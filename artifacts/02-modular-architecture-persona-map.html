@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Sand HealthOS — modular architecture &amp; persona map</title>
+ <style>
+  :root {
+   --ivory: #FAF9F5;
+   --paper: #FFFFFF;
+   --slate: #141413;
+   --clay: #D97757;
+   --clay-d: #B85C3E;
+   --oat: #E3DACC;
+   --olive: #788C5D;
+   --sage: #A8B89A;
+   --rose: #C97B7B;
+   --g100: #F0EEE6;
+   --g200: #E6E3DA;
+   --g300: #D1CFC5;
+   --g500: #87867F;
+   --g700: #3D3D3A;
+   --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+   --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+   --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+
+  * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+  }
+
+  body {
+   background: var(--ivory);
+   color: var(--g700);
+   font-family: var(--sans);
+   font-size: 14.5px;
+   line-height: 1.6;
+   padding: 44px 24px 80px;
+  }
+
+  .page {
+   max-width: 1120px;
+   margin: 0 auto;
+  }
+
+  .eyebrow {
+   font-family: var(--mono);
+   font-size: 11.5px;
+   letter-spacing: 0.08em;
+   text-transform: uppercase;
+   color: var(--g500);
+   margin-bottom: 8px;
+  }
+
+  h1 {
+   font-family: var(--serif);
+   font-weight: 500;
+   font-size: 31px;
+   line-height: 1.22;
+   color: var(--slate);
+   margin-bottom: 14px;
+  }
+
+  .summary {
+   max-width: 820px;
+   font-size: 15px;
+  }
+
+  .summary code,
+  code.inline {
+   font-family: var(--mono);
+   font-size: 12.5px;
+   background: var(--g100);
+   border: 1px solid var(--g200);
+   padding: 1px 5px;
+   border-radius: 4px;
+  }
+
+  h2 {
+   font-family: var(--serif);
+   font-weight: 500;
+   font-size: 21px;
+   color: var(--slate);
+   margin: 38px 0 14px;
+  }
+
+  h3.sub {
+   font-family: var(--sans);
+   font-size: 11px;
+   font-weight: 600;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: var(--g500);
+   margin-bottom: 12px;
+  }
+
+  /* ---------- legend strip ---------- */
+  .legend {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 20px;
+   align-items: center;
+   background: var(--oat);
+   border: 1.5px solid var(--g200);
+   border-radius: 10px;
+   padding: 11px 18px;
+   margin: 20px 0 8px;
+   font-size: 12.5px;
+  }
+
+  .legend .k {
+   display: inline-flex;
+   align-items: center;
+   gap: 7px;
+  }
+
+  .legend .sw {
+   width: 22px;
+   height: 12px;
+   border-radius: 3px;
+   display: inline-block;
+  }
+
+  .sw.confirmed {
+   background: var(--paper);
+   border: 1.5px solid var(--g300);
+  }
+
+  .sw.hot {
+   background: rgba(217, 119, 87, 0.14);
+   border: 1.5px solid var(--clay);
+  }
+
+  .sw.inferred {
+   background: var(--paper);
+   border: 1.5px dashed var(--g500);
+  }
+
+  .sw.scenario {
+   background: rgba(120, 140, 93, 0.13);
+   border: 1.5px solid var(--olive);
+  }
+
+  /* ---------- diagram ---------- */
+  .diagram-panel {
+   border: 1.5px solid var(--g300);
+   border-radius: 12px;
+   background: var(--paper);
+   padding: 18px;
+   overflow-x: auto;
+  }
+
+  svg.flow {
+   display: block;
+   max-width: 100%;
+   height: auto;
+  }
+
+  .flow text {
+   font-family: var(--mono);
+   font-size: 11.5px;
+   fill: var(--slate);
+  }
+
+  .flow .sub {
+   font-size: 9.5px;
+   fill: var(--g500);
+  }
+
+  .flow .band-label {
+   font-size: 10px;
+   fill: var(--g500);
+   letter-spacing: 0.1em;
+   font-weight: 600;
+  }
+
+  .flow .container {
+   fill: var(--g100);
+   stroke: var(--g200);
+   stroke-width: 1.5;
+  }
+
+  .flow .box {
+   fill: #fff;
+   stroke: var(--g300);
+   stroke-width: 1.5;
+  }
+
+  .flow .box.hot {
+   fill: rgba(217, 119, 87, 0.13);
+   stroke: var(--clay);
+  }
+
+  .flow .box.inferred {
+   fill: #fff;
+   stroke: var(--g500);
+   stroke-width: 1.5;
+   stroke-dasharray: 4 3;
+  }
+
+  .flow .box.scenario {
+   fill: rgba(120, 140, 93, 0.11);
+   stroke: var(--olive);
+  }
+
+  .flow .box.persona {
+   fill: var(--slate);
+   stroke: var(--slate);
+  }
+
+  .flow .persona-t {
+   fill: var(--ivory);
+   font-size: 11.5px;
+  }
+
+  .flow .persona-s {
+   fill: var(--g300);
+   font-size: 9.5px;
+  }
+
+  .flow .arrow {
+   stroke: var(--g500);
+   stroke-width: 1.6;
+   fill: none;
+  }
+
+  .flow .arrow.hot {
+   stroke: var(--clay);
+   stroke-width: 2.2;
+  }
+
+  /* ---------- matrix ---------- */
+  .matrix-wrap {
+   overflow-x: auto;
+   border: 1.5px solid var(--g300);
+   border-radius: 12px;
+   background: var(--paper);
+  }
+
+  table.matrix {
+   border-collapse: collapse;
+   width: 100%;
+   min-width: 860px;
+   font-size: 12.5px;
+  }
+
+  table.matrix th,
+  table.matrix td {
+   padding: 9px 10px;
+   border-bottom: 1px solid var(--g100);
+   text-align: center;
+  }
+
+  table.matrix thead th {
+   font-family: var(--mono);
+   font-size: 9.5px;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   color: var(--g500);
+   font-weight: 500;
+   border-bottom: 1.5px solid var(--g200);
+   vertical-align: bottom;
+   line-height: 1.3;
+  }
+
+  table.matrix tbody th {
+   text-align: left;
+   font-weight: 600;
+   color: var(--slate);
+   font-size: 12.5px;
+   white-space: nowrap;
+   border-right: 1.5px solid var(--g100);
+  }
+
+  table.matrix tbody th small {
+   display: block;
+   font-weight: 400;
+   color: var(--g500);
+   font-size: 11px;
+  }
+
+  table.matrix tbody tr:hover {
+   background: var(--g100);
+  }
+
+  .acc {
+   font-size: 14px;
+   line-height: 1;
+  }
+
+  .acc.full {
+   color: var(--clay);
+  }
+
+  .acc.part {
+   color: var(--olive);
+  }
+
+  .acc.none {
+   color: var(--g300);
+  }
+
+  .acc-key {
+   display: flex;
+   gap: 18px;
+   font-size: 12px;
+   color: var(--g500);
+   margin-top: 10px;
+   padding-left: 2px;
+  }
+
+  /* ---------- module cards ---------- */
+  .mod-grid {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 14px;
+  }
+
+  @media (max-width: 900px) {
+   .mod-grid {
+    grid-template-columns: 1fr;
+   }
+  }
+
+  .mod {
+   border: 1.5px solid var(--g300);
+   border-radius: 11px;
+   background: var(--paper);
+   padding: 15px 17px;
+  }
+
+  .mod .name {
+   font-weight: 600;
+   color: var(--slate);
+   font-size: 14px;
+   margin-bottom: 2px;
+  }
+
+  .mod .real {
+   font-family: var(--mono);
+   font-size: 11px;
+   color: var(--clay-d);
+   margin-bottom: 8px;
+   display: block;
+  }
+
+  .mod p {
+   font-size: 12.5px;
+   color: var(--g700);
+   margin-bottom: 9px;
+  }
+
+  .mod .grade {
+   font-family: var(--mono);
+   font-size: 9.5px;
+   letter-spacing: 0.05em;
+   text-transform: uppercase;
+   padding: 2px 7px;
+   border-radius: 4px;
+   display: inline-block;
+  }
+
+  .grade.high {
+   background: rgba(120, 140, 93, 0.16);
+   color: #4C5C38;
+   border: 1px solid var(--sage);
+  }
+
+  .grade.med {
+   background: rgba(217, 119, 87, 0.13);
+   color: var(--clay-d);
+   border: 1px solid var(--clay);
+  }
+
+  .grade.low {
+   background: var(--g100);
+   color: var(--g500);
+   border: 1px solid var(--g300);
+  }
+
+  /* ---------- callout ---------- */
+  .callout {
+   border: 1.5px solid var(--clay);
+   border-radius: 12px;
+   background: rgba(217, 119, 87, 0.06);
+   padding: 17px 20px;
+   margin-top: 22px;
+  }
+
+  .callout h3 {
+   font-family: var(--sans);
+   font-size: 11px;
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: var(--clay);
+   margin-bottom: 9px;
+  }
+
+  .callout p {
+   font-size: 13px;
+   margin-bottom: 8px;
+  }
+
+  .callout p:last-child {
+   margin-bottom: 0;
+  }
+
+  details.deep {
+   margin-top: 22px;
+   border: 1.5px solid var(--g300);
+   border-radius: 11px;
+   background: var(--paper);
+  }
+
+  details.deep summary {
+   cursor: pointer;
+   padding: 13px 17px;
+   font-size: 12.5px;
+   font-weight: 600;
+   font-family: var(--mono);
+   color: var(--g700);
+   letter-spacing: 0.02em;
+  }
+
+  details.deep .deep-body {
+   padding: 0 17px 16px;
+   font-size: 12.5px;
+  }
+
+  details.deep table {
+   width: 100%;
+   border-collapse: collapse;
+   margin-top: 6px;
+  }
+
+  details.deep th,
+  details.deep td {
+   text-align: left;
+   padding: 7px 9px;
+   border-bottom: 1px solid var(--g100);
+   font-size: 11.5px;
+   vertical-align: top;
+  }
+
+  details.deep th {
+   color: var(--g500);
+   font-family: var(--mono);
+   font-weight: 500;
+   text-transform: uppercase;
+   font-size: 9.5px;
+   letter-spacing: 0.05em;
+  }
+
+  .footnote {
+   margin-top: 20px;
+   font-family: var(--mono);
+   font-size: 11px;
+   color: var(--g500);
+  }
+ </style>
+</head>
+
+<body>
+ <div class="page">
+
+  <header data-component="header">
+   <div class="eyebrow">Sand FDE assignment · architecture note</div>
+   <h1>Sand HealthOS — modular architecture &amp; persona access map</h1>
+   <p class="summary">
+    Every module in the assignment brief (<code>Health Atlas</code>, <code>Health Outcome Tracker</code>,
+    <code>Health Insight Engine</code>, <code>Analytics Template Toolkit</code>, <code>HealthOS Data Models</code>)
+    placed onto the layered architecture Sand actually runs — Rwanda's published six-layer NHIC stack, the
+    <code>Bluelake Admin</code> UI confirmed on video, and the Rwanda-scenario source systems from the brief.
+    The <span style="color:var(--clay-d);font-weight:600">clay path</span> traces Problem&nbsp;A
+    (Quarterly Health Bulletin) end to end — DHIS2 export through to a scheduled report in the MoH analyst's inbox.
+   </p>
+  </header>
+
+  <div class="legend" data-component="status-strip">
+   <span class="k"><span class="sw confirmed"></span> Confirmed (video / published source)</span>
+   <span class="k"><span class="sw hot"></span> Problem A — bulletin hot path</span>
+   <span class="k"><span class="sw inferred"></span> Inferred (no public spec)</span>
+   <span class="k"><span class="sw scenario"></span> Assignment scenario (Rwanda brief)</span>
+  </div>
+
+  <div class="diagram-panel" data-component="approach-grid">
+   <svg class="flow" viewBox="0 0 1040 940" width="1040" height="940" role="img"
+    aria-label="Sand HealthOS layered architecture with persona access points">
+    <defs>
+     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#87867F"></path>
+     </marker>
+     <marker id="ahHot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+      orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D97757"></path>
+     </marker>
+    </defs>
+
+    <!-- ============ PERSONAS ============ -->
+    <text class="band-label" x="20" y="18">WHO TOUCHES IT</text>
+    <g>
+     <rect class="box persona" x="20" y="28" width="235" height="58" rx="9"></rect>
+     <text class="persona-t" x="137" y="52" text-anchor="middle">Facility staff</text>
+     <text class="persona-s" x="137" y="69" text-anchor="middle">nurse entrepreneur · clinician · DHO</text>
+    </g>
+    <g>
+     <rect class="box persona" x="275" y="28" width="235" height="58" rx="9"></rect>
+     <text class="persona-t" x="392" y="52" text-anchor="middle">District Health Officer</text>
+     <text class="persona-s" x="392" y="69" text-anchor="middle">Problem B — real-time facility status</text>
+    </g>
+    <g>
+     <rect class="box persona" x="530" y="28" width="235" height="58" rx="9"></rect>
+     <text class="persona-t" x="647" y="52" text-anchor="middle">MoH national</text>
+     <text class="persona-s" x="647" y="69" text-anchor="middle">analyst · statistician · director</text>
+    </g>
+    <g>
+     <rect class="box persona" x="785" y="28" width="235" height="58" rx="9"></rect>
+     <text class="persona-t" x="902" y="52" text-anchor="middle">Sand FDE</text>
+     <text class="persona-s" x="902" y="69" text-anchor="middle">builds · integrates · hands over</text>
+    </g>
+
+    <!-- persona → presentation arrows -->
+    <line class="arrow" x1="137" y1="86" x2="137" y2="124" marker-end="url(#ah)"></line>
+    <line class="arrow" x1="392" y1="86" x2="392" y2="124" marker-end="url(#ah)"></line>
+    <line class="arrow hot" x1="647" y1="86" x2="647" y2="124" marker-end="url(#ahHot)"></line>
+    <line class="arrow" x1="902" y1="86" x2="902" y2="124" marker-end="url(#ah)"></line>
+
+    <!-- ============ PRESENTATION LAYER ============ -->
+    <rect class="container" x="20" y="126" width="1000" height="108" rx="11"></rect>
+    <text class="band-label" x="32" y="146">6 · PRESENTATION LAYER</text>
+    <g>
+     <rect class="box" x="36" y="155" width="300" height="62" rx="9"></rect>
+     <text x="186" y="180" text-anchor="middle">Bluelake Admin</text>
+     <text class="sub" x="186" y="196" text-anchor="middle">bluelake.rhos.africa · confirmed on video</text>
+    </g>
+    <g>
+     <rect class="box hot" x="352" y="155" width="300" height="62" rx="9"></rect>
+     <text x="502" y="180" text-anchor="middle">Superset dashboards</text>
+     <text class="sub" x="502" y="196" text-anchor="middle">templated · scheduled report → email</text>
+    </g>
+    <g>
+     <rect class="box inferred" x="668" y="155" width="336" height="62" rx="9"></rect>
+     <text x="836" y="180" text-anchor="middle">External API access</text>
+     <text class="sub" x="836" y="196" text-anchor="middle">named in NHIC layer spec, surface undocumented</text>
+    </g>
+
+    <line class="arrow" x1="520" y1="254" x2="520" y2="236" marker-end="url(#ah)"></line>
+    <line class="arrow hot" x1="502" y1="254" x2="502" y2="236" marker-end="url(#ahHot)"></line>
+
+    <!-- ============ PRODUCT MODULES ============ -->
+    <rect class="container" x="20" y="256" width="1000" height="112" rx="11"></rect>
+    <text class="band-label" x="32" y="276">5 · PRODUCT MODULES — the four the brief names as user-facing</text>
+    <g>
+     <rect class="box" x="36" y="285" width="230" height="66" rx="9"></rect>
+     <text x="151" y="310" text-anchor="middle">Health Atlas</text>
+     <text class="sub" x="151" y="326" text-anchor="middle">Situation Map · Mapbox</text>
+     <text class="sub" x="151" y="339" text-anchor="middle">facility dots + catchment</text>
+    </g>
+    <g>
+     <rect class="box" x="282" y="285" width="230" height="66" rx="9"></rect>
+     <text x="397" y="310" text-anchor="middle">Outcome Tracker</text>
+     <text class="sub" x="397" y="326" text-anchor="middle">ANC · maternal · malaria · NCD</text>
+     <text class="sub" x="397" y="339" text-anchor="middle">facility → district → national</text>
+    </g>
+    <g>
+     <rect class="box inferred" x="528" y="285" width="230" height="66" rx="9"></rect>
+     <text x="643" y="310" text-anchor="middle">Insight Engine</text>
+     <text class="sub" x="643" y="326" text-anchor="middle">anomaly / outbreak alerting</text>
+     <text class="sub" x="643" y="339" text-anchor="middle">NOT visible in any video</text>
+    </g>
+    <g>
+     <rect class="box hot" x="774" y="285" width="230" height="66" rx="9"></rect>
+     <text x="889" y="310" text-anchor="middle">Analytics Toolkit</text>
+     <text class="sub" x="889" y="326" text-anchor="middle">reusable Superset templates</text>
+     <text class="sub" x="889" y="339" text-anchor="middle">the FDE&#39;s fastest lever</text>
+    </g>
+
+    <line class="arrow" x1="520" y1="394" x2="520" y2="370" marker-end="url(#ah)"></line>
+    <line class="arrow hot" x1="889" y1="394" x2="889" y2="370" marker-end="url(#ahHot)"></line>
+
+    <!-- ============ DATA PLATFORM ============ -->
+    <rect class="container" x="20" y="396" width="1000" height="200" rx="11"></rect>
+    <text class="band-label" x="32" y="416">4·3·2 · DATA PLATFORM — medallion pattern [inferred from dbt/Airflow in FDE
+     JD]</text>
+    <g>
+     <rect class="box hot" x="36" y="425" width="968" height="48" rx="8"></rect>
+     <text x="520" y="446" text-anchor="middle">Storage layer — conformed marts</text>
+     <text class="sub" x="520" y="461" text-anchor="middle">org-unit dim · indicator dim · period dim · fact tables →
+      this is what the bulletin queries</text>
+    </g>
+    <g>
+     <rect class="box" x="36" y="481" width="968" height="48" rx="8"></rect>
+     <text x="520" y="502" text-anchor="middle">Data lakehouse — validate · enrich · aggregate</text>
+     <text class="sub" x="520" y="517" text-anchor="middle">where completeness scoring and cross-source reconciliation
+      belong</text>
+    </g>
+    <g>
+     <rect class="box" x="36" y="537" width="968" height="48" rx="8"></rect>
+     <text x="520" y="558" text-anchor="middle">Landing zone — raw staging</text>
+     <text class="sub" x="520" y="573" text-anchor="middle">immutable source-of-truth copies; re-runnable without
+      re-pulling the API</text>
+    </g>
+
+    <line class="arrow" x1="520" y1="624" x2="520" y2="598" marker-end="url(#ah)"></line>
+
+    <!-- ============ INGESTION ============ -->
+    <rect class="container" x="20" y="626" width="1000" height="108" rx="11"></rect>
+    <text class="band-label" x="32" y="646">1 · INGESTION &amp; TRANSFORMATION — &#8220;HealthOS Data Models&#8221;
+     lives here, not in the UI</text>
+    <g>
+     <rect class="box hot" x="36" y="655" width="312" height="62" rx="9"></rect>
+     <text x="192" y="680" text-anchor="middle">DHIS2 Web API pull</text>
+     <text class="sub" x="192" y="696" text-anchor="middle">org unit × data element × period</text>
+    </g>
+    <g>
+     <rect class="box inferred" x="364" y="655" width="312" height="62" rx="9"></rect>
+     <text x="520" y="680" text-anchor="middle">dbt + Airflow</text>
+     <text class="sub" x="520" y="696" text-anchor="middle">named in FDE JD; usage not confirmed</text>
+    </g>
+    <g>
+     <rect class="box inferred" x="692" y="655" width="312" height="62" rx="9"></rect>
+     <text x="848" y="680" text-anchor="middle">OpenHIM mediator · FHIR map</text>
+     <text class="sub" x="848" y="696" text-anchor="middle">openHIE reference pattern</text>
+    </g>
+
+    <line class="arrow" x1="520" y1="756" x2="520" y2="736" marker-end="url(#ah)"></line>
+    <line class="arrow hot" x1="192" y1="756" x2="192" y2="736" marker-end="url(#ahHot)"></line>
+
+    <!-- ============ SOURCES ============ -->
+    <rect class="container" x="20" y="758" width="1000" height="156" rx="11"></rect>
+    <text class="band-label" x="32" y="778">0 · SOURCE SYSTEMS — green = the Rwanda scenario in the brief</text>
+    <g>
+     <rect class="box hot" x="36" y="787" width="182" height="52" rx="8"></rect>
+     <text x="127" y="809" text-anchor="middle">DHIS2</text>
+     <text class="sub" x="127" y="824" text-anchor="middle">monthly, 2–3wk lag</text>
+    </g>
+    <g>
+     <rect class="box scenario" x="232" y="787" width="182" height="52" rx="8"></rect>
+     <text x="323" y="809" text-anchor="middle">HealthTrack EMR</text>
+     <text class="sub" x="323" y="824" text-anchor="middle">45 hospitals · buggy</text>
+    </g>
+    <g>
+     <rect class="box" x="428" y="787" width="182" height="52" rx="8"></rect>
+     <text x="519" y="809" text-anchor="middle">OpenMRS</text>
+     <text class="sub" x="519" y="824" text-anchor="middle">30 clinics · seen on video</text>
+    </g>
+    <g>
+     <rect class="box scenario" x="624" y="787" width="182" height="52" rx="8"></rect>
+     <text x="715" y="809" text-anchor="middle">CommCare</text>
+     <text class="sub" x="715" y="824" text-anchor="middle">TB + HIV programmes</text>
+    </g>
+    <g>
+     <rect class="box scenario" x="820" y="787" width="182" height="52" rx="8"></rect>
+     <text x="911" y="809" text-anchor="middle">Paper registers</text>
+     <text class="sub" x="911" y="824" text-anchor="middle">175 rural facilities</text>
+    </g>
+    <g>
+     <rect class="box" x="36" y="849" width="182" height="52" rx="8"></rect>
+     <text x="127" y="871" text-anchor="middle">IoT cold chain</text>
+     <text class="sub" x="127" y="886" text-anchor="middle">fridge temp + humidity</text>
+    </g>
+    <g>
+     <rect class="box scenario" x="232" y="849" width="182" height="52" rx="8"></rect>
+     <text x="323" y="871" text-anchor="middle">Excel</text>
+     <text class="sub" x="323" y="886" text-anchor="middle">immunisation programme</text>
+    </g>
+    <g>
+     <rect class="box" x="428" y="849" width="182" height="52" rx="8"></rect>
+     <text x="519" y="871" text-anchor="middle">eLMIS · CRVS</text>
+     <text class="sub" x="519" y="886" text-anchor="middle">logistics · civil registration</text>
+    </g>
+    <g>
+     <rect class="box" x="624" y="849" width="182" height="52" rx="8"></rect>
+     <text x="715" y="871" text-anchor="middle">Zipline · vitals devices</text>
+     <text class="sub" x="715" y="886" text-anchor="middle">3rd-party APIs, per narration</text>
+    </g>
+    <g>
+     <rect class="box" x="820" y="849" width="182" height="52" rx="8"></rect>
+     <text x="911" y="871" text-anchor="middle">Census · population</text>
+     <text class="sub" x="911" y="886" text-anchor="middle">catchment denominators</text>
+    </g>
+   </svg>
+  </div>
+
+  <h2>Who accesses what</h2>
+  <div class="matrix-wrap" data-component="deep-detail">
+   <table class="matrix">
+    <thead>
+     <tr>
+      <th style="text-align:left">Persona</th>
+      <th>Bluelake<br>Admin UI</th>
+      <th>Health Atlas<br>Situation Map</th>
+      <th>Outcome<br>Tracker</th>
+      <th>Insight<br>Engine</th>
+      <th>Analytics<br>Toolkit</th>
+      <th>Data models<br>/ pipeline</th>
+      <th>OpenMRS<br>EMR</th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr>
+      <th>Patient <small>service recipient, not a user</small></th>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+     </tr>
+     <tr>
+      <th>Clinician / midwife <small>point of care</small></th>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc full">●</span></td>
+     </tr>
+     <tr>
+      <th>Nurse entrepreneur <small>runs the clinic</small></th>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc full">●</span></td>
+     </tr>
+     <tr>
+      <th>DHO <small>Digital Health Officer, per-clinic</small></th>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc full">●</span></td>
+     </tr>
+     <tr>
+      <th>District Health Officer <small>Problem B</small></th>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+     </tr>
+     <tr>
+      <th>MoH analyst <small>Problem A — writes the bulletin</small></th>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc none">○</span></td>
+     </tr>
+     <tr>
+      <th>MoH director <small>consumes, does not query</small></th>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc part">◐</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+      <td><span class="acc none">○</span></td>
+     </tr>
+     <tr>
+      <th>Sand FDE <small>builds it, then gives it away</small></th>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc full">●</span></td>
+      <td><span class="acc part">◐</span></td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="acc-key">
+   <span><span class="acc full">●</span> primary user — daily</span>
+   <span><span class="acc part">◐</span> read-only / occasional</span>
+   <span><span class="acc none">○</span> no access</span>
+  </div>
+
+  <h2>Module inventory — what each one actually is</h2>
+  <div class="mod-grid" data-component="approach-grid">
+   <div class="mod">
+    <div class="name">Health Atlas</div>
+    <span class="real">= Situation Map tab, Mapbox</span>
+    <p>Facility dots coloured by status over a district map. The 3D catchment-analysis work is real but was
+     shown on a projector in Rwanda, not in the shipped web UI.</p>
+    <span class="grade high">confirmed on video</span>
+   </div>
+   <div class="mod">
+    <div class="name">Health Outcome Tracker</div>
+    <span class="real">= &#8220;Health Outcome Visibility&#8221; pillar</span>
+    <p>Indicator rollups facility → district → national. In the UI this is the Clinical sub-tab: disease
+     occurrence, burden per health post, prevalence by age/gender.</p>
+    <span class="grade high">confirmed on video</span>
+   </div>
+   <div class="mod">
+    <div class="name">Health Insight Engine</div>
+    <span class="real">= the AI layer nobody has seen</span>
+    <p>Marketing claims anomaly detection and outbreak alerting; Rwanda&#39;s NHIC is genuinely used for
+     Ebola surveillance. But zero alerting UI appears in either video — everything shown is descriptive BI.</p>
+    <span class="grade low">claimed, not observed</span>
+   </div>
+   <div class="mod">
+    <div class="name">Analytics Template Toolkit</div>
+    <span class="real">= Apache Superset + saved templates</span>
+    <p>Superset is named explicitly in Sand&#39;s own FDE job posting. Its built-in scheduled-report feature is
+     the single fastest route to automating the Quarterly Bulletin.</p>
+    <span class="grade med">named in Sand JD</span>
+   </div>
+   <div class="mod">
+    <div class="name">HealthOS Data Models</div>
+    <span class="real">= the DHIS2 → warehouse transform</span>
+    <p>Not a user-facing product. Org unit × data element × period, reshaped into conformed dims and facts.
+     dbt/Airflow listed as preferred FDE skills, consistent with a medallion pipeline.</p>
+    <span class="grade med">pattern inferred</span>
+   </div>
+   <div class="mod">
+    <div class="name">Bluelake Admin</div>
+    <span class="real">= the actual product name on screen</span>
+    <p>Not in the brief at all, but it is what the UI calls itself at <code class="inline">bluelake.rhos.africa</code>.
+     Four tabs, three sub-tabs, one persistent filter bar. Everything above renders through it.</p>
+    <span class="grade high">confirmed on video</span>
+   </div>
+  </div>
+
+  <div class="callout" data-component="verdict">
+   <h3>What this diagram changes about the build</h3>
+   <p><b>The bulletin does not need a new product — it needs a mart and a Superset template.</b> The hot path
+    touches four things Sand already runs: a DHIS2 pull, a conformed mart, a saved dashboard, and Superset&#39;s
+    scheduled-report feature. Nothing on that path is a greenfield build, which is what makes 6 weeks credible.</p>
+   <p><b>The Insight Engine is the honest gap.</b> If the interview pushes on AI capability, the defensible
+    answer is that the descriptive layer is real and shipped, the predictive layer is claimed but unevidenced —
+    and that a bulletin built on the descriptive layer is the lower-risk first deliverable regardless.</p>
+   <p><b>175 paper-only facilities never reach any of these boxes.</b> Every module above assumes a digital
+    source. That constraint belongs in the scoping doc as an explicit out-of-scope line, not discovered in week 4.</p>
+  </div>
+
+  <details class="deep">
+   <summary>Layer-by-layer evidence trail (click to expand)</summary>
+   <div class="deep-body">
+    <table>
+     <tr>
+      <th>Layer</th>
+      <th>Evidence</th>
+      <th>Grade</th>
+     </tr>
+     <tr>
+      <td>Presentation — Bluelake Admin</td>
+      <td>URL <code class="inline">bluelake.rhos.africa/dashboard</code> and full nav structure read off video frames
+      </td>
+      <td>Confirmed</td>
+     </tr>
+     <tr>
+      <td>Presentation — Superset</td>
+      <td>Named as preferred skill in Sand&#39;s FDE Nigeria posting; corroborated by a Sand data engineer&#39;s profile
+      </td>
+      <td>Strong</td>
+     </tr>
+     <tr>
+      <td>Six-layer stack shape</td>
+      <td>Published by Rwanda MoH for the National Health Intelligence Center, April 2025</td>
+      <td>Confirmed (Rwanda NHIC, not Sand-labelled)</td>
+     </tr>
+     <tr>
+      <td>Medallion / bronze-silver-gold naming</td>
+      <td>Not published anywhere. Inferred from AWS-native delivery plus dbt/Airflow in the JD</td>
+      <td>Inferred</td>
+     </tr>
+     <tr>
+      <td>OpenMRS as the EMR</td>
+      <td>Browser tab labelled <code class="inline">OpenMRS</code> visible on a clinician&#39;s laptop in the Bwiza
+       video</td>
+      <td>Confirmed</td>
+     </tr>
+     <tr>
+      <td>IoT cold chain</td>
+      <td>&#8220;Average of Fridge Temperature&#8221; and &#8220;Average of Fridge Humidity&#8221; charts on the
+       Operational tab</td>
+      <td>Confirmed</td>
+     </tr>
+     <tr>
+      <td>OpenHIM / FHIR mediator</td>
+      <td>openHIE is the dominant reference architecture for MoH integration; no evidence Sand adopted it by name</td>
+      <td>Inferred</td>
+     </tr>
+     <tr>
+      <td>Insight Engine alerting</td>
+      <td>Claimed in marketing and plausible given Ebola surveillance use; no alerting UI in any analysed frame</td>
+      <td>Unevidenced</td>
+     </tr>
+    </table>
+   </div>
+  </details>
+
+  <p class="footnote">Sources: research-sand-healthcare-products.md §1–§7 · two Sand product videos analysed
+   frame-by-frame · Rwanda MoH NHIC architecture release · Sand AWS Marketplace listings · Sand FDE job postings
+   (Nigeria, Zambia).</p>
+ </div>
+</body>
+
+</html>

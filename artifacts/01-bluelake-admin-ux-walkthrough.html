@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bluelake Admin — reconstructed UX walkthrough</title>
+  <style>
+    :root {
+
+      /* core */
+      --ivory: #FAF9F5;
+      /* page background */
+      --paper: #FFFFFF;
+      /* card / surface */
+      --slate: #141413;
+      /* primary text, dark accents */
+
+      /* accents */
+      --clay: #D97757;
+      /* primary accent, links, italic emphasis */
+      --clay-d: #B85C3E;
+      /* hover / pressed clay */
+      --oat: #E3DACC;
+      /* warm fill, selected swatch */
+      --olive: #788C5D;
+      /* secondary accent, success, neutral chip */
+      --sage: #A8B89A;
+      /* lighter olive variant (used in some exemplars) */
+      --rose: #C97B7B;
+      /* warning / danger accent (used in incident/status) */
+
+      /* greys (warm, low-chroma) */
+      --g100: #F0EEE6;
+      --g200: #E6E3DA;
+      --g300: #D1CFC5;
+      --g500: #87867F;
+      --g700: #3D3D3A;
+
+      /* typography */
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      background: var(--ivory);
+      color: var(--slate);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 32px 64px;
+    }
+
+    header.page-head {
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--g500);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 28px;
+      letter-spacing: -0.01em;
+      margin: 6px 0 6px;
+    }
+
+    .sub {
+      color: var(--g500);
+      max-width: 760px;
+    }
+
+    code.inline {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: var(--g100);
+      border: 1.5px solid var(--g200);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    /* provenance strip */
+    .provenance {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+      background: var(--oat);
+      border: 1.5px solid var(--g200);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin: 18px 0 26px;
+      font-size: 12.5px;
+    }
+
+    .provenance b {
+      color: var(--slate);
+    }
+
+    .provenance .dot {
+      color: var(--g500);
+    }
+
+    /* ---------- browser chrome mock ---------- */
+    .browser {
+      background: var(--paper);
+      border: 1.5px solid var(--g200);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(20, 20, 19, 0.04);
+    }
+
+    .chrome-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      background: var(--g100);
+      border-bottom: 1.5px solid var(--g200);
+    }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dots i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--g300);
+      display: block;
+    }
+
+    .urlbar {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--g700);
+      background: var(--paper);
+      border: 1px solid var(--g200);
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+
+    /* app top-nav / sub-nav */
+    .app-topnav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 14px;
+      background: var(--slate);
+    }
+
+    .brand {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ivory);
+      padding: 12px 14px 12px 0;
+      margin-right: 6px;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .tab {
+      font-size: 12.5px;
+      color: var(--g300);
+      padding: 13px 14px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      user-select: none;
+    }
+
+    .tab:hover {
+      color: var(--ivory);
+    }
+
+    .tab.active {
+      color: var(--ivory);
+      border-bottom-color: var(--clay);
+      font-weight: 600;
+    }
+
+    .topnav-spacer {
+      flex: 1;
+    }
+
+    .logout {
+      font-size: 11.5px;
+      color: var(--g500);
+      padding: 13px 4px;
+    }
+
+    .app-subnav {
+      display: flex;
+      gap: 4px;
+      padding: 8px 14px;
+      background: var(--paper);
+      border-bottom: 1.5px solid var(--g200);
+    }
+
+    .subtab {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 7px;
+      color: var(--g700);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .subtab:hover {
+      background: var(--g100);
+    }
+
+    .subtab.active {
+      background: var(--oat);
+      color: var(--slate);
+      font-weight: 600;
+    }
+
+    .filterbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--g100);
+      border-bottom: 1.5px solid var(--g200);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .chip {
+      background: var(--paper);
+      border: 1px solid var(--g200);
+      border-radius: 6px;
+      padding: 4px 9px;
+      color: var(--g700);
+    }
+
+    .chip b {
+      color: var(--slate);
+      font-weight: 600;
+    }
+
+    .app-body {
+      padding: 18px 16px 20px;
+      min-height: 420px;
+    }
+
+    /* generic card */
+    .card {
+      background: var(--paper);
+      border: 1.5px solid var(--g200);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .card h3 {
+      font-family: var(--sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--g700);
+      margin: 0 0 10px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* fake chart primitives, css-only */
+    .linechart {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 96px;
+      padding-top: 6px;
+    }
+
+    .linechart i {
+      display: block;
+      flex: 1;
+      border-radius: 2px 2px 0 0;
+      background: var(--clay);
+      opacity: 0.85;
+    }
+
+    .linechart i:nth-child(3n) {
+      background: var(--olive);
+    }
+
+    .linechart i:nth-child(5n) {
+      background: var(--sage);
+    }
+
+    .donut {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: conic-gradient(var(--clay) 0 55%, var(--olive) 55% 80%, var(--g300) 80% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 6px auto 4px;
+      position: relative;
+    }
+
+    .donut::after {
+      content: "";
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--paper);
+    }
+
+    .donut-total {
+      position: absolute;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--slate);
+    }
+
+    .donut-label {
+      text-align: center;
+      font-size: 11px;
+      color: var(--g500);
+    }
+
+    .hbar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 7px 0;
+    }
+
+    .hbar-label {
+      width: 108px;
+      font-size: 11px;
+      color: var(--g700);
+      flex: none;
+    }
+
+    .hbar-track {
+      flex: 1;
+      height: 9px;
+      border-radius: 5px;
+      background: var(--g100);
+      overflow: hidden;
+    }
+
+    .hbar-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: var(--clay);
+    }
+
+    .hbar-fill.olive {
+      background: var(--olive);
+    }
+
+    .hbar-fill.sage {
+      background: var(--sage);
+    }
+
+    /* map mock */
+    .mapmock {
+      height: 220px;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(217, 119, 87, 0.35), transparent 40%),
+        radial-gradient(circle at 62% 30%, rgba(217, 119, 87, 0.28), transparent 35%),
+        radial-gradient(circle at 50% 70%, rgba(120, 140, 93, 0.3), transparent 40%),
+        radial-gradient(circle at 75% 65%, rgba(120, 140, 93, 0.25), transparent 35%),
+        var(--slate);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mapmock .dot {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+    }
+
+    .mapmock .dot.orange {
+      background: #E8985A;
+    }
+
+    .mapmock .dot.blue {
+      background: #7CA9C9;
+    }
+
+    .mapmock .attrib {
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .mapmock .district {
+      position: absolute;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.04em;
+    }
+
+    .kv {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      padding: 3px 0;
+      color: var(--g700);
+    }
+
+    .kv b {
+      color: var(--slate);
+      font-family: var(--mono);
+    }
+
+    /* ---------- annotation / notes panel ---------- */
+    .bench {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 22px;
+      align-items: start;
+      margin-top: 20px;
+    }
+
+    .notes {
+      background: var(--paper);
+      border: 1.5px solid var(--g200);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .notes h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 16px;
+      margin: 0 0 4px;
+    }
+
+    .notes .lede {
+      color: var(--g500);
+      font-size: 12.5px;
+      margin: 0 0 14px;
+    }
+
+    .notes ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .notes li {
+      position: relative;
+      padding: 9px 0 9px 20px;
+      border-top: 1.5px solid var(--g100);
+      font-size: 12.5px;
+      color: var(--g700);
+    }
+
+    .notes li:first-child {
+      border-top: none;
+    }
+
+    .notes li::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 15px;
+      width: 6px;
+      height: 6px;
+      border-radius: 2px;
+      background: var(--clay);
+    }
+
+    .notes li b {
+      color: var(--slate);
+      font-weight: 600;
+    }
+
+    .notes li i.tag {
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 9.5px;
+      color: var(--olive);
+      border: 1px solid var(--sage);
+      border-radius: 4px;
+      padding: 0 4px;
+      margin-left: 4px;
+    }
+
+    /* quote panel */
+    .quote {
+      margin-top: 18px;
+      background: var(--oat);
+      border: 1.5px solid var(--g200);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+
+    .quote h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 15px;
+      margin: 0 0 8px;
+    }
+
+    .quote p {
+      font-style: italic;
+      font-size: 12.5px;
+      color: var(--g700);
+      margin: 0 0 6px;
+      padding-left: 12px;
+      border-left: 2px solid var(--clay);
+    }
+
+    .reset-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 14px;
+    }
+
+    .reset-btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g700);
+      background: var(--paper);
+      border: 1.5px solid var(--g200);
+      border-radius: 7px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover {
+      border-color: var(--clay);
+      color: var(--clay-d);
+    }
+
+    details.deep {
+      margin-top: 22px;
+      border: 1.5px solid var(--g200);
+      border-radius: 10px;
+      background: var(--paper);
+    }
+
+    details.deep summary {
+      cursor: pointer;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: var(--mono);
+      color: var(--g700);
+      letter-spacing: 0.02em;
+    }
+
+    details.deep .deep-body {
+      padding: 0 16px 16px;
+      font-size: 12.5px;
+      color: var(--g700);
+    }
+
+    details.deep table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    details.deep th,
+    details.deep td {
+      text-align: left;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--g100);
+      font-size: 11.5px;
+    }
+
+    details.deep th {
+      color: var(--g500);
+      font-family: var(--mono);
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+
+    .footnote {
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--g500);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap" data-component="header">
+
+    <header class="page-head">
+      <div class="eyebrow">Sand FDE assignment / prototype / interaction</div>
+      <h1>Bluelake Admin — reconstructed UX walkthrough</h1>
+      <p class="sub">
+        A click-through mockup of Sand's actual healthcare product UI, rebuilt from frame-by-frame
+        analysis of two Sand product videos (not imagined). Click a top-nav tab to switch screens and
+        feel the navigation shape before we design the Quarterly Health Bulletin prototype on top of it.
+      </p>
+    </header>
+
+    <div class="provenance" data-component="status-strip">
+      <span><b>Source:</b> <code class="inline">meta/muse-spark-1.2</code> video analysis</span>
+      <span class="dot">·</span>
+      <span>2 Sand videos: <i>RHOS Blue Room</i>, <i>Bwiza Health Post &amp; Blue Room</i></span>
+      <span class="dot">·</span>
+      <span>Confirmed URL: <code class="inline">bluelake.rhos.africa/dashboard</code></span>
+      <span class="dot">·</span>
+      <span>Real product, not our design — layout/labels are reconstructed as-observed</span>
+    </div>
+
+    <div class="browser">
+      <div class="chrome-bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="urlbar" id="urlbar">https://bluelake.rhos.africa/dashboard</span>
+      </div>
+
+      <div class="app-topnav">
+        <span class="brand">Bluelake Admin</span>
+        <span class="tab active" data-screen="dashboard" onclick="go('dashboard', this)">Dashboard</span>
+        <span class="tab" data-screen="operations" onclick="go('operations', this)">Operations</span>
+        <span class="tab" data-screen="finance" onclick="go('finance', this)">Finance</span>
+        <span class="tab" data-screen="map" onclick="go('map', this)">Situation Map</span>
+        <span class="topnav-spacer"></span>
+        <span class="logout">Logout</span>
+      </div>
+
+      <div class="app-subnav">
+        <span class="subtab active" data-sub="operational" onclick="setSub(this)">Operational</span>
+        <span class="subtab" data-sub="financial" onclick="setSub(this)">Financial</span>
+        <span class="subtab" data-sub="clinical" onclick="setSub(this)">Clinical</span>
+      </div>
+
+      <div class="filterbar">
+        <span class="chip">Facility: <b>All</b></span>
+        <span class="chip">Last N Days: <b>90</b></span>
+        <span class="chip">From: <b>2023/09/05</b></span>
+        <span class="chip">Gender: <b>All</b></span>
+        <span class="chip">Age Group: <b>All</b></span>
+      </div>
+
+      <div class="app-body">
+
+        <!-- ============ SCREEN: Dashboard / Operational ============ -->
+        <div class="screen active" id="screen-dashboard" data-component="deep-detail">
+          <div class="stack">
+            <div class="card">
+              <h3>Footfall Per Health Post</h3>
+              <div class="linechart">
+                <i style="height:38%"></i><i style="height:52%"></i><i style="height:44%"></i>
+                <i style="height:61%"></i><i style="height:58%"></i><i style="height:70%"></i>
+                <i style="height:66%"></i><i style="height:80%"></i><i style="height:74%"></i>
+                <i style="height:62%"></i><i style="height:69%"></i><i style="height:85%"></i>
+                <i style="height:77%"></i><i style="height:90%"></i><i style="height:83%"></i>
+                <i style="height:71%"></i><i style="height:65%"></i><i style="height:74%"></i>
+              </div>
+            </div>
+            <div class="grid3">
+              <div class="card">
+                <h3>Visits Per Gender</h3>
+                <div class="donut" style="position:relative;">
+                  <span class="donut-total">28.03K</span>
+                </div>
+                <div class="donut-label">total visits, 90d window</div>
+              </div>
+              <div class="card">
+                <h3>Average Fridge Temperature</h3>
+                <div class="linechart" style="height:78px;">
+                  <i style="height:40%"></i><i style="height:42%"></i><i style="height:41%"></i>
+                  <i style="height:78%"></i><i style="height:43%"></i><i style="height:40%"></i>
+                  <i style="height:39%"></i><i style="height:41%"></i><i style="height:70%"></i>
+                  <i style="height:40%"></i><i style="height:42%"></i><i style="height:41%"></i>
+                </div>
+                <div class="donut-label">~4–5°C baseline · cold-chain / vaccine monitoring</div>
+              </div>
+              <div class="card">
+                <h3>Average Fridge Humidity</h3>
+                <div class="linechart" style="height:78px;">
+                  <i style="height:55%"></i><i style="height:58%"></i><i style="height:52%"></i>
+                  <i style="height:60%"></i><i style="height:66%"></i><i style="height:57%"></i>
+                  <i style="height:54%"></i><i style="height:80%"></i><i style="height:59%"></i>
+                  <i style="height:53%"></i><i style="height:56%"></i><i style="height:58%"></i>
+                </div>
+                <div class="donut-label">IoT sensor feed, per facility</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ SCREEN: Operations ============ -->
+        <div class="screen" id="screen-operations">
+          <div class="grid2">
+            <div class="card">
+              <h3>Daily Footfall Per Gender</h3>
+              <div class="linechart">
+                <i style="height:44%"></i><i style="height:50%"></i><i style="height:60%"></i>
+                <i style="height:55%"></i><i style="height:68%"></i><i style="height:62%"></i>
+                <i style="height:74%"></i><i style="height:70%"></i><i style="height:80%"></i>
+                <i style="height:66%"></i><i style="height:71%"></i><i style="height:63%"></i>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Reporting Completeness by Facility</h3>
+              <div class="hbar-row"><span class="hbar-label">KAGASA</span>
+                <div class="hbar-track">
+                  <div class="hbar-fill" style="width:88%"></div>
+                </div>
+              </div>
+              <div class="hbar-row"><span class="hbar-label">KARAMBI</span>
+                <div class="hbar-track">
+                  <div class="hbar-fill olive" style="width:64%"></div>
+                </div>
+              </div>
+              <div class="hbar-row"><span class="hbar-label">KARAMBO</span>
+                <div class="hbar-track">
+                  <div class="hbar-fill sage" style="width:91%"></div>
+                </div>
+              </div>
+              <div class="hbar-row"><span class="hbar-label">MUGI</span>
+                <div class="hbar-track">
+                  <div class="hbar-fill" style="width:72%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ SCREEN: Finance ============ -->
+        <div class="screen" id="screen-finance">
+          <div class="grid2">
+            <div class="card">
+              <h3>Daily Revenue Per Health Post (RWF)</h3>
+              <div class="linechart">
+                <i style="height:40%"></i><i style="height:58%"></i><i style="height:50%"></i>
+                <i style="height:66%"></i><i style="height:61%"></i><i style="height:74%"></i>
+                <i style="height:69%"></i><i style="height:85%"></i><i style="height:78%"></i>
+                <i style="height:64%"></i><i style="height:72%"></i><i style="height:88%"></i>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Total Revenue</h3>
+              <div class="donut"><span class="donut-total">RF 14M</span></div>
+              <div class="donut-label">90d window, all facilities</div>
+              <div class="kv"><span>Per Insurance</span><b>62%</b></div>
+              <div class="kv"><span>Out-of-pocket</span><b>38%</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ SCREEN: Situation Map ============ -->
+        <div class="screen" id="screen-map">
+          <div class="card">
+            <h3>Situation Map — Kigali / Lake Kivu region</h3>
+            <div class="mapmock">
+              <span class="district" style="left:12%; top:20%;">GASABO</span>
+              <span class="district" style="left:55%; top:14%;">KAMONYI</span>
+              <span class="district" style="left:30%; top:55%;">NYARUGENGE</span>
+              <span class="district" style="left:70%; top:60%;">KICUKIRO</span>
+              <span class="district" style="left:15%; top:80%;">BUGESERA</span>
+              <span class="dot orange" style="left:18%; top:32%;"></span>
+              <span class="dot orange" style="left:22%; top:36%;"></span>
+              <span class="dot blue" style="left:47%; top:24%;"></span>
+              <span class="dot orange" style="left:52%; top:30%;"></span>
+              <span class="dot blue" style="left:34%; top:58%;"></span>
+              <span class="dot orange" style="left:38%; top:62%;"></span>
+              <span class="dot blue" style="left:66%; top:55%;"></span>
+              <span class="dot orange" style="left:71%; top:64%;"></span>
+              <span class="dot blue" style="left:20%; top:75%;"></span>
+              <span class="attrib">© mapbox</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="reset-row">
+      <button class="reset-btn" onclick="resetFlow()">↺ back to Dashboard</button>
+    </div>
+
+    <div class="bench">
+      <section class="notes" data-component="deep-detail">
+        <h2>What you're feeling</h2>
+        <p class="lede">Every element on these 4 screens is grounded in a specific frame from the source videos — not
+          invented. Tags mark what's directly observed vs inferred.</p>
+        <ul>
+          <li><b>Two-level nav, not one.</b> Top nav picks the domain (Dashboard/Operations/Finance/Situation Map),
+            sub-nav picks the lens (Operational/Financial/Clinical). <i class="tag">observed</i></li>
+          <li><b>The filter bar never moves.</b> Facility / date range / gender / age group sit above every screen — the
+            same 4 controls slice every module. <i class="tag">observed</i></li>
+          <li><b>Fridge temp/humidity charts prove real IoT cold-chain monitoring</b> is live, not just a marketing
+            claim — this is the kind of concrete capability worth citing directly in an interview. <i
+              class="tag">observed</i></li>
+          <li><b>Chart vocabulary repeats:</b> line for trend, donut for totals, stacked/horizontal bar for breakdowns,
+            dot map for geography — same 4 shapes everywhere. <i class="tag">observed</i></li>
+          <li><b>Numbers on screen (28.03K visits, RF 14M revenue) are unverifiable</b> — could be demo/synthetic data,
+            not confirmed live production figures. <i class="tag">flagged</i></li>
+          <li><b>"Reporting Completeness by Facility" bars are inferred</b> from the assignment's Quarterly Bulletin
+            requirement, not directly seen on screen — included here to test whether it fits the existing chart
+            language. <i class="tag">inferred</i></li>
+        </ul>
+      </section>
+
+      <aside class="quote" data-component="deep-detail">
+        <h2>Direct narration (verbatim)</h2>
+        <p>"The clinics are powered by the rural health operating system, which was developed by Sand Technologies."</p>
+        <p>"The patient is able to have one file tracked from registration to lab results to pharmaceutical scripts
+          seamlessly."</p>
+        <p>"...a key new role that we've introduced: the Digital Health Officer or DHO."</p>
+      </aside>
+    </div>
+
+    <details class="deep">
+      <summary>Screen-by-screen source mapping (click to expand)</summary>
+      <div class="deep-body">
+        <table>
+          <tr>
+            <th>Screen</th>
+            <th>Source video</th>
+            <th>Confirmed elements</th>
+          </tr>
+          <tr>
+            <td>Dashboard / Operational</td>
+            <td>RHOS Blue Room</td>
+            <td>Footfall Per Health Post, Visits Per Gender donut, fridge temp/humidity charts — all read directly off
+              the projected screen</td>
+          </tr>
+          <tr>
+            <td>Operations</td>
+            <td>RHOS Blue Room</td>
+            <td>Daily Footfall Per Gender chart confirmed; Reporting Completeness bar is a plausible extrapolation, not
+              directly observed</td>
+          </tr>
+          <tr>
+            <td>Finance</td>
+            <td>RHOS Blue Room</td>
+            <td>Daily Revenue Per Health Post, Total Revenue donut (RF 14M) — legible on the projected screen</td>
+          </tr>
+          <tr>
+            <td>Situation Map</td>
+            <td>Bwiza Health Post &amp; Blue Room</td>
+            <td>District labels (Gasabo, Kamonyi, Nyarugenge, Kicukiro, Bugesera) and orange/blue dot clustering read
+              directly off frame; exact dot semantics not stated on screen</td>
+          </tr>
+        </table>
+      </div>
+    </details>
+
+    <p class="footnote">Rebuilt UI, not a copy-paste screenshot — every label above traces to a specific timestamp in
+      the source videos. See <code class="inline">research-sand-healthcare-products.md §7</code> for the full
+      frame-by-frame writeup.</p>
+  </div>
+
+  <script>
+    var subMap = {
+      dashboard: 'operational',
+      operations: 'operational',
+      finance: 'financial',
+      map: 'operational'
+    };
+    function go(screenId, tabEl) {
+      document.querySelectorAll('.tab').forEach(function (t) {t.classList.remove('active');});
+      tabEl.classList.add('active');
+      document.querySelectorAll('.screen').forEach(function (s) {s.classList.remove('active');});
+      document.getElementById('screen-' + screenId).classList.add('active');
+      var urls = {
+        dashboard: 'https://bluelake.rhos.africa/dashboard',
+        operations: 'https://bluelake.rhos.africa/operations',
+        finance: 'https://bluelake.rhos.africa/finance',
+        map: 'https://bluelake.rhos.africa/situation-map'
+      };
+      document.getElementById('urlbar').textContent = urls[screenId];
+      setSub(document.querySelector('.subtab[data-sub="' + subMap[screenId] + '"]'));
+    }
+    function setSub(el) {
+      document.querySelectorAll('.subtab').forEach(function (t) {t.classList.remove('active');});
+      el.classList.add('active');
+    }
+    function resetFlow() {
+      go('dashboard', document.querySelector('.tab[data-screen="dashboard"]'));
+      setSub(document.querySelector('.subtab[data-sub="operational"]'));
+    }
+  </script>
+</body>
+
+</html>

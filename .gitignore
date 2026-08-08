@@ -1,0 +1,11 @@
+# html-kit scratch output — finished renders are promoted to artifacts/ instead
+.html-kit/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
