@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Opportunity Map &amp; Council Verdict — FDE Problem Selection</title>
+ <style>
+  :root {
+   --ivory: #FAF9F5;
+   --paper: #FFFFFF;
+   --slate: #141413;
+   --clay: #D97757;
+   --clay-d: #B85C3E;
+   --oat: #E3DACC;
+   --olive: #788C5D;
+   --sage: #A8B89A;
+   --rose: #C97B7B;
+   --g100: #F0EEE6;
+   --g200: #E6E3DA;
+   --g300: #D1CFC5;
+   --g500: #87867F;
+   --g700: #3D3D3A;
+   --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+   --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+   --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+
+  * {
+   box-sizing: border-box;
+   margin: 0;
+   padding: 0;
+  }
+
+  body {
+   background: var(--ivory);
+   color: var(--g700);
+   font-family: var(--sans);
+   font-size: 15px;
+   line-height: 1.65;
+   padding: 44px 24px 90px;
+  }
+
+  .page {
+   max-width: 1080px;
+   margin: 0 auto;
+  }
+
+  .eyebrow {
+   font-family: var(--mono);
+   font-size: 11.5px;
+   letter-spacing: 0.08em;
+   text-transform: uppercase;
+   color: var(--g500);
+   margin-bottom: 9px;
+  }
+
+  h1 {
+   font-family: var(--serif);
+   font-weight: 500;
+   font-size: 32px;
+   line-height: 1.22;
+   color: var(--slate);
+   margin-bottom: 14px;
+  }
+
+  .lede {
+   max-width: 800px;
+   font-size: 15.5px;
+  }
+
+  h2 {
+   font-family: var(--serif);
+   font-weight: 500;
+   font-size: 23px;
+   color: var(--slate);
+   margin: 44px 0 8px;
+   scroll-margin-top: 20px;
+  }
+
+  h2+.sec-sub {
+   color: var(--g500);
+   font-size: 14px;
+   margin-bottom: 18px;
+   max-width: 780px;
+  }
+
+  h3.mini {
+   font-family: var(--sans);
+   font-size: 11px;
+   font-weight: 600;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: var(--g500);
+   margin: 26px 0 10px;
+  }
+
+  code.inline,
+  td code,
+  li code,
+  p code {
+   font-family: var(--mono);
+   font-size: 12.5px;
+   background: var(--g100);
+   border: 1px solid var(--g200);
+   padding: 1px 5px;
+   border-radius: 4px;
+  }
+
+  strong {
+   color: var(--slate);
+  }
+
+  /* ---------- summary strip ---------- */
+  .summary-strip {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 14px;
+   align-items: center;
+   background: var(--oat);
+   border: 1.5px solid var(--g200);
+   border-radius: 11px;
+   padding: 13px 18px;
+   margin: 22px 0 10px;
+   font-size: 13px;
+  }
+
+  .summary-strip .verdict-pill {
+   margin-left: auto;
+   background: var(--slate);
+   color: var(--ivory);
+   font-family: var(--mono);
+   font-size: 11.5px;
+   text-decoration: none;
+   padding: 6px 13px;
+   border-radius: 7px;
+   white-space: nowrap;
+  }
+
+  .summary-strip .verdict-pill:hover {
+   background: var(--clay-d);
+  }
+
+  /* ---------- tldr pills ---------- */
+  .tldr {
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   gap: 8px;
+   margin: 18px 0 6px;
+  }
+
+  .tldr .pill {
+   background: var(--paper);
+   border: 1.5px solid var(--g300);
+   border-radius: 20px;
+   padding: 5px 14px;
+   font-size: 12.5px;
+   font-family: var(--mono);
+   color: var(--g700);
+  }
+
+  .tldr .pill.hot {
+   border-color: var(--clay);
+   background: rgba(217, 119, 87, 0.09);
+   color: var(--clay-d);
+  }
+
+  .tldr .arw {
+   color: var(--g500);
+   font-size: 13px;
+  }
+
+  /* ---------- tree ---------- */
+  pre.tree {
+   background: var(--slate);
+   color: #E8E6DC;
+   font-family: var(--mono);
+   font-size: 12.5px;
+   line-height: 1.75;
+   border-radius: 10px;
+   padding: 20px 22px;
+   overflow-x: auto;
+   margin: 4px 0 8px;
+  }
+
+  pre.tree .out {
+   color: #E8985A;
+   font-weight: 600;
+  }
+
+  pre.tree .opp {
+   color: #9CC4E4;
+   font-weight: 600;
+  }
+
+  pre.tree .quote {
+   color: #E8E6DC;
+   font-style: italic;
+  }
+
+  pre.tree .met {
+   color: #87867F;
+  }
+
+  pre.tree .pick {
+   color: #D97757;
+   font-weight: 600;
+  }
+
+  pre.tree .new {
+   color: #A8BC8C;
+   font-weight: 600;
+  }
+
+  /* ---------- option cards ---------- */
+  .grid[data-component="approach-grid"] {
+   display: grid;
+   grid-template-columns: repeat(3, minmax(0, 1fr));
+   gap: 22px;
+   margin: 8px 0 12px;
+  }
+
+  @media (max-width: 980px) {
+   .grid[data-component="approach-grid"] {
+    grid-template-columns: 1fr;
+   }
+  }
+
+  .card[data-component="proposal-card"] {
+   background: var(--paper);
+   border: 1.5px solid var(--g300);
+   border-radius: 12px;
+   padding: 20px 22px;
+   display: flex;
+   flex-direction: column;
+   gap: 11px;
+  }
+
+  .card[data-component="proposal-card"].hot {
+   border: 2px solid var(--clay);
+  }
+
+  .card[data-component="proposal-card"] .tag {
+   font-family: var(--mono);
+   font-size: 11px;
+   text-transform: uppercase;
+   letter-spacing: 0.06em;
+   color: var(--g500);
+  }
+
+  .card[data-component="proposal-card"].hot .tag {
+   color: var(--clay-d);
+  }
+
+  .card[data-component="proposal-card"] .num {
+   display: inline-block;
+   font-family: var(--mono);
+   font-size: 12px;
+   background: var(--oat);
+   color: var(--slate);
+   padding: 2px 8px;
+   border-radius: 8px;
+   margin-right: 8px;
+   vertical-align: 3px;
+  }
+
+  .card[data-component="proposal-card"] h3 {
+   font-family: var(--serif);
+   font-weight: 500;
+   font-size: 18px;
+   color: var(--slate);
+   margin: 0;
+  }
+
+  .card[data-component="proposal-card"] .meta {
+   font-size: 12.5px;
+   color: var(--g500);
+  }
+
+  .card[data-component="proposal-card"] p {
+   font-size: 13.5px;
+   color: var(--g700);
+   line-height: 1.55;
+   flex: 1;
+  }
+
+  .card .killer {
+   font-size: 12.5px;
+   border-top: 1.5px solid var(--g100);
+   padding-top: 10px;
+   color: var(--g700);
+  }
+
+  .card .killer b {
+   color: var(--clay-d);
+  }
+
+  /* ---------- tables ---------- */
+  .tbl-wrap {
+   overflow-x: auto;
+   border: 1.5px solid var(--g300);
+   border-radius: 11px;
+   background: var(--paper);
+  }
+
+  table {
+   border-collapse: collapse;
+   width: 100%;
+   min-width: 620px;
+   font-size: 13px;
+  }
+
+  th,
+  td {
+   padding: 9px 12px;
+   border-bottom: 1px solid var(--g100);
+   text-align: left;
+   vertical-align: top;
+  }
+
+  thead th {
+   font-family: var(--mono);
+   font-size: 9.5px;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   color: var(--g500);
+   font-weight: 500;
+   border-bottom: 1.5px solid var(--g200);
+  }
+
+  tbody tr:hover {
+   background: var(--g100);
+  }
+
+  tbody tr.hot {
+   background: rgba(217, 119, 87, 0.07);
+  }
+
+  td.num {
+   font-family: var(--mono);
+   text-align: right;
+   white-space: nowrap;
+  }
+
+  .conf {
+   font-family: var(--mono);
+   font-size: 11px;
+   padding: 1px 6px;
+   border-radius: 4px;
+  }
+
+  .conf.high {
+   background: rgba(120, 140, 93, 0.16);
+   color: #4C5C38;
+   border: 1px solid var(--sage);
+  }
+
+  .conf.med {
+   background: var(--g100);
+   color: var(--g700);
+   border: 1px solid var(--g300);
+  }
+
+  /* ---------- reversal callout ---------- */
+  .reversal {
+   border: 1.5px solid var(--olive);
+   background: rgba(120, 140, 93, 0.07);
+   border-radius: 12px;
+   padding: 18px 22px;
+   margin: 16px 0;
+  }
+
+  .reversal h3 {
+   font-family: var(--sans);
+   font-size: 11px;
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: #4C5C38;
+   margin-bottom: 10px;
+  }
+
+  .reversal blockquote {
+   border-left: 3px solid var(--olive);
+   padding-left: 13px;
+   margin: 9px 0;
+   font-style: italic;
+   font-size: 13.5px;
+   color: var(--g700);
+  }
+
+  .reversal blockquote cite {
+   display: block;
+   font-style: normal;
+   font-size: 12px;
+   color: var(--g500);
+   margin-top: 3px;
+  }
+
+  /* ---------- warn callout ---------- */
+  .warn {
+   border: 1.5px solid var(--clay);
+   background: rgba(217, 119, 87, 0.06);
+   border-radius: 12px;
+   padding: 18px 22px;
+   margin: 16px 0;
+  }
+
+  .warn h3 {
+   font-family: var(--sans);
+   font-size: 11px;
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   color: var(--clay);
+   margin-bottom: 10px;
+  }
+
+  .warn p {
+   font-size: 13.5px;
+   margin-bottom: 8px;
+  }
+
+  .warn p:last-child {
+   margin-bottom: 0;
+  }
+
+  /* ---------- kill criteria list ---------- */
+  ol.kill {
+   list-style: none;
+   counter-reset: k;
+   margin: 6px 0;
+  }
+
+  ol.kill li {
+   counter-increment: k;
+   position: relative;
+   padding: 12px 0 12px 44px;
+   border-bottom: 1.5px solid var(--g100);
+   font-size: 13.5px;
+  }
+
+  ol.kill li:last-child {
+   border-bottom: none;
+  }
+
+  ol.kill li::before {
+   content: "K" counter(k);
+   position: absolute;
+   left: 0;
+   top: 12px;
+   font-family: var(--mono);
+   font-size: 11px;
+   font-weight: 600;
+   background: var(--slate);
+   color: var(--ivory);
+   padding: 2px 7px;
+   border-radius: 5px;
+  }
+
+  ol.kill li b {
+   color: var(--clay-d);
+  }
+
+  ul.qs {
+   list-style: none;
+   margin: 6px 0;
+  }
+
+  ul.qs li {
+   position: relative;
+   padding: 9px 0 9px 20px;
+   border-bottom: 1.5px solid var(--g100);
+   font-size: 13.5px;
+  }
+
+  ul.qs li:last-child {
+   border-bottom: none;
+  }
+
+  ul.qs li::before {
+   content: "";
+   position: absolute;
+   left: 2px;
+   top: 17px;
+   width: 6px;
+   height: 6px;
+   border-radius: 50%;
+   background: var(--clay);
+  }
+
+  ul.qs li.big::before {
+   background: var(--slate);
+   width: 8px;
+   height: 8px;
+   top: 16px;
+   left: 1px;
+  }
+
+  /* ---------- verdict box ---------- */
+  aside.verdict {
+   border-left: 4px solid var(--clay);
+   background: var(--paper);
+   border-radius: 0 12px 12px 0;
+   padding: 24px 28px;
+   max-width: 900px;
+   margin-top: 10px;
+  }
+
+  aside.verdict h2 {
+   font-family: var(--serif);
+   font-weight: 500;
+   font-size: 23px;
+   color: var(--slate);
+   margin: 0 0 10px;
+  }
+
+  aside.verdict p {
+   font-size: 14.5px;
+   margin-bottom: 9px;
+   color: var(--g700);
+  }
+
+  aside.verdict ol {
+   margin: 10px 0 0 22px;
+   font-size: 14px;
+   color: var(--g700);
+  }
+
+  aside.verdict ol li {
+   margin-bottom: 6px;
+  }
+
+  /* ---------- deep ---------- */
+  details.deep {
+   margin-top: 18px;
+   border: 1.5px solid var(--g300);
+   border-radius: 11px;
+   background: var(--paper);
+  }
+
+  details.deep summary {
+   cursor: pointer;
+   padding: 13px 18px;
+   font-size: 12.5px;
+   font-weight: 600;
+   font-family: var(--mono);
+   color: var(--g700);
+   letter-spacing: 0.02em;
+  }
+
+  details.deep .deep-body {
+   padding: 0 18px 18px;
+   font-size: 13px;
+  }
+
+  details.deep .deep-body p {
+   margin-bottom: 10px;
+  }
+
+  details.deep .deep-body ul {
+   margin: 6px 0 10px 20px;
+  }
+
+  details.deep .deep-body li {
+   margin-bottom: 5px;
+  }
+
+  .footnote {
+   margin-top: 26px;
+   font-family: var(--mono);
+   font-size: 11px;
+   color: var(--g500);
+  }
+
+  /* ---------- sticky rail ---------- */
+  .rail {
+   display: none;
+  }
+
+  @media (min-width: 1280px) {
+   body {
+    padding-left: 0;
+    padding-right: 0;
+   }
+
+   .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1080px) 220px;
+    gap: 44px;
+    justify-content: center;
+    padding: 0 24px;
+   }
+
+   .rail {
+    display: block;
+    position: sticky;
+    top: 40px;
+    align-self: start;
+    padding-top: 120px;
+    font-size: 12.5px;
+   }
+
+   .rail a {
+    display: block;
+    padding: 5px 0 5px 12px;
+    color: var(--g500);
+    text-decoration: none;
+    border-left: 2px solid var(--g200);
+    line-height: 1.4;
+   }
+
+   .rail a:hover {
+    color: var(--slate);
+   }
+
+   .rail a.active {
+    color: var(--clay-d);
+    border-left-color: var(--clay);
+    font-weight: 600;
+   }
+  }
+ </style>
+</head>
+
+<body>
+ <div class="shell">
+  <div class="page">
+
+   <header data-component="header">
+    <div class="eyebrow">Sand FDE assignment · Deliverable 1 · council deliberation</div>
+    <h1>Opportunity map &amp; council verdict</h1>
+    <p class="lede">
+     Problems A, B and C in the brief are stated as <em>solutions</em>. This maps them back to the
+     underlying needs, then puts the selection through a six-seat adversarial council — three rounds,
+     anonymised cross-examination, confidence-weighted tally. The council surfaced a fourth
+     opportunity the brief never names, and killed two of its own members' proposals on the way to a verdict.
+    </p>
+   </header>
+
+   <div class="summary-strip" data-component="status-strip">
+    <span><strong>6 seats</strong> · 3 rounds + restate gate</span>
+    <span>·</span>
+    <span>Claude-only, single provider</span>
+    <span>·</span>
+    <span><strong>Consensus:</strong> <code class="inline">A-plus-handover-act</code> at 5.625 / 4.333 threshold</span>
+    <a class="verdict-pill" href="#verdict">Skip to verdict ↓</a>
+   </div>
+
+   <div class="tldr">
+    <span class="pill">Restate gate</span><span class="arw">→</span>
+    <span class="pill">R1 independent</span><span class="arw">→</span>
+    <span class="pill hot">R2 cross-exam · unanimity broken</span><span class="arw">→</span>
+    <span class="pill">R3 crystallise</span><span class="arw">→</span>
+    <span class="pill">Chairman verdict</span>
+   </div>
+
+   <!-- ================= OPPORTUNITY MAP ================= -->
+   <h2 id="s1">1 · The opportunity map</h2>
+   <p class="sec-sub">
+    Outcome at the root. Opportunities are needs phrased in the words of whoever feels them —
+    never a verb about building something. A, B and C then sit where they actually belong: as
+    <em>candidate solutions</em>, each with siblings the brief never considered.
+   </p>
+
+   <pre class="tree" data-component="deep-detail"><span class="out">OUTCOME</span>
+    MoH leadership acts on data <span class="met">within the period it describes</span>
+    │
+    ├─ <span class="opp">O1</span>&nbsp;&nbsp;<span class="met">MoH analyst · 40 hrs/month</span>
+    │&nbsp;&nbsp;<span class="quote">"40 hours a month on a document that is stale before it is</span>
+    │&nbsp;&nbsp;<span class="quote">read, and I cannot defend its numbers."</span>
+    │&nbsp;&nbsp;├─ S-A1 Automate the bulletin end to end <span class="pick">← PROBLEM A</span>
+    │&nbsp;&nbsp;├─ S-A2 Publish monthly instead of quarterly
+    │&nbsp;&nbsp;└─ S-A3 Retire the PDF; replace with a live page
+    │
+    ├─ <span class="opp">O2</span>&nbsp;&nbsp;<span class="met">felt by the District Health Officer · 3-week lag</span>
+    │&nbsp;&nbsp;<span class="quote">"By the time I see a stockout it is a crisis, never a warning."</span>
+    │&nbsp;&nbsp;├─ S-B1 Real-time facility status dashboard <span class="pick">← PROBLEM B</span>
+    │&nbsp;&nbsp;├─ S-B2 SMS exception reporting from facilities
+    │&nbsp;&nbsp;└─ S-B3 Supply-chain-only feed (eLMIS), no clinical
+    │
+    ├─ <span class="opp">O3</span>&nbsp;&nbsp;<span class="met">felt by the TB + HIV programme managers</span>
+    │&nbsp;&nbsp;<span class="quote">"Co-infected patients are counted twice and treated once."</span>
+    │&nbsp;&nbsp;├─ S-C1 Unified patient view across CommCare <span class="pick">← PROBLEM C</span>
+    │&nbsp;&nbsp;├─ S-C2 Weekly reconciliation report, no merging
+    │&nbsp;&nbsp;└─ S-C3 Shared patient identifier <span class="met">(policy, not software)</span>
+    │
+    └─ <span class="new">O4</span>&nbsp;&nbsp;<span class="new">NOT IN THE BRIEF</span>
+    &nbsp;&nbsp;&nbsp;<span class="met">felt by the MoH Director — the person who actually spoke</span>
+    &nbsp;&nbsp;&nbsp;<span class="quote">"I cannot trust any number I am shown, so I do not use them."</span>
+    &nbsp;&nbsp;&nbsp;├─ S-D1 Every figure traceable to its source record
+    &nbsp;&nbsp;&nbsp;├─ S-D2 Publish completeness beside every indicator
+    &nbsp;&nbsp;&nbsp;└─ S-D3 Reproduce last quarter from source as a trust proof</pre>
+
+   <div class="reversal">
+    <h3>O4 is the finding</h3>
+    <p style="font-size:13.5px;">
+     Two seats reached it independently, by different methods. It matters because the Director's
+     actual sentence was <em>"our data is a mess, we cannot make good decisions"</em> — a
+     <strong>trust</strong> complaint, not a <strong>throughput</strong> complaint. A, B and C all
+     answer throughput. None of them answers O4 directly.
+    </p>
+    <blockquote>
+     "The Director bought relief from <em>not trusting the numbers she's shown</em>, not a bulletin."
+     <cite>— Socrates, Round 1</cite>
+    </blockquote>
+    <blockquote>
+     "Maybe none of A/B/C is right — the true need is a Director who can't trust <em>any</em> number
+     she's shown, not a missing report or dashboard."
+     <cite>— Rams, restate gate</cite>
+    </blockquote>
+    <p style="font-size:13.5px; margin-top:10px;">
+     The practical consequence: whichever solution ships must carry S-D1 and S-D2 as
+     <em>requirements</em>, not nice-to-haves. That is why the recommended outcome statement below
+     includes end-to-end figure traceability — it is the part that addresses the need actually voiced.
+    </p>
+   </div>
+
+   <!-- ================= THE THREE SOLUTIONS ================= -->
+   <h2 id="s2">2 · A, B and C as competing solutions</h2>
+   <p class="sec-sub">
+    Compared on the only axis that matters for a 6-week first engagement: can it be finished, proven,
+    and still running after the FDE leaves the country.
+   </p>
+
+   <div class="grid" data-component="approach-grid">
+
+    <div class="card hot" data-component="proposal-card">
+     <span class="tag">Solution ★ Selected</span>
+     <div><span class="num">A</span></div>
+     <h3>Automate the bulletin</h3>
+     <div class="meta">Addresses O1. Partially addresses O4 if traceability is built in.</div>
+     <p>
+      Whole delivery path already exists: DHIS2 pull → conformed mart → Superset template →
+      scheduled report. Nothing greenfield. Has a measurable baseline (40 hrs) that exists
+      <em>today</em>, so the win is provable inside the sprint.
+     </p>
+     <div class="killer"><b>Weakness:</b> automates the mess rather than resolving it. Touches none of the 175
+      paper-only facilities.</div>
+    </div>
+
+    <div class="card" data-component="proposal-card">
+     <span class="tag">Solution</span>
+     <div><span class="num">B</span></div>
+     <h3>Real-time facility status</h3>
+     <div class="meta">Addresses O2. This is the Solutions Manager's pre-committed narrative.</div>
+     <p>
+      175 of ~250 facilities have no digital capture at all. There is no sensor, no app, no feed.
+      "Real-time" for 70% of the fleet is not a hard build — it is a UI over a null field, plus a
+      second unstarted project to digitise paper.
+     </p>
+     <div class="killer"><b>Weakness:</b> its honest scope is "real-time for 30% of facilities" — a materially smaller
+      promise than the one being asked for.</div>
+    </div>
+
+    <div class="card" data-component="proposal-card">
+     <span class="tag">Solution</span>
+     <div><span class="num">C</span></div>
+     <h3>Unified TB/HIV patient view</h3>
+     <div class="meta">Addresses O3. Highest clinical value of the three.</div>
+     <p>
+      Probabilistic identity matching across CommCare silos with no shared identifier, in six weeks,
+      with no MoH clinical-safety review process to catch a bad merge.
+     </p>
+     <div class="killer"><b>Weakness:</b> the failure mode is a false patient-record merge — wrong regimen, missed
+      contraindication. A coroner's inquest, not a bug ticket.</div>
+    </div>
+
+   </div>
+
+   <p style="font-size:13.5px; max-width:820px;">
+    Note S-C2 in the tree: a <em>weekly reconciliation report</em> flags co-infected patients for a
+    human to review, without merging any records. It captures much of O3's value with none of C's tail
+    risk — and the brief never considers it. That is the practical payoff of separating opportunities
+    from solutions.
+   </p>
+
+   <!-- ================= WHAT THE COUNCIL DID ================= -->
+   <h2 id="s3">3 · What the council actually did</h2>
+   <p class="sec-sub">
+    The interesting result is not the answer. It is that the first answer was wrong in a way that
+    looked exactly like agreement.
+   </p>
+
+   <h3 class="mini">Round 1 — apparent unanimity</h3>
+   <p style="font-size:14px; max-width:820px;">
+    All six seats independently backed Problem A. On a single-provider council that is a warning sign,
+    not a result — six runs of one model landing on the same answer is the failure mode a
+    multi-provider panel exists to catch.
+   </p>
+
+   <h3 class="mini">Round 2 — the unanimity breaks</h3>
+   <p style="font-size:14px; max-width:820px;">
+    Cross-examination established that the six seats had converged on a <em>label</em> while meaning
+    four incompatible things: ship the minimum wiring; restructure the sprint so the Ministry's Digital
+    Health Officer co-builds the pipeline; add a read-only situation-map as a hedge; quietly instrument
+    toward B for political cover. These cannot coexist in six weeks with two engineers.
+   </p>
+
+   <div class="reversal">
+    <h3>Two seats then killed their own proposals</h3>
+    <blockquote>
+     "The unanimity is not independent convergence — five of six converged on 'A' while smuggling in
+     incompatible payloads. That's anchoring on a <em>label</em>, not agreement on a <em>thing</em>."
+     <cite>— Socrates, Round 2</cite>
+    </blockquote>
+    <blockquote>
+     "Commit to the handover-act, conditioned explicitly on a named person — absent that it reverts to
+     bare A, and <strong>I will not pretend that is still capacity transfer</strong>. Secondary
+     preference: none — <strong>the co-build is dead.</strong>"
+     <cite>— Meadows (1.5× domain-weight seat), Round 3 — abandoning her own signature proposal</cite>
+    </blockquote>
+    <blockquote>
+     "Via negativa: remove the exposure whose safety depends on someone else's future restraint.
+     <strong>I fold the barbell.</strong>"
+     <cite>— Taleb, Round 3 — withdrawing his own hedge after Machiavelli showed a "read-only" label cannot bind how
+      others re-use an artifact</cite>
+    </blockquote>
+    <p style="font-size:13.5px; margin-top:10px;">
+     The heaviest-weighted seat conceding its own position is the strongest available evidence the
+     final convergence is reasoned rather than conformist. It is not proof.
+    </p>
+   </div>
+
+   <!-- ================= TALLY ================= -->
+   <h2 id="s4">4 · Vote tally</h2>
+   <p class="sec-sub">
+    Confidence-weighted. Base weight 1.0 per seat, except the domain-weight seat at 1.5× — designated
+    at panel selection <em>before</em> any analysis, so it could not be tuned to the outcome.
+   </p>
+
+   <div class="tbl-wrap">
+    <table>
+     <thead>
+      <tr>
+       <th>Seat</th>
+       <th>Method</th>
+       <th>Stance</th>
+       <th>Conf.</th>
+       <th class="num">Base</th>
+       <th class="num">Vote wt</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td><strong>Rams</strong></td>
+       <td>subtractive-essentialism</td>
+       <td><code>A-plus-handover-act</code></td>
+       <td><span class="conf high">high</span></td>
+       <td class="num">1.0</td>
+       <td class="num">1.000</td>
+      </tr>
+      <tr>
+       <td><strong>Torvalds</strong></td>
+       <td>empirical-reduction</td>
+       <td><code>A-plus-handover-act</code></td>
+       <td><span class="conf high">high</span></td>
+       <td class="num">1.0</td>
+       <td class="num">1.000</td>
+      </tr>
+      <tr>
+       <td><strong>Taleb</strong></td>
+       <td>tail-stress-testing</td>
+       <td><code>A-plus-handover-act</code></td>
+       <td><span class="conf high">high</span></td>
+       <td class="num">1.0</td>
+       <td class="num">1.000</td>
+      </tr>
+      <tr>
+       <td><strong>Socrates</strong></td>
+       <td>elenchic-questioning</td>
+       <td><code>A-plus-handover-act</code></td>
+       <td><span class="conf med">med</span></td>
+       <td class="num">1.0</td>
+       <td class="num">0.750</td>
+      </tr>
+      <tr class="hot">
+       <td><strong>Meadows</strong> <span style="color:var(--clay-d);font-family:var(--mono);font-size:11px;">1.5×
+         domain</span></td>
+       <td>causal-loop-mapping</td>
+       <td><code>A-plus-handover-act</code></td>
+       <td><span class="conf med">med</span></td>
+       <td class="num">1.5</td>
+       <td class="num">1.125</td>
+      </tr>
+      <tr>
+       <td><strong>Machiavelli</strong> <span
+         style="color:var(--clay-d);font-family:var(--mono);font-size:11px;">dealbreaker</span></td>
+       <td>incentive-backward-induction</td>
+       <td><code>A-plus-handover-act</code></td>
+       <td><span class="conf med">med</span></td>
+       <td class="num">1.0</td>
+       <td class="num">0.750</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <p style="font-size:13.5px; margin-top:12px;">
+    <code class="inline">W_total = 6.5</code> · threshold (2/3) = <code class="inline">4.333</code> ·
+    <code class="inline">A-plus-handover-act = 5.625</code> → <strong>clears, consensus reached.</strong>
+    Every rejected option — <code class="inline">A-minimal</code>, <code class="inline">A-plus-cobuild</code>,
+    <code class="inline">A-plus-B-sliver</code> — scored <strong>0.0</strong> in Round 3. Every seat holding
+    one of those in Rounds 1–2 moved off it.
+   </p>
+
+   <!-- ================= UNKNOWNS ================= -->
+   <h2 id="s5">5 · What the council does not know</h2>
+   <p class="sec-sub">Leading with the gaps, not the conclusion.</p>
+
+   <ul class="qs">
+    <li class="big">
+     <strong>Nobody has asked whether a named DHO has cleared hours.</strong> Three full rounds argued
+     about how much capacity transfer Problem A requires — and the entire debate turned on an
+     empirical, checkable fact that a single email would answer in a day. The council resolved it by
+     argument instead of by asking. <em>This is a finding about the deliberation, not just the problem.</em>
+    </li>
+    <li>Whether the 40 hours/month is measured or self-reported. Every "high ROI, low risk" argument for A silently
+     assumes it is accurate.</li>
+    <li>Whether the Solutions Manager's pre-discovery B narrative is backed by a real external commitment — a funder
+     deliverable or NHIC mandate — that would make choosing A organisationally costly regardless of technical merit.
+    </li>
+    <li>Whether the Director herself, not just the Solutions Manager, has been told B and C are <em>deferred</em> rather
+     than rejected, and agrees to that sequencing.</li>
+    <li>Whether DHIS2's aggregate figures are ever verified against facility source records, or whether the bulletin has
+     been faithfully automating a noisy input for years.</li>
+    <li>Whether machine-readable historical bulletins even exist to validate a new pipeline against — which would make
+     kill-criterion K2 below unachievable as written.</li>
+   </ul>
+
+   <!-- ================= KILL CRITERIA ================= -->
+   <h2 id="s6">6 · Kill criteria</h2>
+   <p class="sec-sub">
+    Observable without re-convening anything, tied to a threshold and a date. If one trips, the verdict
+    is invalid — not "worth revisiting".
+   </p>
+
+   <ol class="kill">
+    <li>
+     If by <b>end of Week 1</b> no MoH IT lead has named a specific Digital Health Officer with
+     confirmed cleared hours, the handover act has no subject. Formally downgrade the plan to
+     <code>A-minimal</code> and <b>stop describing the deliverable as capacity transfer</b> — per the
+     domain seat's own condition.
+    </li>
+    <li>
+     If by <b>end of Week 3</b> the pipeline's output for two already-published historical quarters
+     deviates <b>&gt;5%</b> on any headline indicator from the manually-compiled bulletin, the
+     "this is wiring, not R&amp;D" premise is falsified. Replan weeks 4–6 around reconciliation, not
+     handover polish.
+    </li>
+    <li>
+     If at any point the Solutions Manager or Country Director represents real-time facility status or
+     Health Atlas as delivered or in progress externally, that is the political-capture failure flagged
+     by the dealbreaker vote. <b>Correct the record with the Country Director within 48 hours</b>; if
+     uncorrected, escalate for explicit sequencing with MoH leadership.
+    </li>
+    <li>
+     If direct observation of the analyst in Weeks 1–2 — <b>stopwatch, not self-report</b> — puts real
+     compilation time outside a <b>25–55 hr/month</b> band, recalculate the ROI case before Week 3. The
+     ranking against B and C can change.
+    </li>
+    <li>
+     If Week 1–2 technical discovery finds DHIS2 export schemas or indicator definitions vary materially
+     across the 45 HealthTrack hospitals and 30 OpenMRS clinics, "nothing on A's path is greenfield" is
+     false for a real fraction of the fleet. Scope down to fewer facilities with explicit gap flags, or
+     renegotiate the schedule.
+    </li>
+   </ol>
+
+   <!-- ================= VERDICT ================= -->
+   <h2 id="verdict">7 · Verdict</h2>
+
+   <aside class="verdict" data-component="verdict">
+    <h2>Commit to <code style="font-family:var(--mono);font-size:0.8em;">A-plus-handover-act</code></h2>
+    <p>
+     Problem A — bulletin automation — <strong>plus exactly one bounded capacity-transfer act</strong>:
+     a named Digital Health Officer personally runs the pipeline restart once, unassisted, while the FDE
+     watches, before exit. No joint architecture. No co-build. No hedged B artifact.
+    </p>
+    <ol>
+     <li><strong>Ship A</strong> — DHIS2 pull → conformed mart → Superset template → scheduled report. Every figure
+      traceable to a source record <em>(this is the part that answers O4)</em>.</li>
+     <li><strong>One handover act</strong> — the named DHO runs the restart themselves, once, before exit. Hours, not a
+      redesign.</li>
+     <li><strong>Condition it in Week 1</strong> — ask for the named person immediately. If refused, downgrade honestly
+      to <code>A-minimal</code> rather than letting the capacity-transfer claim survive by default.</li>
+     <li><strong>Defer B and C on the record</strong> — in writing, to the Director, as deferred not rejected. Not
+      quietly.</li>
+     <li><strong>Ship no B-shaped artifact</strong> — not even read-only. A status map's visual grammar asserts a
+      freshness a "stale" label cannot revoke, and read-only does not bind how others re-use it.</li>
+    </ol>
+    <p style="margin-top:14px;">
+     <strong>Concrete next step:</strong> send a written request to the MoH IT lead by
+     <strong>end of Week 1, Day 2</strong>, naming a specific Digital Health Officer and asking them to
+     confirm cleared hours for a Week 6 handover-and-restart session.
+    </p>
+   </aside>
+
+   <div class="warn" style="margin-top:22px;">
+    <h3>Honest limits of this verdict</h3>
+    <p>
+     <strong>Convergence risk: medium-high.</strong> This was a single-provider council by mandate.
+     Six personas of one model are not six independent opinions, and no seat at any round seriously
+     entertained B or C as the final pick. It is not possible from this transcript to separate
+     <em>"A is genuinely correct"</em> from <em>"this model's priors, run six ways, reliably land on A."</em>
+    </p>
+    <p>
+     <strong>Zero empirical evidence.</strong> Across three rounds, no seat produced a measurement.
+     Every argument reasons from the brief. That is precisely why Section 6 is written as falsifiable
+     field checks rather than conclusions.
+    </p>
+    <p>
+     The counter-evidence is real but bounded: Round 2 dismantled the false unanimity, and two seats
+     abandoned their own proposals under pressure. That is a higher bar than a council restating
+     Round 1 with more confidence — and still not a substitute for a second model family.
+    </p>
+   </div>
+
+   <details class="deep">
+    <summary>Council composition, method, and protocol deviations</summary>
+    <div class="deep-body">
+     <p><strong>Panel (6 seats, method-diverse by construction — no two share a reasoning method):</strong></p>
+     <ul>
+      <li><strong>Socrates</strong> — elenchic questioning. Assumption destruction.</li>
+      <li><strong>Meadows</strong> — causal-loop mapping. <em>Domain-weight seat, 1.5×</em>, on the grounds that
+       opportunity mapping is leverage-point location. Locked before any analysis.</li>
+      <li><strong>Machiavelli</strong> — incentive backward-induction. Power and revealed preference.</li>
+      <li><strong>Torvalds</strong> — empirical reduction to practice. Ship it and maintain it.</li>
+      <li><strong>Rams</strong> — subtractive essentialism. The user decides; design honesty.</li>
+      <li><strong>Taleb</strong> — tail stress-testing. Fragility and skin in the game.</li>
+     </ul>
+     <p><strong>Protocol:</strong> restate gate → Round 1 independent (300w) → Round 2 anonymised cross-examination with
+      anti-conformity directive (250w) → Round 3 crystallisation with structured stance lines (100w) →
+      confidence-weighted tally → separate Chairman synthesis.</p>
+     <p><strong>Deviations, recorded rather than smoothed over:</strong></p>
+     <ul>
+      <li><strong>Single provider.</strong> Claude-only by explicit user mandate. Provider spread scores 1/5. This is
+       the weakest link in the diversity design and is not minimised anywhere in this document.</li>
+      <li><strong>No native council subagent types</strong> in this harness, so each seat ran as a generic subagent with
+       its persona identity block inlined verbatim. That is a prompting workaround, not a model-level guarantee.</li>
+      <li><strong>Meadows and Torvalds are a genuine polarity pair</strong> forced onto the same provider by the
+       Claude-only mandate. Their Round 2 clash is well-argued but carries no architectural independence.</li>
+      <li><strong>Three seats returned compressed stubs</strong>; their full text was recovered from their own
+       transcripts rather than re-prompted. The recovered text is presented above as delivered.</li>
+      <li><strong>Chairman was dispatched as a separate agent</strong> rather than synthesised by the coordinator,
+       specifically because the coordinator had already argued for Problem A earlier in the session and would have been
+       auditing its own prior. The Chairman still shares a provider with the panel.</li>
+      <li><strong>One Chairman error corrected here:</strong> the verdict text stated "no restate gate triggered". The
+       restate gate did run, and produced the highest-signal output of the session — all six seats independently
+       rejected the A/B/C framing before seeing each other's work.</li>
+     </ul>
+     <p><strong>Epistemic scorecard:</strong> perspective spread 4/5 · provider spread 1/5 · evidence mix 50%
+      mechanistic, 17% strategic, 17% ethical, 17% heuristic, <strong>0% empirical</strong> · convergence risk
+      medium-high.</p>
+    </div>
+   </details>
+
+   <p class="footnote">
+    Full transcripts: <code>history://R1{Seat}</code>, <code>history://R2{Seat}</code>,
+    <code>history://R3{Seat}</code>, <code>history://Chairman</code>. Briefing packet and anonymised
+    round records under <code>/tmp/council-*.md</code>. Research basis:
+    <code>research/sand-product-research.md</code>.
+   </p>
+
+  </div>
+
+  <nav class="rail" aria-label="Section navigation">
+   <a href="#s1">1 · Opportunity map</a>
+   <a href="#s2">2 · A / B / C</a>
+   <a href="#s3">3 · What the council did</a>
+   <a href="#s4">4 · Vote tally</a>
+   <a href="#s5">5 · Unknowns</a>
+   <a href="#s6">6 · Kill criteria</a>
+   <a href="#verdict">7 · Verdict</a>
+  </nav>
+ </div>
+
+ <script>
+  (function () {
+   var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+   if (!links.length) return;
+   var byId = {};
+   links.forEach(function (a) {byId[a.getAttribute('href').slice(1)] = a;});
+   var targets = Object.keys(byId)
+    .map(function (id) {return document.getElementById(id);})
+    .filter(Boolean);
+
+   var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+     if (!e.isIntersecting) return;
+     links.forEach(function (a) {a.classList.remove('active');});
+     var a = byId[e.target.id];
+     if (a) a.classList.add('active');
+    });
+   }, {rootMargin: '0px 0px -70% 0px', threshold: 0});
+
+   targets.forEach(function (t) {obs.observe(t);});
+  })();
+ </script>
+</body>
+
+</html>

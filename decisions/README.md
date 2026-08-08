@@ -31,6 +31,7 @@ usually wasn't a decision.
 | [0003](0003-adopt-bluelake-ui-language.md) | Build the prototype in the Bluelake Admin UI language | Accepted |
 | [0004](0004-no-pm-tooling-install.md) | Borrow decision/hypothesis patterns; don't install PM skill marketplaces | Accepted |
 | [0005](0005-git-lfs-for-videos.md) | Track source videos with Git LFS rather than excluding them | Accepted |
+| [0006](0006-problem-a-plus-handover-act.md) | Commit to Problem A plus one bounded handover act *(council)* | Accepted |
 
 ---
 
