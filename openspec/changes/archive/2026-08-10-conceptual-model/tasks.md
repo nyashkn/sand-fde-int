@@ -30,7 +30,7 @@
 
 ## 5. Record and hand off
 
-- [ ] 5.1 Write the object map and ubiquitous language into `openspec/specs/conceptual-model/` via the archive step
+- [x] 5.1 Write the object map and ubiquitous language into `openspec/specs/conceptual-model/` via the archive step
 - [x] 5.2 Record any canonical term that was invented rather than bound, as an ADR
 - [x] 5.3 Answer or explicitly defer the two open questions in `design.md` (province as object, bulletin as object)
 - [x] 5.4 Confirm `ingest-mart` and `trust-lineage` have what they need: the vocabulary and the URL contract respectively
