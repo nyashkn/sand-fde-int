@@ -33,6 +33,7 @@ usually wasn't a decision.
 | [0005](0005-git-lfs-for-videos.md) | Track source videos with Git LFS rather than excluding them | Accepted |
 | [0006](0006-problem-a-plus-handover-act.md) | Commit to Problem A plus one bounded handover act *(council)* | Accepted |
 | [0007](0007-cross-provider-redteam-amendments.md) | Red-team D1 across three model families, and amend *(cross-provider)* | Accepted |
+| [0008](0008-recon-before-engagement.md) | Ship pre-engagement recon as a reusable pipeline (Deliverable 0) | Accepted |
 
 ---
 

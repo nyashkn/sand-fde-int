@@ -1,0 +1,7 @@
+# L6 — Integration + Data-Flow (Rwanda Health Information Exchange / RHIE)
+
+**Lane:** integration + data-flow · **Method:** Perplexity sonar-pro (×3) + Parallel.ai search (×2) + native fetches of primary sources (CIIC-HIN RHIE report, OpenHIE impact story, OpenHIE framework, MoH NHIC launch, HSSP V, Rwanda Digital Health Strategy 2018–2023, MoH SOP, dhis2/integration-dhis-rapidpro GitHub) · **Raw dumps:** `out/.raw/` · **Date:** 2026-08-09
+
+## Overview
+
+Rwanda's interoperability architecture is the **Rwanda Health Information Exchange (RHIE / RHIES)**, built on the **OpenHIE** reference architecture with **OpenHIM** as the central interoperability layer and **HAPI FHIR** as the registry FHIR-server. The OpenHIE three-layer model maps cleanly onto Rwanda: (1) **Point-of-Service** — OpenMRS EMR, RapidSMS/RapidPro, DHIS2, LabWare/VLSM, eLMIS; (2) **Interoperability Layer** — OpenHIM Core + Admin Console + Mediators (lab-order, lab-result, OpenMRS→DHIS2 CBS, OpenMRS→NIDA, OpenMRS→Facility/Provider Registry); (3) **Business Domain + Registry Services** — Client Registry (CR, HAPI FHIR), Shared Health Record (SHR, FHIR), Facility Registry (FOSA IDs, JSON/MongoDB), Provider Registry (PR, MongoDB), Terminology Registry (TR, ICD-11/ICHI/LOINC/NPC), and a Lab Registry (MySQL). The exchange is deployed at the **national data centre**, reached 197 facilities across 30 districts by Jan 2025, and is gov</content>

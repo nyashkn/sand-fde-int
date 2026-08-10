@@ -1,0 +1,23 @@
+_version = 1
+
+[workflow]
+graph = "polish.fabro"
+
+[run]
+goal = "Subtractive readability pass on the MoH-Rwanda artifact: CSS/layout only, no content changes, preserve all 45 source links, VLM-verified until verdict >= acceptable."
+working_dir = "/Users/njui/Documents/dev_work/job_applications/sand/moh-rwanda-research"
+
+[run.model]
+name = "deepseek-v4-flash"
+
+[run.environment]
+id = "local-host"
+
+[environments.local-host]
+provider = "local"
+
+[run.clone]
+enabled = false
+
+[run.artifacts]
+include = ["out/moh-rwanda-architecture.html", "out/review/latest.md", "out/render/latest.png"]

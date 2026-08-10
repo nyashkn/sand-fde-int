@@ -1,0 +1,36 @@
+_version = 1
+
+# Run (dry, no LLM):   fabro validate workflows/moh-rwanda.toml
+#                      fabro run workflows/moh-rwanda.toml --dry-run
+# Real run (costs $, ~long): start the daemon under the Infisical wrapper first so
+# the search CLIs + OpenRouter key resolve:
+#   infisical-kn-personal-dev fabro server start
+#   infisical-kn-personal-dev fabro run workflows/moh-rwanda.toml \
+#     -I question="Rwanda MoH digital-health landscape" --detach
+# Then: fabro inspect <run_id> ; fabro artifact cp --tree <run_id> ./out
+
+[workflow]
+graph = "moh-rwanda.fabro"
+
+[run]
+goal = "MECE technical deep-research of the Rwanda Ministry of Health digital-health system landscape, ending in an html-kit artifact (systems map, per-persona journeys, integration + data-flow, data-protection posture)."
+working_dir = "/Users/njui/Documents/dev_work/job_applications/sand/moh-rwanda-research"
+
+# Run-level default model; the graph model_stylesheet overrides per node.
+[run.model]
+name = "deepseek-v4-flash"
+
+[run.environment]
+id = "local-host"
+
+[environments.local-host]
+provider = "local"
+
+# The search CLIs self-inject their keys via `infisical-kn-personal-dev`, so no
+# secrets need forwarding here (avoids the fail-closed *_api_key strip).
+
+[run.clone]
+enabled = false
+
+[run.artifacts]
+include = ["out/**"]

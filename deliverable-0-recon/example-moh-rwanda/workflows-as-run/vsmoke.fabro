@@ -1,0 +1,28 @@
+digraph vsmoke {
+  rankdir=LR;
+  // Vision smoke: prove a fabro agent node can SEE an image via read_file + a vision model.
+  graph [
+    goal="{{ goal }}",
+    model_stylesheet="* { model: kimi-k3; }",
+    default_max_retries=0
+  ];
+
+  start [shape=Mdiamond, label="Start"];
+  exit  [shape=Msquare,  label="Exit"];
+  halt  [shape=parallelogram, script="echo 'vsmoke failed' >&2; exit 1"];
+  halt -> exit;
+
+  look [
+    label="Describe screenshot",
+    prompt="Call read_file on out/render/full.png (a PNG screenshot of a web page). Then describe EXACTLY what you visually see in the pixels: list the visible section heading texts verbatim, the dominant colors, and any diagrams/boxes/SVG shapes and their layout. Do NOT guess from the filename. If you CANNOT actually perceive image pixels, write the single line 'NO VISION' and nothing else. Write your description to out/vision-test.md."
+  ];
+
+  // Pass only if the model produced a real visual description (mentions a real heading token
+  // that appears in the artifact) and did NOT bail with NO VISION.
+  verify [shape=parallelogram, goal_gate=true,
+    script="test -s out/vision-test.md || { echo 'no file' >&2; exit 1; }; grep -q 'NO VISION' out/vision-test.md && { echo 'model has no vision' >&2; exit 1; }; grep -qiE 'persona|systems map|data-protection|Rwanda|executive summary' out/vision-test.md && echo 'VISION OK' || { echo 'no real visual content' >&2; exit 1; }"];
+
+  start -> look   [condition="outcome=succeeded"]; start -> halt;
+  look  -> verify [condition="outcome=succeeded"]; look  -> halt;
+  verify -> exit  [condition="outcome=succeeded"]; verify -> halt;
+}

@@ -1,0 +1,115 @@
+digraph moh_rwanda {
+  rankdir=LR;
+  graph [
+    goal="{{ goal }}",
+    // KN model map: flash = workhorse, minimax-m3 = heavy (legal + synth), kimi-k3 = visual.
+    // No Opus anywhere (signet: a prior deep-research run was killed for using Opus).
+    // minimax-m3 (OpenRouter) rejects reasoning_effort other than 'none' — do NOT set it here.
+    model_stylesheet="* { model: deepseek-v4-flash; } .heavy { model: minimax-m3; } .visual { model: kimi-k3; }",
+    default_max_retries=2
+  ];
+
+  start [shape=Mdiamond, label="Start"];
+  exit  [shape=Msquare,  label="Exit"];
+
+  // Failure sink — §2: every node has an unconditional edge here; only non-succeeded
+  // outcomes reach it (condition edges win by precedence). goal_gate => whole run FAILS.
+  // NOT goal_gate: in fabro 0.316 an unvisited goal_gate=true node fails the whole run,
+  // so goal_gate lives only on always-visited nodes (coverage). halt just exits 1 when a
+  // bad path reaches it; that path also leaves coverage unvisited, which fails the run.
+  halt [shape=parallelogram,
+        script="echo 'MoH-Rwanda run failed at an upstream node' >&2; exit 1"];
+  halt -> exit;
+
+  // Deterministic glue: ensure output dir exists.
+  preflight [shape=parallelogram, label="Preflight (mkdir out)", script="mkdir -p out"];
+
+  // ── Scope: turn the question into 7 MECE lane briefs (no research yet) ──
+  scope [
+    label="Scope (MECE lanes)",
+    prompt="Research question: {{ goal }}\n\nProduce a MECE research plan for the Rwanda Ministry of Health (MoH) digital-health landscape, covering EXACTLY these 7 lanes: (1) systems internal+external, (2) where each is deployed, (3) vendors incl AI, (4) data-protection approach inside those systems, (5) personas (policy, epidemiology, hospitals/clinicians, district health, community health workers, citizens) and their journeys, (6) how disparate systems/services integrate, (7) Rwanda data-protection law + how health orgs like sandtech.com solved it.\n\nWrite out/00-scope.md: per lane, the key sub-questions and candidate systems/vendors/keywords to search. Lanes must be mutually exclusive, collectively exhaustive. Do NOT research yet — plan only."
+  ];
+
+  // ── Static parallel fan-out: 7 research lanes ──
+  fan [shape=component, label="Fan-out: 7 research lanes"];
+
+  lane_systems [
+    label="L1 Systems (internal+external)",
+    prompt="Follow the deep-web-search skill (call use_skill('deep-web-search') first). LANE = systems.\nFOCUS: Every digital-health system the Rwanda MoH runs or relies on — internal (HMIS/DHIS2, RapidSMS, e-LMIS, EMR/OpenMRS, lab/LIMS, CHW mobile tools, civil-registration, disease registries) and external (donor/partner platforms, WHO / Global Fund / CDC systems). For each: purpose, owner, current status.\nTHEN double-click the 3-5 most central systems: architecture, modules, who uses them.\nWrite out/01-systems.md with inline source URLs."
+  ];
+  lane_deploy [
+    label="L2 Deployment",
+    prompt="Follow the deep-web-search skill (use_skill('deep-web-search')). LANE = deployment.\nFOCUS: Where each system is deployed — national data centre, cloud (which provider), facility/on-prem, district, mobile/offline-first. Hosting, connectivity assumptions, and the national/district/facility/community tiering.\nTHEN double-click the deployment topology of the 2-3 backbone systems.\nWrite out/02-deployment.md with inline source URLs."
+  ];
+  lane_vendors [
+    label="L3 Vendors + AI",
+    prompt="Follow the deep-web-search skill (use_skill('deep-web-search')). LANE = vendors.\nFOCUS: Vendors and implementing partners the MoH uses, EMPHASIS on AI vendors (triage, imaging/diagnostics, chatbots, forecasting, CHW decision support). Who supplies what; contract/grant context if public.\nTHEN double-click each AI vendor: product, integration point, data used.\nWrite out/03-vendors.md with inline source URLs."
+  ];
+  lane_dp_approach [
+    label="L4 Data-protection approach",
+    prompt="Follow the deep-web-search skill (use_skill('deep-web-search')). LANE = dp_approach.\nFOCUS: How the deployed systems actually handle data protection in practice — consent capture, de-identification, access control, data residency, audit logging, encryption at rest/in transit.\nTHEN double-click 2-3 systems' concrete DP design.\nWrite out/04-dp-approach.md with inline source URLs."
+  ];
+  lane_personas [
+    label="L5 Personas + journeys",
+    class="heavy",
+    prompt="Follow the deep-web-search skill (use_skill('deep-web-search')). LANE = personas.\nFOCUS: Personas across the MoH stack — national policy/planning, epidemiology/surveillance, hospital clinicians, district health officers, community health workers (CHWs), and citizens/patients. For each: goals, the systems they touch, and their end-to-end journey. This lane feeds the persona map in the final artifact.\nWrite out/05-personas.md — one clear journey per persona, with inline source URLs."
+  ];
+  lane_integration [
+    label="L6 Integration + data-flow",
+    class="heavy",
+    prompt="Follow the deep-web-search skill (use_skill('deep-web-search')). LANE = integration.\nFOCUS: How the disparate systems connect — Rwanda Health Information Exchange (HIE), the OpenHIE architecture, interop standards (HL7 FHIR, ADX, DHIS2 APIs), the shared health record, master patient / facility registries, and messaging. Describe which system sends what data to which.\nTHEN double-click the HIE / interoperability layer.\nWrite out/06-integration.md — include an explicit list of data-flow edges (source -> destination : payload), with inline source URLs."
+  ];
+  lane_dp_law [
+    label="L7 DP law + benchmark",
+    class="heavy",
+    prompt="Follow the deep-web-search skill (use_skill('deep-web-search')). LANE = dp_law.\nFOCUS: Rwanda data-protection law — Law No. 058/2021 relating to the protection of personal data and privacy; NCSA guidance; health-data specifics; cross-border transfer rules; DPO obligations.\nTHEN benchmark: how do health-data platforms akin to https://www.sandtech.com/ (and comparable African digital-health platforms) architect for such laws — data residency, consent, ReBAC/access control, audit, DPO, breach handling.\nDouble-click 2-3 benchmark approaches.\nWrite out/07-dp-law.md with inline source URLs."
+  ];
+
+  join [shape=tripleoctagon, label="Join 7 lanes"];
+
+  // ── Synthesis: one MECE model the artifact renders ──
+  synth [
+    label="Synthesize MECE model",
+    class="heavy",
+    prompt="Read out/00-scope.md and out/01-systems.md .. out/07-dp-law.md. Produce out/08-synthesis.md — a single MECE model of the Rwanda MoH digital-health landscape:\n(a) systems inventory TABLE (system | purpose | owner | deployment | vendor | DP posture),\n(b) per-persona journeys,\n(c) systems map (nodes + relationships),\n(d) integration / data-flow edges (source -> destination : payload),\n(e) DP-law constraints mapped to how each system/benchmark solves them.\nFlag gaps and a confidence level per section. Keep every claim's source URL inline. This file is the SINGLE source the visual artifact renders."
+  ];
+
+  // ── Visual artifact via Kimi K3 ──
+  html [
+    label="Render html-kit artifact",
+    class="visual",
+    prompt="Read out/08-synthesis.md, then call use_skill('html-artifact') and follow it exactly. Produce out/moh-rwanda-architecture.html — one self-contained page (inline CSS/SVG, no external assets) in the style of the reference artifact, with sections: (1) executive summary, (2) systems map, (3) persona journeys (one lane per persona), (4) integration & data-flow diagram, (5) data-protection posture vs Rwanda Law 058/2021. After writing, confirm the file exists and is substantial."
+  ];
+
+  // ── Coverage gate: MECE guarantee — run FAILS if any lane/artifact missing ──
+  coverage [shape=parallelogram, goal_gate=true, label="Coverage gate (MECE)",
+    script="for f in 01-systems 02-deployment 03-vendors 04-dp-approach 05-personas 06-integration 07-dp-law 08-synthesis; do test -s out/$f.md || { echo \"MISSING out/$f.md\" >&2; exit 1; }; done; test -s out/moh-rwanda-architecture.html || { echo 'MISSING html artifact' >&2; exit 1; }; echo 'coverage ok'"];
+
+  // ── Edges (§2: gate every forward edge on succeeded; unconditional -> halt) ──
+  start -> preflight;
+  preflight -> scope [condition="outcome=succeeded"]; preflight -> halt;
+  scope     -> fan   [condition="outcome=succeeded"]; scope     -> halt;
+
+  fan -> lane_systems;
+  fan -> lane_deploy;
+  fan -> lane_vendors;
+  fan -> lane_dp_approach;
+  fan -> lane_personas;
+  fan -> lane_integration;
+  fan -> lane_dp_law;
+
+  // Parallel branches feed the join UNCONDITIONALLY (proven poc11 idiom); a lane
+  // failing to write its out/NN-*.md is caught by the coverage goal_gate below.
+  lane_systems     -> join;
+  lane_deploy      -> join;
+  lane_vendors     -> join;
+  lane_dp_approach -> join;
+  lane_personas    -> join;
+  lane_integration -> join;
+  lane_dp_law      -> join;
+
+  join     -> synth    [condition="outcome=succeeded"]; join     -> halt;
+  synth    -> html     [condition="outcome=succeeded"]; synth    -> halt;
+  html     -> coverage [condition="outcome=succeeded"]; html     -> halt;
+  coverage -> exit     [condition="outcome=succeeded"]; coverage -> halt;
+}
