@@ -16,16 +16,18 @@ from hamilton import driver
 
 from dataflow import bronze as bronze_mod
 from dataflow import gold as gold_mod
+from dataflow import guards as guards_mod
 from dataflow import silver as silver_mod
 
 OUT = Path(__file__).resolve().parent / "mart"
 
 
 def main() -> int:
-    dr = driver.Builder().with_modules(bronze_mod, silver_mod, gold_mod).build()
+    dr = driver.Builder().with_modules(bronze_mod, silver_mod, gold_mod, guards_mod).build()
 
     GOLD = ["facility_quarter", "district_quarter", "nmr_district_quarter",
-            "nmr_facility_quarter", "completeness_summary"]
+            "nmr_facility_quarter", "completeness_summary",
+            "temporal_signal_guard", "stratification_guard"]
     result = dr.execute(["bronze", "bronze_dhis2", "silver", "org_units",
                          "crosswalk", "org_unit_map", "observations_resolved"] + GOLD)
 

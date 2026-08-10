@@ -9,3 +9,4 @@ __pycache__/
 
 # OS
 .DS_Store
+deliverable-2-prototype/output/*.html

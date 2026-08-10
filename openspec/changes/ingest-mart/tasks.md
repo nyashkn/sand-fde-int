@@ -51,4 +51,4 @@
 - [ ] 7.1 Answer or explicitly defer the two open questions in `design.md` (source blob in bronze, gold partitioning)
 - [x] 7.2 Confirm `data-validation` has silver nodes its checks can attach to
 - [x] 7.3 Confirm `trust-lineage` has every column its projection requires, with no new write path needed
-- [ ] 7.4 Write the README setup and run instructions required by the brief's submission list
+- [x] 7.4 Write the README setup and run instructions required by the brief's submission list
