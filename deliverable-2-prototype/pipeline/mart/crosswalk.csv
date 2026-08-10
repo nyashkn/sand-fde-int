@@ -1,0 +1,72 @@
+source_system,source_field,canonical_element,role,code_system,code,note
+assignment_csv,facility_id,org_unit,identity,,,"Resolved to a surrogate. Prefix is NOT a district code: NYA maps to 7 districts, NGO to 2."
+assignment_csv,facility_name,,unmapped,,,"Templated <District> + Hospital|Health Center N. Contradicts tier_level in 62 of 117 rows (53%). Retained as a display label with no semantic content."
+assignment_csv,district,org_unit.parent,dimension,,,"Real: 30/30 correct against Rwanda administrative structure. org_unit at level=district."
+assignment_csv,province,org_unit.parent,dimension,,,"Real: district-to-province mapping correct 30/30. org_unit at level=province."
+assignment_csv,tier_level,org_unit.tier,dimension,,,"Four values, measurably two bands. District is statistically indistinguishable from Health Center across all equipment and specialist-staffing columns."
+assignment_csv,gps_lat,,unmapped,,,"Uniform random within Rwanda bbox. Every province spans the full country extent. Unusable."
+assignment_csv,gps_lon,,unmapped,,,"Uniform random within Rwanda bbox. Unusable."
+assignment_csv,nicu_available,capability_nicu_available,observation,,,
+assignment_csv,nicu_beds,capability_nicu_beds,observation,,,
+assignment_csv,incubators_functional,capability_incubators_functional,observation,,,
+assignment_csv,incubators_total,capability_incubators_total,observation,,,
+assignment_csv,radiant_warmers,capability_radiant_warmers,observation,,,
+assignment_csv,phototherapy_units,capability_phototherapy_units,observation,,,
+assignment_csv,cpap_machines,capability_cpap_machines,observation,,,
+assignment_csv,resuscitation_tables,capability_resuscitation_tables,observation,,,
+assignment_csv,kangaroo_care_space,capability_kangaroo_care_space,observation,,,"Contradicts operations.kangaroo_care_practiced in 19 of 32 cases (59.4%)."
+assignment_csv,electricity_reliable,capability_electricity_reliable,observation,,,
+assignment_csv,backup_generator,capability_backup_generator,observation,,,"33 of 117 have neither reliable power nor a generator while holding powered equipment."
+assignment_csv,reporting_month,period,dimension,,,"ISO YYYY-MM. 10 of 12 months present; 2024-02 and 2024-12 absent."
+assignment_csv,total_deliveries,deliveries_total,observation,,,
+assignment_csv,live_births,live_births,observation,,,"Exact identity: live_births = total_deliveries - stillbirths, 1404/1404."
+assignment_csv,neonatal_deaths_0_7d,neonatal_deaths_early,observation,ICD-10,P00-P96,"Early neonatal, 0-7 days."
+assignment_csv,neonatal_deaths_8_28d,neonatal_deaths_late,observation,ICD-10,P00-P96,"Late neonatal, 8-28 days."
+assignment_csv,stillbirths,stillbirths,observation,ICD-10,P95,
+assignment_csv,death_birth_asphyxia,neonatal_deaths_asphyxia,observation,ICD-10,P21,"Birth asphyxia."
+assignment_csv,death_prematurity,neonatal_deaths_prematurity,observation,ICD-10,P07,"Disorders related to short gestation and low birth weight."
+assignment_csv,death_sepsis,neonatal_deaths_sepsis,observation,ICD-10,P36,"Bacterial sepsis of newborn."
+assignment_csv,death_congenital,neonatal_deaths_congenital,observation,ICD-10,Q00-Q99,"Congenital malformations."
+assignment_csv,death_other,neonatal_deaths_other,observation,ICD-10,P00-P96,"Residual. The five cause columns sum to total neonatal deaths, 1404/1404."
+assignment_csv,avg_gestational_age,,unmapped,,,"Uniform-sd-ratio 1.004, quantised to 0.1, no facility anchor. Independent of preterm counts. Carries no information."
+assignment_csv,preterm_births_28_32w,,unmapped,,,"Independent of avg_gestational_age. Generator drew them separately."
+assignment_csv,preterm_births_32_37w,,unmapped,,,"Independent of avg_gestational_age."
+assignment_csv,apgar_less_7_at_5min,,unmapped,,,"Independent of every clinical covariate it should track."
+assignment_csv,birth_weight_less_2500g,,unmapped,,,"r=0.018 against prematurity where reality gives 0.6-0.9. Disqualified for joint clinical-risk analysis."
+assignment_csv,newborn_protocol_exists,governance_protocol_status,observation,,,"Pure function of protocol_last_updated staleness: Outdated iff >=24 months, 0/103 exceptions. Do not treat as independent evidence."
+assignment_csv,protocol_last_updated,governance_protocol_updated,observation,,,"34 of 117 postdate the 2024 window; max 2025-10."
+assignment_csv,death_audits_conducted_pct,governance_death_audit_rate,observation,,,
+assignment_csv,staff_trained_on_protocol_pct,governance_staff_trained_rate,observation,,,"Pooled r=-0.844 against NMR is tier-confounded. Within tier: +0.042 / +0.111 / +0.144."
+assignment_csv,quality_improvement_active,governance_qi_active,observation,,,
+assignment_csv,supervision_visits_quarterly,governance_supervision_visits,observation,,,
+assignment_csv,hmis_reporting_completeness,governance_reporting_completeness,observation,,,"Self-reported. Not an independent measure of completeness."
+assignment_csv,bag_mask_ventilation_competency,governance_bagmask_competency,observation,,,
+assignment_csv,thermal_care_protocol_compliance,governance_thermal_compliance,observation,,,
+assignment_csv,infection_prevention_score,governance_ipc_score,observation,,,
+assignment_csv,total_nurses,staff_nurses_total,observation,,,
+assignment_csv,neonatal_trained_nurses,staff_nurses_neonatal,observation,,,"36 of 48 have last_neonatal_training_date='Never' yet report trained nurses."
+assignment_csv,midwives,staff_midwives,observation,,,
+assignment_csv,obstetricians,staff_obstetricians,observation,,,"29 of 45 Health Centers report an obstetrician on staff."
+assignment_csv,pediatricians,staff_pediatricians,observation,,,
+assignment_csv,neonatologists,staff_neonatologists,observation,,,
+assignment_csv,anesthetists,staff_anesthetists,observation,,,
+assignment_csv,last_neonatal_training_date,staff_last_training,observation,,,
+assignment_csv,staff_per_delivery_2024,,unmapped,,,"Named as derived but unreconstructable: best of 8 formulas matched 58.1%, worse than the column's own mode at 65.8%. Only 3 distinct values, correlates positively with volume."
+assignment_csv,night_shift_coverage,staff_night_coverage,observation,,,"32 of 45 District-tier report no night coverage."
+assignment_csv,avg_referral_time_hrs,ops_referral_time_hrs,observation,,,"Self-reported. r=+0.125 against NMR."
+assignment_csv,referrals_out_monthly,ops_referrals_out,observation,,,"Aggregate outbound exceeds inbound by 74% across a closed network."
+assignment_csv,referrals_in_monthly,ops_referrals_in,observation,,,
+assignment_csv,oxygen_cylinders_available,ops_oxygen_cylinders,observation,,,
+assignment_csv,oxygen_concentrators,ops_oxygen_concentrators,observation,,,
+assignment_csv,oxygen_plant,ops_oxygen_plant,observation,,,
+assignment_csv,ambulance_available,ops_ambulance,observation,,,
+assignment_csv,kangaroo_care_practiced,ops_kangaroo_practiced,observation,,,
+assignment_csv,essential_drugs_stockouts_days,ops_stockout_days,observation,,,"11 of 117 exceed 31, the maximum days in any calendar month."
+assignment_csv,antibiotics_available,ops_antibiotics,observation,,,
+assignment_csv,surfactant_available,ops_surfactant,observation,,,
+assignment_csv,referral_feedback_rate,ops_referral_feedback_rate,observation,,,
+dhis2,orgUnit,org_unit,identity,,,"DHIS2 organisation unit UID. Second source proving the crosswalk."
+dhis2,period,period,dimension,,,"DHIS2 ISO period, YYYYMM. Normalised to YYYY-MM."
+dhis2,TOTAL_DELIVERIES,deliveries_total,observation,,,"Same canonical element as assignment_csv.total_deliveries."
+dhis2,LIVE_BIRTHS,live_births,observation,,,"Same canonical element as assignment_csv.live_births."
+dhis2,NND_EARLY,neonatal_deaths_early,observation,ICD-10,P00-P96,"Same canonical element as assignment_csv.neonatal_deaths_0_7d."

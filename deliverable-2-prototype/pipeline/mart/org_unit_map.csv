@@ -1,0 +1,4 @@
+source_system,source_key,org_unit,basis
+dhis2,NYA001,facility:NYA001,"Declared. DHIS2 export uses the MoH facility register code, same code space as the CSV export."
+dhis2,GAS006,facility:GAS006,"Declared. Same basis."
+dhis2,HUY014,facility:HUY014,"Declared. Same basis."
