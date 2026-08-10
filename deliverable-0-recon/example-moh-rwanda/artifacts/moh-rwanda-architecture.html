@@ -338,10 +338,148 @@
   ol.src li .st { color: var(--ink); font-weight: 600; }
 
   .footnote { margin-top: 26px; font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* ---------- glossary side-panel (CSS-only toggle) ---------- */
+  .gloss-cb { position: absolute; opacity: 0; pointer-events: none; }
+  .gloss-btn {
+   position: fixed;
+   top: 96px;
+   right: 0;
+   z-index: 40;
+   font-family: var(--mono);
+   font-size: 10px;
+   letter-spacing: 0.08em;
+   text-transform: uppercase;
+   color: var(--paper);
+   background: var(--clay);
+   border: 1.5px solid var(--clay-d);
+   border-right: none;
+   border-radius: 9px 0 0 9px;
+   padding: 9px 11px;
+   cursor: pointer;
+   writing-mode: vertical-rl;
+   box-shadow: 0 2px 8px rgba(26,25,23,0.12);
+   user-select: none;
+  }
+  .gloss-btn:hover { background: var(--clay-d); }
+  .gloss-backdrop {
+   position: fixed;
+   inset: 0;
+   background: rgba(26,25,23,0.28);
+   opacity: 0;
+   pointer-events: none;
+   transition: opacity 0.25s ease;
+   z-index: 45;
+  }
+  .gloss-drawer {
+   position: fixed;
+   top: 0;
+   right: 0;
+   height: 100vh;
+   width: 380px;
+   max-width: 88vw;
+   background: var(--cream);
+   border-left: 1.5px solid var(--rule);
+   box-shadow: -6px 0 22px rgba(26,25,23,0.14);
+   z-index: 50;
+   transform: translateX(100%);
+   transition: transform 0.28s ease;
+   overflow-y: auto;
+   padding: 20px 22px 40px;
+  }
+  .gloss-cb:checked ~ .gloss-drawer { transform: translateX(0); }
+  .gloss-cb:checked ~ .gloss-backdrop { opacity: 1; pointer-events: auto; }
+  .gloss-head {
+   display: flex;
+   align-items: baseline;
+   justify-content: space-between;
+   border-bottom: 1.5px solid var(--rule);
+   padding-bottom: 10px;
+   margin-bottom: 12px;
+   position: sticky;
+   top: -20px;
+   background: var(--cream);
+  }
+  .gloss-head h3 { font-family: var(--serif); font-weight: 500; font-size: 18px; color: var(--ink); }
+  .gloss-close {
+   font-family: var(--mono);
+   font-size: 16px;
+   line-height: 1;
+   color: var(--muted);
+   cursor: pointer;
+   padding: 4px 8px;
+   border: 1px solid var(--rule);
+   border-radius: 6px;
+   background: var(--paper);
+  }
+  .gloss-close:hover { color: var(--clay-d); border-color: var(--clay); }
+  dl.gloss-list { margin: 0; }
+  dl.gloss-list dt {
+   font-family: var(--mono);
+   font-size: 11px;
+   font-weight: 700;
+   color: var(--clay-d);
+   margin-top: 11px;
+   letter-spacing: 0.02em;
+  }
+  dl.gloss-list dd {
+   margin: 2px 0 0;
+   font-size: 12px;
+   line-height: 1.45;
+   color: var(--ink-soft);
+  }
+  dl.gloss-list dd + dt { border-top: 1px solid var(--rule-2); padding-top: 10px; }
  </style>
 </head>
 
 <body>
+ <!-- =============== GLOSSARY SIDE-PANEL (CSS-only toggle) =============== -->
+ <input type="checkbox" id="gloss-toggle" class="gloss-cb" aria-hidden="true">
+ <label for="gloss-toggle" class="gloss-btn" role="button" tabindex="0" aria-label="Open glossary">Glossary</label>
+ <label for="gloss-toggle" class="gloss-backdrop" aria-hidden="true"></label>
+ <aside class="gloss-drawer" role="region" aria-label="Glossary of acronyms">
+  <div class="gloss-head">
+   <h3>Glossary</h3>
+   <label for="gloss-toggle" class="gloss-close" role="button" aria-label="Close glossary">&#215;</label>
+  </div>
+  <dl class="gloss-list">
+   <dt>RHMIS</dt><dd>Rwanda Health Management Information System — the national aggregate routine-reporting backbone, run on DHIS2.</dd>
+   <dt>DHIS2</dt><dd>District Health Information Software 2 — open-source aggregate HIS platform (UiO/HISP); Rwanda's national HIS since 2012.</dd>
+   <dt>HMIS</dt><dd>Health Management Information System — the routine facility service-data reporting layer.</dd>
+   <dt>eIDSR</dt><dd>electronic Integrated Disease Surveillance &amp; Response — case-based notifiable-disease surveillance on the DHIS2 Tracker.</dd>
+   <dt>HIV CBS</dt><dd>HIV Case-Based Surveillance — per-patient HIV tracking, live in 197 PEPFAR sites.</dd>
+   <dt>NHIC</dt><dd>National Health Intelligence Center — six-layer data-lakehouse + AI analytics layer, launched Apr 2025.</dd>
+   <dt>RHIE</dt><dd>Rwanda Health Information Exchange — the national OpenHIE-based interoperability layer.</dd>
+   <dt>OpenHIE</dt><dd>Open Health Information Exchange — reference architecture of registries plus interoperability components.</dd>
+   <dt>OpenHIM</dt><dd>Open Health Information Mediator — the routing/mediation bus that translates, audits and routes transactions.</dd>
+   <dt>HAPI FHIR</dt><dd>Open-source Java implementation of HL7 FHIR — backs the RHIE registries.</dd>
+   <dt>Client / Facility / Provider Registry</dt><dd>Master registries of patients (CR), facilities (FR) and health workers/providers (PR).</dd>
+   <dt>SHR</dt><dd>Shared Health Record — longitudinal FHIR encounter store shared across facilities.</dd>
+   <dt>UPID</dt><dd>Unique Patient Identifier — the national health ID, linked to NIDA.</dd>
+   <dt>NIDA</dt><dd>National Identification Agency — Rwanda's foundational national identity system.</dd>
+   <dt>FOSA</dt><dd>Health-facility coding scheme / facility IDs used by the Facility Registry.</dd>
+   <dt>ICD-11</dt><dd>WHO International Classification of Diseases, 11th revision — diagnosis terminology.</dd>
+   <dt>LOINC</dt><dd>Logical Observation Identifiers Names and Codes — lab/observation terminology.</dd>
+   <dt>VLSM</dt><dd>Viral Load &amp; Sample Management — HIV viral-load lab system feeding results over the exchange.</dd>
+   <dt>LIMS</dt><dd>Laboratory Information Management System — facility lab system (e.g. LabWare).</dd>
+   <dt>e-LMIS</dt><dd>electronic Logistics Management Information System — health-commodity supply-chain tracking.</dd>
+   <dt>OpenMRS</dt><dd>Open-source Medical Record System — the platform behind Rwanda's facility EMR.</dd>
+   <dt>eBuzima</dt><dd>Rwanda's OpenMRS-based facility EMR deployment.</dd>
+   <dt>eCHIS</dt><dd>electronic Community Health Information System — the CHW-facing digital platform.</dd>
+   <dt>RapidSMS / RapidPro</dt><dd>SMS/IVR messaging platforms for community data collection and workflow flows.</dd>
+   <dt>d-IDS</dt><dd>digital Integrated Decision Support — AI decision support embedded in the community EMR (cuts referrals ~24%).</dd>
+   <dt>mUbuzima</dt><dd>CHW mobile app carrying Insightiv ML modules.</dd>
+   <dt>HWMS</dt><dd>Health Workforce Management System — workforce deployment and staffing.</dd>
+   <dt>iHRIS</dt><dd>open-source Human Resources Information System for the health workforce.</dd>
+   <dt>RHAP</dt><dd>Rwanda Health Analytics Platform — analytics mirror (e.g. RCAS COVID) integrated with the stack.</dd>
+   <dt>PBF</dt><dd>Performance-Based Financing — results-linked facility payment, tracked via the G10 dashboard.</dd>
+   <dt>RSSB</dt><dd>Rwanda Social Security Board — administers the national health-insurance scheme.</dd>
+   <dt>CBHI / Mutuelle</dt><dd>Community-Based Health Insurance (Mutuelle de Sant&#233;) — Rwanda's community health-insurance scheme.</dd>
+   <dt>NCSA</dt><dd>National Cyber Security Authority — receives statutory data-breach notifications.</dd>
+   <dt>Law No. 058/2021</dt><dd>Rwanda's data-protection and privacy law governing personal-data processing.</dd>
+  </dl>
+ </aside>
+
  <div class="page">
 
   <!-- =============== 1. HEADER + SUMMARY + STAT BAND =============== -->
@@ -400,7 +538,11 @@
      .diagram .t { font-size: 11px; fill: #1A1917; font-weight: 600; }
      .diagram .s { font-size: 11px; fill: #55544E; }
      .diagram .cont { fill: #FCFBF7; stroke: #DED9CC; stroke-width: 1.5; }
-     .diagram .lab { font-family: var(--mono); font-size: 10px; fill: #86857D; }
+     .diagram .lab { font-family: var(--mono); font-size: 10px; fill: #86857D; paint-order: stroke; stroke: #FCFBF7; stroke-width: 3px; stroke-linejoin: round; }
+     .diagram a { cursor: pointer; }
+     .diagram a:hover rect.bx { stroke-width: 2.6; }
+     .diagram a:hover .t { text-decoration: underline; }
+     .diagram .lkm { font-family: var(--mono); font-size: 10px; fill: #86857D; }
     </style>
 
     <!-- EXTERNAL -->
@@ -449,16 +591,18 @@
     <rect class="cont" x="20" y="136" width="1080" height="300" rx="11"></rect>
     <text class="bl" x="34" y="156">NATIONAL TIER — National Data Centre + Kigali</text>
 
-    <g>
+    <a href="https://nhic.moh.gov.rw/" target="_blank" rel="noopener"><g>
      <rect class="bx" x="36" y="166" width="516" height="52" rx="8" fill="rgba(169,83,47,0.12)" stroke="#A9532F"></rect>
      <text class="t" x="294" y="187" text-anchor="middle">H1 · NHIC — national data lakehouse + AI</text>
      <text class="s" x="294" y="203" text-anchor="middle">6 layers · real-time analytics · launched Apr 2025</text>
-    </g>
-    <g>
+     <text class="lkm" x="540" y="180" text-anchor="middle">&#8599;</text>
+    </g></a>
+    <a href="https://ohie.org/impact-stories/creating-a-health-information-exchange-system-in-rwanda" target="_blank" rel="noopener"><g>
      <rect class="bx" x="568" y="166" width="520" height="52" rx="8" fill="rgba(111,133,90,0.12)" stroke="#6F855A"></rect>
      <text class="t" x="828" y="187" text-anchor="middle">F1 RHIE / F2 OpenHIM — OpenHIE interoperability bus</text>
      <text class="s" x="828" y="203" text-anchor="middle">HAPI FHIR · Mapping Mediator · audit + Grafana/Prometheus</text>
-    </g>
+     <text class="lkm" x="1076" y="180" text-anchor="middle">&#8599;</text>
+    </g></a>
 
     <text class="lab" x="36" y="236">Registries / identity (F)</text>
     <g font-size="11">
@@ -492,59 +636,66 @@
      <text class="s" x="999" y="276" text-anchor="middle">EMR ↔ VLSM</text>
     </g>
 
-    <g>
+    <a href="https://docs.dhis2.org/en/topics/user-stories/rwanda-hmis-powered-by-dhis2.html" target="_blank" rel="noopener"><g>
      <rect class="bx" x="36" y="296" width="1052" height="48" rx="7" fill="rgba(195,106,71,0.12)" stroke="#C36A47"></rect>
      <text class="t" x="562" y="316" text-anchor="middle">A1 · RHMIS on DHIS2 — national HMIS since 2012</text>
      <text class="s" x="562" y="332" text-anchor="middle">+ A2 eIDSR · A3 HIV CBS (197 PEPFAR sites) · A4 COVID modules · A5 programme registries (eTB, cancer, NCD)</text>
-    </g>
-    <g>
+     <text class="lkm" x="1076" y="311" text-anchor="middle">&#8599;</text>
+    </g></a>
+    <a href="https://www.rssb.rw/rssb-products/mutuelle-de-sante-cbhi/" target="_blank" rel="noopener"><g>
      <rect class="bx" x="36" y="352" width="1052" height="48" rx="7" fill="rgba(148,128,111,0.13)" stroke="#94806F"></rect>
      <text class="t" x="562" y="372" text-anchor="middle">G · Workforce · financing · administration</text>
      <text class="s" x="562" y="388" text-anchor="middle">G1–G9 HWMS · iHRIS · licensing · RHAP · G10 PBF dashboard  ·  G11 RSSB Mutuelle de Santé (CBHI)</text>
-    </g>
+     <text class="lkm" x="1076" y="367" text-anchor="middle">&#8599;</text>
+    </g></a>
 
     <line x1="300" y1="436" x2="300" y2="418" stroke="#86857D" stroke-width="1.6" marker-end="url(#a1)"></line>
-    <text class="lab" x="310" y="432">monthly aggregate → DHIS2 · research de-id extracts</text>
+    <text class="lab" x="300" y="430" text-anchor="middle">monthly aggregates · DHIS2 · de-id extracts</text>
     <line x1="820" y1="436" x2="820" y2="418" stroke="#86857D" stroke-width="1.6" marker-end="url(#a1)"></line>
-    <text class="lab" x="620" y="432" text-anchor="end">SISCOM · d-IDS surveillance alerts →</text>
+    <text class="lab" x="820" y="430" text-anchor="middle">SISCOM aggregates · d-IDS alerts</text>
 
     <!-- FACILITY -->
     <rect class="cont" x="20" y="438" width="536" height="90" rx="11"></rect>
     <text class="bl" x="34" y="458">FACILITY TIER — on-prem hospitals · labs · supply</text>
-    <g>
+    <a href="https://github.com/Rwanda-EMR" target="_blank" rel="noopener"><g>
      <rect class="bx" x="34" y="468" width="160" height="46" rx="7" fill="rgba(62,133,124,0.12)" stroke="#3E857C"></rect>
      <text class="t" x="114" y="489" text-anchor="middle" font-size="11.5">B1 OpenMRS</text>
      <text class="s" x="114" y="504" text-anchor="middle">eBuzima · on-prem</text>
-    </g>
+     <text class="lkm" x="182" y="482" text-anchor="middle">&#8599;</text>
+    </g></a>
     <g>
      <rect class="bx" x="202" y="468" width="160" height="46" rx="7" fill="rgba(94,127,166,0.12)" stroke="#5E7FA6"></rect>
      <text class="t" x="282" y="489" text-anchor="middle" font-size="11.5">E1·E2 LIMS · VLSM</text>
      <text class="s" x="282" y="504" text-anchor="middle">LabWare · HIV VL</text>
     </g>
-    <g>
+    <a href="https://www.zipline.com/newsroom/zipline-and-the-government-of-rwanda-announce-a-new-partnership-to-serve-the-entire-country-with-instant-logistics" target="_blank" rel="noopener"><g>
      <rect class="bx" x="370" y="468" width="176" height="46" rx="7" fill="rgba(181,138,52,0.13)" stroke="#B58A34"></rect>
      <text class="t" x="458" y="489" text-anchor="middle" font-size="11.5">D1 e-LMIS · D5 Zipline</text>
      <text class="s" x="458" y="504" text-anchor="middle">commodities · drones</text>
-    </g>
+     <text class="lkm" x="534" y="482" text-anchor="middle">&#8599;</text>
+    </g></a>
 
     <!-- COMMUNITY -->
     <rect class="cont" x="564" y="438" width="536" height="90" rx="11"></rect>
     <text class="bl" x="578" y="458">COMMUNITY TIER — CHW + mobile</text>
-    <g>
+    <a href="https://www.unicef.org/rwanda/stories/piles-registers-digital-care-community-health-workers-rwanda-adopt-digital-health-rec" target="_blank" rel="noopener"><g>
      <rect class="bx" x="578" y="468" width="160" height="46" rx="7" fill="rgba(138,107,158,0.12)" stroke="#8A6B9E"></rect>
      <text class="t" x="658" y="489" text-anchor="middle" font-size="11.5">C1 eCHIS / cEMR</text>
      <text class="s" x="658" y="504" text-anchor="middle">offline Android</text>
-    </g>
-    <g>
+     <text class="lkm" x="726" y="482" text-anchor="middle">&#8599;</text>
+    </g></a>
+    <a href="https://github.com/dhis2/integration-dhis-rapidpro" target="_blank" rel="noopener"><g>
      <rect class="bx" x="746" y="468" width="160" height="46" rx="7" fill="rgba(138,107,158,0.12)" stroke="#8A6B9E"></rect>
      <text class="t" x="826" y="489" text-anchor="middle" font-size="11.5">C2 · C3 RapidSMS/Pro</text>
      <text class="s" x="826" y="504" text-anchor="middle">SMS · IVR · WhatsApp</text>
-    </g>
-    <g>
+     <text class="lkm" x="894" y="482" text-anchor="middle">&#8599;</text>
+    </g></a>
+    <a href="https://pubmed.ncbi.nlm.nih.gov/41687454/" target="_blank" rel="noopener"><g>
      <rect class="bx" x="914" y="468" width="172" height="46" rx="7" fill="rgba(62,133,124,0.10)" stroke="#3E857C"></rect>
      <text class="t" x="1000" y="489" text-anchor="middle" font-size="11.5">B2 cEMR + AI</text>
      <text class="s" x="1000" y="504" text-anchor="middle">d-IDS · mUbuzima ML</text>
-    </g>
+     <text class="lkm" x="1074" y="482" text-anchor="middle">&#8599;</text>
+    </g></a>
 
     <line x1="300" y1="528" x2="300" y2="548" stroke="#DED9CC" stroke-width="0"></line>
    </svg>

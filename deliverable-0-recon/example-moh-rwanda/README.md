@@ -7,8 +7,9 @@ concrete output that produced Deliverable 0's artifact, kept for audit and repro
 
 ```
 artifacts/
-  moh-rwanda-architecture.html          # FINAL — v2 structural redesign: SVG persona swimlanes +
-                                        #   persona×systems access matrix, tiered diagrams, 45 links
+  moh-rwanda-architecture.html          # FINAL — v2 redesign: SVG persona swimlanes + persona×systems
+                                        #   access matrix, tiered diagrams; system boxes link to their
+                                        #   primary source; CSS-only glossary side-panel (34 acronyms); 54 links
   moh-rwanda-architecture.v1-dense.html # v1 — link-rich but text-dense (the redesign's "before")
   moh-rwanda-architecture.baseline.html # first render, pre-links
   synthesis.md                          # the single sourced model the artifact renders from (166 citations)
