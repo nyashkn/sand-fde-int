@@ -100,7 +100,11 @@ islands. Mosaic is built on Observable Plot, so a single registry serves both.
 |---|---|---|
 | `ranking` | horizontal bar | length = value, y = entity |
 | `distribution-across-units` | sorted dot plot with reference rule | x = value, y = entity, rule = benchmark |
-| `composition` | stacked horizontal bar | length = value, fill = category accent |
+
+A `composition` kind (stacked bar) was registered and removed. Five causes needed five
+hues in a one-accent palette, its percentage labels collided, and it sat directly above a
+table carrying the same numbers plus their ICD-10 codes. A chart is registered only when
+it does something a table cannot.
 | `rate-vs-benchmark` | dot plot with benchmark rule | x = rate, rule = benchmark |
 
 A figure kind absent from this table fails the render. It is never improvised.

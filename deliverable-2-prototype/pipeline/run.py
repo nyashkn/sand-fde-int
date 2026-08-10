@@ -61,7 +61,13 @@ def main() -> int:
     # Parquet, not the DuckDB file, is the published artifact: it supports HTTP range
     # requests, so a browser pulls only the row groups it needs and the batch job reads
     # the same bytes. No service between the pipeline and the surface.
-    for name in ["silver", "org_units"] + GOLD:
+    #
+    # observations_resolved is published because it is the only table carrying
+    # rules_applied, and the bulletin's lineage section must read the rule name rather
+    # than restate it. A hand-typed rule name in a provenance record is a fabrication
+    # waiting to happen, and it happened once already.
+    PUBLISHED = ["silver", "org_units", "observations_resolved"] + GOLD
+    for name in PUBLISHED:
         con.execute(f"COPY {name} TO '{OUT / (name + '.parquet')}' (FORMAT PARQUET)")
 
     print(f"bronze     {sum(len(d) for d in result['bronze'].values()):>7,} rows "
@@ -72,7 +78,7 @@ def main() -> int:
           f"({', '.join(f'{k}:{v}' for k, v in org_units['level'].value_counts().items())})")
     for name in GOLD:
         print(f"gold       {len(result[name]):>7,}  {name}")
-    print(f"\nwrote {len(GOLD)+2} parquet files to {OUT}")
+    print(f"\nwrote {len(PUBLISHED)} parquet files to {OUT}")
     con.close()
     return 0
 

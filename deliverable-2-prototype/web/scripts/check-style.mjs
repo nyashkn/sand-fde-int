@@ -42,6 +42,16 @@ const RULES = [
     test: (html) => [...html.matchAll(/<script\b/gi)].map((m) => m[0]),
   },
   {
+    id: 'no-code-in-markup',
+    why: 'A function or template expression reached an attribute or text node instead of its value. Shipped once as stroke-dasharray="(d) => d.provisional ? ...".',
+    test: (html) => [
+      ...html.matchAll(/="[^"]*=&gt;[^"]*"/g),
+      ...html.matchAll(/="[^"]*\s=>\s[^"]*"/g),
+      ...html.matchAll(/\[object (?:Object|Promise)\]/g),
+      ...html.matchAll(/\bundefined\b(?=[<\s.,)])/g),
+    ].map((m) => m[0]),
+  },
+  {
     id: 'no-external-assets',
     why: 'The document must render offline and survive forwarding. Every asset is inline.',
     // Assets only. An anchor to the full bulletin is a hyperlink: it is the point of the

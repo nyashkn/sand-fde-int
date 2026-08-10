@@ -41,12 +41,7 @@ export interface DistributionDatum {
   provisional: boolean;
 }
 
-export interface CompositionDatum {
-  category: string;
-  value: number;
-}
-
-export type FigureKind = 'ranking' | 'distribution-across-units' | 'composition';
+export type FigureKind = 'ranking' | 'distribution-across-units';
 
 interface RenderOptions {
   width?: number;
@@ -67,7 +62,9 @@ function plotToSvg(mark: (document: Document) => SVGSVGElement | HTMLElement): s
 
 const baseStyle = {
   fontFamily: TOKENS.mono,
-  fontSize: 11,
+  // A string, not 11: Plot forwards this to CSSStyleDeclaration, where a bare number is
+  // a type error and silently produces no font-size in some paths.
+  fontSize: '11px',
   background: 'transparent',
   color: TOKENS.ink,
 } as const;
@@ -141,47 +138,34 @@ function distribution(data: DistributionDatum[], o: RenderOptions): string {
           x: 'value',
           y: 'label',
           r: 4,
+          // Hollow against filled is the whole encoding, and it is verified in greyscale.
+          // A strokeDasharray function used to sit here too: it is not a Plot channel, so
+          // the function's own source text was serialised into the published SVG.
           fill: (d: DistributionDatum) => (d.provisional ? TOKENS.paper : TOKENS.clay),
           stroke: TOKENS.clay,
-          strokeWidth: (d: DistributionDatum) => (d.provisional ? 1.5 : 0),
-          strokeDasharray: (d: DistributionDatum) => (d.provisional ? '2,1.5' : 'none'),
+          strokeWidth: 1.5,
         }),
       ],
     }),
   );
 }
 
-function composition(data: CompositionDatum[], o: RenderOptions): string {
-  const palette = ['#c36a47', '#3e857c', '#8a6b9e', '#b58a34', '#5e7fa6'];
-  const total = data.reduce((s, d) => s + d.value, 0);
-  return plotToSvg((document) =>
-    Plot.plot({
-      document,
-      width: o.width ?? 760,
-      height: 132,
-      marginLeft: 8,
-      marginRight: 8,
-      marginTop: 28,
-      style: baseStyle,
-      x: { label: null, percent: false, axis: null },
-      color: { domain: data.map((d) => d.category), range: palette, legend: true },
-      marks: [
-        Plot.barX(data, { x: 'value', fill: 'category', insetLeft: 0.5, insetRight: 0.5 }),
-        Plot.text(data, {
-          x: 'value',
-          fill: TOKENS.paper,
-          text: (d: CompositionDatum) => (d.value / total > 0.08 ? `${Math.round((d.value / total) * 100)}%` : ''),
-          fontSize: 11,
-        }),
-      ],
-    }),
-  );
-}
-
-const RENDERERS = { ranking, 'distribution-across-units': distribution, composition } as const;
+/**
+ * Two kinds, deliberately.
+ *
+ * A `composition` renderer existed and was removed: five causes as a stacked bar needed
+ * five hues in a palette with one accent, collided its own percentage labels, and sat
+ * directly above a table carrying the same five numbers plus their ICD-10 codes. It
+ * showed proportion, which a Share column shows exactly and a reader can subtract.
+ *
+ * A chart earns a place here by doing something a table cannot: `ranking` compares
+ * magnitude across ten bars at a glance, `distribution-across-units` shows spread and
+ * distance from a benchmark across thirty. Reinstating a kind means clearing that bar.
+ */
+const RENDERERS = { ranking, 'distribution-across-units': distribution } as const;
 
 export function chart(kind: FigureKind, data: unknown[], options: RenderOptions = {}): string {
-  const render = RENDERERS[kind];
+  const render = RENDERERS[kind as keyof typeof RENDERERS];
   if (!render) {
     throw new Error(
       `No chart type registered for figure kind "${kind}". ` +
@@ -190,6 +174,6 @@ export function chart(kind: FigureKind, data: unknown[], options: RenderOptions 
   }
   // Each renderer validates its own datum shape through its typed signature; the cast is
   // the one place the registry's heterogeneous table meets a concrete renderer.
-  const typed = data as RankingDatum[] & DistributionDatum[] & CompositionDatum[];
+  const typed = data as RankingDatum[] & DistributionDatum[];
   return render(typed, options);
 }

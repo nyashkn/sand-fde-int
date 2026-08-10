@@ -23,6 +23,7 @@ const MART_TABLES = [
   'completeness_summary',
   'temporal_signal_guard',
   'stratification_guard',
+  'observations_resolved',
 ] as const;
 
 /**
@@ -181,4 +182,19 @@ export async function icdCodes(): Promise<Record<string, string>> {
   const rows = await q(`SELECT DISTINCT data_element, code FROM silver
     WHERE code_system = 'ICD-10' AND code <> ''`);
   return Object.fromEntries(rows.map((r) => [String(r.data_element), String(r.code)]));
+}
+
+/**
+ * The batch-conflict rules actually applied in a quarter, read from the mart.
+ *
+ * Not a constant in the template. Writing the rule name by hand into the lineage table
+ * already produced `DUP-01`, a rule the pipeline has never had, in a section whose entire
+ * job is letting a reader check the provenance of a figure. A lineage record that names a
+ * fictional rule is worse than no lineage record.
+ */
+export async function rulesApplied(): Promise<string[]> {
+  const rows = await q(
+    `SELECT DISTINCT rules_applied FROM observations_resolved WHERE rules_applied <> ''`,
+  );
+  return rows.map((r) => String(r.rules_applied)).sort();
 }

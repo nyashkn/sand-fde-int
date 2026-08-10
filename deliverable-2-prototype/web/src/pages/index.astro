@@ -2,6 +2,7 @@
 import '../styles/bulletin.css';
 import {
   completeness, headlineNmr, districtNmr, topFacilities, causeBreakdown, guards, icdCodes,
+  rulesApplied,
 } from '../lib/mart';
 import { chart } from '../lib/charts';
 
@@ -9,10 +10,14 @@ import { chart } from '../lib/charts';
 // and the difference silently published a file named Q3 holding Q1 figures.
 const QUARTER = process.env.QUARTER ?? '2024-Q1';
 
-const [comp, head, districts, top, causes, g, codes] = await Promise.all([
+const [comp, head, districts, top, causes, g, codes, rules] = await Promise.all([
   completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER),
-  topFacilities(QUARTER), causeBreakdown(QUARTER), guards(), icdCodes(),
+  topFacilities(QUARTER), causeBreakdown(QUARTER), guards(), icdCodes(), rulesApplied(),
 ]);
+
+// Read from the mart, never retyped: a hand-written rule name in a provenance record
+// already produced one that does not exist.
+const RULE = rules[0] ?? 'none';
 
 const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
 const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
@@ -28,10 +33,6 @@ const districtSvg = chart('distribution-across-units', districts.map((d) => ({
   label: d.district, value: d.value, provisional: d.provisional,
 })), { xLabel: 'Neonatal deaths per 1,000 live births',
        benchmark: { value: NATIONAL_NMR, label: `national ~${NATIONAL_NMR}` } });
-
-const causeSvg = chart('composition', causes.map((c) => ({
-  category: c.cause, value: c.value,
-})));
 
 const CAUSE_LABEL: Record<string, string> = {
   asphyxia: 'Birth asphyxia', prematurity: 'Prematurity', sepsis: 'Sepsis',
@@ -68,12 +69,12 @@ const monthsPhrase = absent.length
       WHO GHO definition, {monthsPhrase}.
       {contested.length > 0 && (
         <span>
-          {' '}All {head.provisionalDistricts} district figures are
+          {' '}All {head.provisionalDistricts} district figures
           {' '}<span class="tag provisional">provisional</span>: {contested.join(' and ')} each
-          arrived twice with differing values and nothing in the source says which load is correct.
+          loaded twice with differing values.
         </span>
       )}
-      <a class="lineage" href="#lineage-headline">lineage</a>
+      {' '}<a class="lineage" href="#lineage-headline">lineage</a>
     </p>
 
     <div class="receipts">
@@ -112,25 +113,25 @@ const monthsPhrase = absent.length
     <a href="#s6">&sect;6 Lineage</a>
   </nav>
 
+  <p class="convention">
+    Provisional figures are hatched in bars, hollow in dots, underlined in tables.
+    Every figure links to its lineage record.
+  </p>
+
+  {/* Captions state what a figure is and the one misreading that would cause harm.
+      Nothing here explains method: that lives in the README and openspec/specs, and it
+      was filling this document with an engineering argument the Director did not ask for. */}
   <section id="s1">
     <h2><span class="n">&sect;1</span>Facilities by delivery volume</h2>
-    <p>
-      Ranked on total deliveries. This ranks <b>volume, not quality</b>: delivery volume tracks
-      facility tier closely, so the ordering largely reproduces the tier hierarchy.
-      <a class="lineage" href="#lineage-top">lineage</a>
-    </p>
     <figure set:html={rankingSvg} />
-    <figcaption>Top {top.length} of 117 facilities. Hatched bars are provisional.</figcaption>
+    <figcaption>
+      Top {top.length} of 117 by total deliveries. Volume tracks tier, so this is not a
+      quality ranking. <a class="lineage" href="#lineage-top">lineage</a>
+    </figcaption>
   </section>
 
   <section id="s2">
     <h2><span class="n">&sect;2</span>Neonatal deaths by cause</h2>
-    <p>
-      Bound to ICD-10 perinatal codes, so these are comparable with national reporting rather
-      than bespoke categories. Cause columns reconcile to total neonatal deaths in every one of
-      the 1,404 source rows. <a class="lineage" href="#lineage-cause">lineage</a>
-    </p>
-    <figure set:html={causeSvg} />
     <table>
       <thead><tr><th>Cause</th><th>ICD-10</th><th class="num">Deaths</th><th class="num">Share</th></tr></thead>
       <tbody>
@@ -144,38 +145,30 @@ const monthsPhrase = absent.length
         ))}
       </tbody>
     </table>
+    <figcaption>
+      Reconciles to total neonatal deaths in 1,404 of 1,404 source rows.
+      {' '}<a class="lineage" href="#lineage-cause">lineage</a>
+    </figcaption>
   </section>
 
   <section id="s3">
     <h2><span class="n">&sect;3</span>Neonatal mortality by district</h2>
-    <p>
-      District is the finest grain this data supports: facility coordinates in the source are
-      unusable, see &sect;5. Hollow markers are provisional. The rule marks Rwanda's reported
-      national rate. <a class="lineage" href="#lineage-district">lineage</a>
-    </p>
     <figure set:html={districtSvg} />
     <figcaption>
       {districts.length} districts, {districts[districts.length - 1]?.value.toFixed(1)} to {districts[0]?.value.toFixed(1)} per 1,000.
+      District grain: facility coordinates are unusable, &sect;5.
+      {' '}<a class="lineage" href="#lineage-district">lineage</a>
     </figcaption>
   </section>
 
   <section id="s4">
     <h2><span class="n">&sect;4</span>Withheld</h2>
-    <p>
-      Two panels a quarterly bulletin would normally carry are not printed. Both are withheld by
-      automated guards rather than editorial judgement, and each records the measurement that
-      decided it.
-    </p>
-
+    {/* The lead is the guard's own recorded reason, not a restatement of it. The pipeline
+        already writes one sentence per row carrying the numbers that decided the
+        disposition, so anything written here by hand would be a second, driftable copy. */}
     <div class="withheld-panel">
       <div class="hd">Withheld &middot; trend against previous quarter</div>
-      <p class="lead">There is no genuine month-to-month signal in this data.</p>
-      <p>
-        Shuffling each facility's months among themselves destroys any real ordering while
-        preserving that facility's level. The shuffled null matches the observed autocorrelation,
-        so all apparent movement is a stable per-facility baseline plus noise. A quarter-over-quarter
-        arrow would be drawing noise.
-      </p>
+      <p class="lead">{g.temporal.find((t) => t.withheld)?.reason}</p>
       <table>
         <thead><tr><th>Series</th><th class="num">Observed lag-1</th><th class="num">Permutation null</th><th>Disposition</th></tr></thead>
         <tbody>
@@ -189,21 +182,12 @@ const monthsPhrase = absent.length
           ))}
         </tbody>
       </table>
-      <p style="font-size:12px;color:var(--muted)">
-        Seed {g.temporal[0]?.seed}, {g.temporal[0]?.trials} trials, recorded so the disposition is reproducible.
-      </p>
+      <figcaption>Seed {g.temporal[0]?.seed}, {g.temporal[0]?.trials} trials.</figcaption>
     </div>
 
     <div class="withheld-panel">
       <div class="hd">Withheld &middot; what drives mortality</div>
-      <p class="lead">Every candidate driver is confounded by facility tier.</p>
-      <p>
-        Pooled across all 117 facilities, staff training correlates with mortality at
-        {' '}{g.strat[0]?.pooled.toFixed(3)}, strong enough to look like a finding. Inside each tier it
-        disappears. Both the training rate and the death count are downstream of where equipment and
-        staff were placed, so the pooled figure measures tier and not training. Publishing it would
-        point the Ministry at a lever that is not there.
-      </p>
+      <p class="lead">{g.strat.find((s) => s.withheld)?.reason}</p>
       <table>
         <thead><tr><th>Covariate</th><th class="num">Pooled r</th><th>Within tier</th><th>Disposition</th></tr></thead>
         <tbody>
@@ -222,11 +206,6 @@ const monthsPhrase = absent.length
 
   <section id="s5">
     <h2><span class="n">&sect;5</span>Known defects in the source data</h2>
-    <p>
-      Published rather than corrected silently. Each was found by a one-line check that runs on
-      every ingest, so the same class of problem is caught in next quarter's file without anyone
-      remembering to look.
-    </p>
     <table>
       <thead><tr><th>Field</th><th>Finding</th><th class="num">Extent</th><th>Handling</th></tr></thead>
       <tbody>
@@ -239,68 +218,50 @@ const monthsPhrase = absent.length
         <tr><td class="mono">facility_id</td><td>Prefix ambiguous across districts. <code>NYA</code> maps to seven.</td><td class="num">9 prefixes</td><td><span class="tag settled">resolved</span></td></tr>
       </tbody>
     </table>
-    <div class="block quiet">
-      <div class="t">why publish these</div>
-      <p>
-        A bulletin that renders clean numbers over data with these problems is exactly the object
-        the Director already refuses. Naming them, and showing what each figure did about them, is
-        what makes the rest of the document checkable rather than merely confident.
-      </p>
-    </div>
   </section>
 
   <section id="s6">
     <h2><span class="n">&sect;6</span>Lineage</h2>
-    <p>
-      One record per figure above. In the full system these are addressable URLs
-      (<code>/metric/nmr/district/nyanza/{QUARTER}/lineage</code>); here they are anchors in the
-      same file, so the document works offline and forwards intact.
-    </p>
 
-    <div class="lineage-card" id="lineage-headline">
-      <h4>Headline neonatal mortality, {QUARTER}</h4>
-      <dl>
-        <dt>figure</dt><dd>nmr, grain (national, quarter)</dd>
-        <dt>inputs</dt><dd>{head.births.toLocaleString()} live births, {head.deaths.toLocaleString()} neonatal deaths, {districts.length} districts</dd>
-        <dt>months</dt><dd>{monthsPhrase}</dd>
-        <dt>provisional</dt><dd>{head.provisionalDistricts} of {head.districts} district inputs</dd>
-        <dt>rule applied</dt><dd><code>DEFAULT-BATCH-01</code>, lowest occurrence ordinal on contested batches. Arbitrary and pending resolution.</dd>
-        <dt>definition</dt><dd>WHO GHO: (early + late neonatal deaths) / live births &times; 1,000</dd>
-        <dt>source</dt><dd>assignment_csv &rarr; bronze &rarr; silver &rarr; district_quarter</dd>
-      </dl>
-    </div>
-
-    <div class="lineage-card" id="lineage-top">
-      <h4>Facilities by delivery volume, {QUARTER}</h4>
-      <dl>
-        <dt>figure</dt><dd>deliveries_total, grain (facility, quarter)</dd>
-        <dt>inputs</dt><dd>117 facilities, {monthsHeld} months each</dd>
-        <dt>shown</dt><dd>top {top.length} by value</dd>
-        <dt>rule applied</dt><dd><code>DEFAULT-BATCH-01</code> on contested batches</dd>
-        <dt>caveat</dt><dd>Volume tracks tier; this is not a quality ranking.</dd>
-      </dl>
-    </div>
-
-    <div class="lineage-card" id="lineage-cause">
-      <h4>Neonatal deaths by cause, {QUARTER}</h4>
-      <dl>
-        <dt>figure</dt><dd>5 cause elements, grain (national, quarter)</dd>
-        <dt>codes</dt><dd>ICD-10 P21 asphyxia, P07 prematurity, P36 sepsis, Q00 to Q99 congenital</dd>
-        <dt>identity check</dt><dd>Cause columns sum to total neonatal deaths in 1,404 of 1,404 source rows.</dd>
-        <dt>definition</dt><dd>Sum over the quarter's held months.</dd>
-      </dl>
-    </div>
-
-    <div class="lineage-card" id="lineage-district">
-      <h4>Neonatal mortality by district, {QUARTER}</h4>
-      <dl>
-        <dt>figure</dt><dd>nmr, grain (district, quarter)</dd>
-        <dt>inputs</dt><dd>{districts.length} districts, {head.births.toLocaleString()} live births</dd>
-        <dt>provisional</dt><dd>{districts.filter((d) => d.provisional).length} of {districts.length}</dd>
-        <dt>grain note</dt><dd>District, not facility. Facility geography is not derivable from this source.</dd>
-        <dt>benchmark</dt><dd>National reported rate, approximately {NATIONAL_NMR} per 1,000.</dd>
-      </dl>
-    </div>
+    {/* One table, not four cards. The cards used eleven different field names between
+        them, so no two figures could be compared, and their per-figure caveats repeated
+        what each section already says. A fixed schema also exposes the gap: a figure
+        missing a definition now has a visibly empty cell. */}
+    <table class="lineage">
+      <thead>
+        <tr><th>Figure</th><th>Grain</th><th>Inputs</th><th>Rule applied</th><th>Definition</th></tr>
+      </thead>
+      <tbody>
+        <tr id="lineage-headline">
+          <th scope="row">Neonatal mortality, headline</th>
+          <td class="mono">national, quarter</td>
+          <td>{head.births.toLocaleString()} live births, {head.deaths.toLocaleString()} deaths, {districts.length} districts, {monthsPhrase}</td>
+          <td><code>{RULE}</code> lowest occurrence ordinal, arbitrary and pending resolution</td>
+          <td>WHO GHO: (early + late neonatal deaths) / live births &times; 1,000</td>
+        </tr>
+        <tr id="lineage-top">
+          <th scope="row">Facilities by delivery volume</th>
+          <td class="mono">facility, quarter</td>
+          <td>117 facilities, {monthsHeld} months each, top {top.length} shown</td>
+          <td><code>{RULE}</code> on contested batches</td>
+          <td>Sum of <code>total_deliveries</code> over held months</td>
+        </tr>
+        <tr id="lineage-cause">
+          <th scope="row">Neonatal deaths by cause</th>
+          <td class="mono">national, quarter</td>
+          <td>5 cause elements, reconciling in 1,404 of 1,404 source rows</td>
+          <td><code>{RULE}</code> on contested batches</td>
+          <td>ICD-10 P21, P07, P36, Q00 to Q99, summed over held months</td>
+        </tr>
+        <tr id="lineage-district">
+          <th scope="row">Neonatal mortality by district</th>
+          <td class="mono">district, quarter</td>
+          <td>{districts.length} districts, {head.births.toLocaleString()} live births, {districts.filter((d) => d.provisional).length} provisional</td>
+          <td><code>{RULE}</code> lowest occurrence ordinal</td>
+          <td>WHO GHO per district, benchmarked against {NATIONAL_NMR} per 1,000</td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 
   <footer class="colophon">
