@@ -61,6 +61,6 @@
 
 ## 7. Record and hand off
 
-- [ ] 7.1 Record the Flint decision in Deliverable 3 as the productionization path, with the reason it was not adopted now
+- [x] 7.1 Record the Flint decision in Deliverable 3 as the productionization path, with the reason it was not adopted now
 - [x] 7.2 Answer or explicitly defer the two open questions in `design.md`
 - [x] 7.3 Confirm `explore-surface` can inherit the same token set
