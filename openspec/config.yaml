@@ -1,0 +1,118 @@
+schema: spec-driven
+
+context: |
+  # Sand Technologies — Forward Deployed Engineer recruitment assignment
+
+  Scenario: 2-person FDE team embedded with Rwanda's Ministry of Health under an
+  MoU to "improve health data systems and decision-making capabilities".
+  Chosen problem: Problem A — automate the Quarterly Health Bulletin
+  (currently 40 hrs/month of manual DHIS2 Excel compilation).
+
+  ## The decision that governs everything
+
+  ADR 0006 (decisions/0006-problem-a-plus-handover-act.md) commits to
+  `A-plus-handover-act`: Problem A plus exactly one bounded capacity-transfer
+  act — a named Digital Health Officer runs the pipeline restart once,
+  unassisted, before exit.
+
+  An adversarial council surfaced a fourth opportunity the brief never names:
+  the Director's complaint is about TRUST, not throughput — "I cannot trust any
+  number I am shown." End-to-end figure traceability is therefore a stated
+  requirement of the outcome, not a nice-to-have.
+
+  Design consequence: a deeplink is not navigation, it is a lineage receipt.
+  Every figure in the bulletin must be clickable through to the rows that
+  produced it, the dedup rule applied, the source file, and the ingest time.
+
+  ## Data reality (measured, not assumed)
+
+  Provided sample: 5 CSVs, 117 facilities, 1,404 facility-months of 2024.
+  Verified defects — all found with one-line checks, all to be published rather
+  than silently corrected:
+    - gps_lat/gps_lon are uniform random within Rwanda's bbox. Every province
+      spans the full country extent. Facility-point mapping is impossible;
+      district/province strings are the only trustworthy geography.
+    - 2024-01 and 2024-03 are duplicated for every facility (234 rows) with
+      DIFFERENT values — a DHIS2 double-submission. 2024-02 and 2024-12 absent.
+      Naive groupby overstates Q1 by ~20%.
+    - facility_name contradicts tier_level in 62 of 117 rows (53%).
+    - facility_id prefixes are ambiguous: NYA maps to 7 districts.
+  Clinical data itself is internally consistent 1404/1404 and district/province
+  mapping is correct 30/30 against real Rwanda administrative structure.
+
+  Outcome structure: NMR is explained by capability, not geography.
+  staff_trained_on_protocol r=-0.844, volume r=-0.832, cpap_machines r=-0.811.
+  avg_referral_time_hrs r=+0.125. Monthly NMR sd=0.77 — no seasonality.
+  Therefore: no climate/raster covariates as explanation. Basemap only.
+
+  ## Architecture
+
+  Two surfaces, one substrate:
+    - Bulletin (published, HTML, email-embedded) — static render, no JS,
+      capability metrics only, every figure deeplinked.
+    - Explore (interactive) — Mosaic coordinator + DuckDB-WASM, toggleable
+      context layers, hydrates filter state from deeplink URL params.
+
+  Browser-first is a constraint response, not a preference: the brief states
+  4-6 hrs/day power and spotty 3G/4G in rural districts. Server-rendered
+  dashboards fail exactly where outcomes are worst. Local WASM processing also
+  keeps health data on ministry hardware.
+
+  Mart: medallion in DuckDB, Parquet on disk.
+    bronze/  as-received, source field names VERBATIM, immutable
+    silver/  DHIS2 grain (org_unit, period, data_element, value) plus
+             source_system, ingested_at, rule_applied, quality_flags
+    gold/    bulletin marts (district_quarter, facility_quarter)
+  Parquet + HTTP range requests means the same files serve the Python batch job
+  and the browser explore surface. No API between them.
+
+  ## Standards to bind to (do not invent vocabulary)
+
+    DHIS2 data model  — silver grain and dataElement names. Rwanda runs DHIS2.
+    ICD-10 perinatal  — P21 asphyxia, P07 prematurity, P36 sepsis, Q00-Q99 congenital
+    WHO GHO           — indicator definitions (NMR)
+    HXL               — humanitarian context layers; maps to Flint semantic types
+    ADX (IHE)         — aggregate exchange envelope
+  FHIR is explicitly out of scope: patient-level clinical exchange, wrong tool
+  for aggregate reporting.
+
+  Mapping is a crosswalk TABLE (source_system, source_field, canonical_element,
+  code_system, code), never an in-code rename. Bronze must stay auditable
+  against the file MoH actually sent.
+
+  ## Stack
+
+    batch     Python + DuckDB + Parquet (deterministic, versioned, testable)
+    charts    Flint (microsoft/flint-chart) — one spec, multiple backends, themes
+    explore   Mosaic (uwdata) + DuckDB-WASM
+    map       MapLibre GL JS; district choropleth on FAO GAUL level2
+    geo       HDX Rwanda healthsites (1,345 real facilities) as basemap context
+
+  ## Sand products to leverage (named in the brief)
+
+    Health Atlas, Health Outcome Tracker, Health Insight Engine,
+    Analytics Template Toolkit (Apache Superset), HealthOS Data Models.
+  Superset is the default BI layer — any custom build must carry an explicit
+  build-vs-buy justification. The justification here is offline/low-power
+  district use; Superset still serves the central MoH office.
+
+  ## Conventions
+
+    - Decisions that are dated and immutable go in decisions/ as ADRs.
+      Living requirements go in openspec/specs/. They are complementary.
+    - Deliverable folders mirror the brief's own numbering.
+    - Every claim about the data must be reproducible by a runnable check.
+      Assert with numbers and denominators, never adjectives.
+    - Name and version every data rule (e.g. DUP-01), never anonymous
+      .drop_duplicates().
+
+rules:
+  proposal:
+    - State the measurable outcome and what is explicitly OUT of scope
+    - Name the assumption that would reverse the proposal if falsified
+  design:
+    - Every build-vs-buy call must name the Sand product it displaces and why
+    - Any figure a human reads must have a stated lineage path
+  tasks:
+    - Keep tasks under 2 hours
+    - Validation checks ship with the code that could break them
