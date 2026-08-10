@@ -1,0 +1,304 @@
+---
+import '../styles/tokens.css';
+import {
+  completeness, headlineNmr, districtNmr, topFacilities, causeBreakdown, guards, icdCodes,
+} from '../lib/mart';
+import { chart } from '../lib/charts';
+
+const QUARTER = import.meta.env.QUARTER ?? '2024-Q1';
+
+const [comp, head, districts, top, causes, g, codes] = await Promise.all([
+  completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER),
+  topFacilities(QUARTER), causeBreakdown(QUARTER), guards(), icdCodes(),
+]);
+
+const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
+const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
+const monthsHeld = comp.length - absent.length;
+const withheldCount = g.temporal.filter((t) => t.withheld).length > 0 ? 1 : 0;
+const withheldStrat = g.strat.filter((s) => s.withheld).length > 0 ? 1 : 0;
+
+const NATIONAL_NMR = 19; // WHO / national reporting, used as the benchmark rule
+
+const rankingSvg = chart('ranking', top.map((t) => ({
+  label: t.name, value: t.value, provisional: t.provisional,
+})), { xLabel: 'Deliveries in quarter' });
+
+const districtSvg = chart('distribution-across-units', districts.map((d) => ({
+  label: d.district, value: d.value, provisional: d.provisional,
+})), { xLabel: 'Neonatal deaths per 1,000 live births',
+       benchmark: { value: NATIONAL_NMR, label: `national ~${NATIONAL_NMR}` } });
+
+const causeSvg = chart('composition', causes.map((c) => ({
+  category: c.cause, value: c.value,
+})));
+
+const CAUSE_LABEL: Record<string, string> = {
+  asphyxia: 'Birth asphyxia', prematurity: 'Prematurity', sepsis: 'Sepsis',
+  congenital: 'Congenital', other: 'Other',
+};
+const monthsPhrase = absent.length
+  ? `${monthsHeld} of ${comp.length} expected months, ${absent.join(' and ')} absent`
+  : `${monthsHeld} of ${comp.length} expected months`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quarterly Health Bulletin, {QUARTER}</title>
+</head>
+<body>
+<div class="page" id="top">
+
+  <header class="masthead">
+    <div class="kicker">Ministry of Health, Rwanda &middot; neonatal &middot; {QUARTER}</div>
+    <h1>Quarterly Health Bulletin</h1>
+  </header>
+
+  <!-- First screen answers the Director's question: can I defend this document. -->
+  <div class="answer">
+    <div class="answer-label">Neonatal mortality, {QUARTER}</div>
+    <div class="answer-figure">
+      {head.rate.toFixed(1)}<span class="answer-unit"> per 1,000 live births</span>
+    </div>
+    <p class="answer-basis">
+      <b>{head.deaths.toLocaleString()} deaths</b> across <b>{head.births.toLocaleString()} live births</b>,
+      WHO GHO definition, {monthsPhrase}.
+      {contested.length > 0 && (
+        <span>
+          {' '}All {head.provisionalDistricts} district figures are
+          {' '}<span class="tag provisional">provisional</span>: {contested.join(' and ')} each
+          arrived twice with differing values and nothing in the source says which load is correct.
+        </span>
+      )}
+      <a class="lineage" href="#lineage-headline">lineage</a>
+    </p>
+
+    <div class="receipts">
+      <div class="receipt">
+        <div class="k">Months held</div>
+        <div class={`v ${absent.length ? 'warn' : 'good'}`}>{monthsHeld}<span style="font-size:15px;color:var(--muted)">/{comp.length}</span></div>
+        <div class="d">{absent.length ? `${absent.join(', ')} absent` : 'complete quarter'}</div>
+      </div>
+      <div class="receipt">
+        <div class="k">Facilities reporting</div>
+        <div class="v good">{Math.max(...comp.map((c) => c.facilities_received))}<span style="font-size:15px;color:var(--muted)">/{comp[0]?.facilities_expected}</span></div>
+        <div class="d">in the months held</div>
+      </div>
+      <div class="receipt">
+        <div class="k">Figures provisional</div>
+        <div class={`v ${head.provisionalDistricts ? 'warn' : 'good'}`}>{head.provisionalDistricts}<span style="font-size:15px;color:var(--muted)">/{head.districts}</span></div>
+        <div class="d">{contested.length ? 'awaiting a batch decision' : 'none contested'}</div>
+      </div>
+      <div class="receipt">
+        <div class="k">Panels withheld</div>
+        <div class="v warn">{withheldCount + withheldStrat}</div>
+        <div class="d">data cannot support them, see &sect;4</div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="n">&sect;1</span>Facilities by delivery volume</h2>
+    <p>
+      Ranked on total deliveries. This ranks <b>volume, not quality</b>: delivery volume tracks
+      facility tier closely, so the ordering largely reproduces the tier hierarchy.
+      <a class="lineage" href="#lineage-top">lineage</a>
+    </p>
+    <figure set:html={rankingSvg} />
+    <figcaption>Top {top.length} of 117 facilities. Hatched bars are provisional.</figcaption>
+  </section>
+
+  <section>
+    <h2><span class="n">&sect;2</span>Neonatal deaths by cause</h2>
+    <p>
+      Bound to ICD-10 perinatal codes, so these are comparable with national reporting rather
+      than bespoke categories. Cause columns reconcile to total neonatal deaths in every one of
+      the 1,404 source rows. <a class="lineage" href="#lineage-cause">lineage</a>
+    </p>
+    <figure set:html={causeSvg} />
+    <table>
+      <thead><tr><th>Cause</th><th>ICD-10</th><th class="num">Deaths</th><th class="num">Share</th></tr></thead>
+      <tbody>
+        {causes.map((c) => (
+          <tr class={c.provisional ? 'provisional' : ''}>
+            <td>{CAUSE_LABEL[c.cause] ?? c.cause}</td>
+            <td class="mono">{codes[`neonatal_deaths_${c.cause}`] ?? 'not coded'}</td>
+            <td class="num">{c.value.toLocaleString()}</td>
+            <td class="num">{((c.value / causes.reduce((s, x) => s + x.value, 0)) * 100).toFixed(1)}%</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2><span class="n">&sect;3</span>Neonatal mortality by district</h2>
+    <p>
+      District is the finest grain this data supports: facility coordinates in the source are
+      unusable, see &sect;5. Hollow markers are provisional. The rule marks Rwanda's reported
+      national rate. <a class="lineage" href="#lineage-district">lineage</a>
+    </p>
+    <figure set:html={districtSvg} />
+    <figcaption>
+      {districts.length} districts, {districts[districts.length - 1]?.value.toFixed(1)} to {districts[0]?.value.toFixed(1)} per 1,000.
+    </figcaption>
+  </section>
+
+  <section>
+    <h2><span class="n">&sect;4</span>Withheld</h2>
+    <p>
+      Two panels a quarterly bulletin would normally carry are not printed. Both are withheld by
+      automated guards rather than editorial judgement, and each records the measurement that
+      decided it.
+    </p>
+
+    <div class="withheld-panel">
+      <div class="hd">Withheld &middot; trend against previous quarter</div>
+      <p class="lead">There is no genuine month-to-month signal in this data.</p>
+      <p>
+        Shuffling each facility's months among themselves destroys any real ordering while
+        preserving that facility's level. The shuffled null matches the observed autocorrelation,
+        so all apparent movement is a stable per-facility baseline plus noise. A quarter-over-quarter
+        arrow would be drawing noise.
+      </p>
+      <table>
+        <thead><tr><th>Series</th><th class="num">Observed lag-1</th><th class="num">Permutation null</th><th>Disposition</th></tr></thead>
+        <tbody>
+          {g.temporal.map((t) => (
+            <tr>
+              <td class="mono">{t.element}</td>
+              <td class="num">{t.observed >= 0 ? '+' : ''}{t.observed.toFixed(3)}</td>
+              <td class="num">{t.nullMean >= 0 ? '+' : ''}{t.nullMean.toFixed(3)} &plusmn; {t.nullSd.toFixed(3)}</td>
+              <td><span class="tag withheld">withheld</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--muted)">
+        Seed {g.temporal[0]?.seed}, {g.temporal[0]?.trials} trials, recorded so the disposition is reproducible.
+      </p>
+    </div>
+
+    <div class="withheld-panel">
+      <div class="hd">Withheld &middot; what drives mortality</div>
+      <p class="lead">Every candidate driver is confounded by facility tier.</p>
+      <p>
+        Pooled across all 117 facilities, staff training correlates with mortality at
+        {' '}{g.strat[0]?.pooled.toFixed(3)}, strong enough to look like a finding. Inside each tier it
+        disappears. Both the training rate and the death count are downstream of where equipment and
+        staff were placed, so the pooled figure measures tier and not training. Publishing it would
+        point the Ministry at a lever that is not there.
+      </p>
+      <table>
+        <thead><tr><th>Covariate</th><th class="num">Pooled r</th><th>Within tier</th><th>Disposition</th></tr></thead>
+        <tbody>
+          {g.strat.map((s) => (
+            <tr>
+              <td class="mono">{s.covariate}</td>
+              <td class="num">{s.pooled >= 0 ? '+' : ''}{s.pooled.toFixed(3)}</td>
+              <td class="mono">{s.within}</td>
+              <td><span class="tag withheld">withheld</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">&sect;5</span>Known defects in the source data</h2>
+    <p>
+      Published rather than corrected silently. Each was found by a one-line check that runs on
+      every ingest, so the same class of problem is caught in next quarter's file without anyone
+      remembering to look.
+    </p>
+    <table>
+      <thead><tr><th>Field</th><th>Finding</th><th class="num">Extent</th><th>Handling</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">gps_lat, gps_lon</td><td>Uniform random within Rwanda's bounding box. Every province spans the full country extent.</td><td class="num">117 / 117</td><td><span class="tag unmeasured">not used</span></td></tr>
+        <tr class="provisional"><td class="mono">2024-01, 2024-03</td><td>Each loaded twice with differing values. No timestamp distinguishes them, and both are internally consistent.</td><td class="num">234 rows</td><td><span class="tag provisional">queued</span></td></tr>
+        <tr><td class="mono">2024-02, 2024-12</td><td>Absent entirely.</td><td class="num">2 months</td><td><span class="tag unmeasured">disclosed</span></td></tr>
+        <tr><td class="mono">facility_name</td><td>Contradicts <code>tier_level</code>.</td><td class="num">62 / 117</td><td><span class="tag unmeasured">label only</span></td></tr>
+        <tr><td class="mono">staff_per_delivery_2024</td><td>Named as derived but unreconstructable. Best of eight formulas matched 58.1%, worse than guessing the column's own mode.</td><td class="num">3 values</td><td><span class="tag unmeasured">not used</span></td></tr>
+        <tr><td class="mono">birth_weight_less_2500g</td><td>Independent of prematurity, r = 0.018, where reality gives 0.6 to 0.9.</td><td class="num">1,404 rows</td><td><span class="tag unmeasured">not used</span></td></tr>
+        <tr><td class="mono">facility_id</td><td>Prefix ambiguous across districts. <code>NYA</code> maps to seven.</td><td class="num">9 prefixes</td><td><span class="tag settled">resolved</span></td></tr>
+      </tbody>
+    </table>
+    <div class="block quiet">
+      <div class="t">why publish these</div>
+      <p>
+        A bulletin that renders clean numbers over data with these problems is exactly the object
+        the Director already refuses. Naming them, and showing what each figure did about them, is
+        what makes the rest of the document checkable rather than merely confident.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">&sect;6</span>Lineage</h2>
+    <p>
+      One record per figure above. In the full system these are addressable URLs
+      (<code>/metric/nmr/district/nyanza/{QUARTER}/lineage</code>); here they are anchors in the
+      same file, so the document works offline and forwards intact.
+    </p>
+
+    <div class="lineage-card" id="lineage-headline">
+      <h4>Headline neonatal mortality, {QUARTER}</h4>
+      <dl>
+        <dt>figure</dt><dd>nmr, grain (national, quarter)</dd>
+        <dt>inputs</dt><dd>{head.births.toLocaleString()} live births, {head.deaths.toLocaleString()} neonatal deaths, {districts.length} districts</dd>
+        <dt>months</dt><dd>{monthsPhrase}</dd>
+        <dt>provisional</dt><dd>{head.provisionalDistricts} of {head.districts} district inputs</dd>
+        <dt>rule applied</dt><dd><code>DEFAULT-BATCH-01</code>, lowest occurrence ordinal on contested batches. Arbitrary and pending resolution.</dd>
+        <dt>definition</dt><dd>WHO GHO: (early + late neonatal deaths) / live births &times; 1,000</dd>
+        <dt>source</dt><dd>assignment_csv &rarr; bronze &rarr; silver &rarr; district_quarter</dd>
+      </dl>
+    </div>
+
+    <div class="lineage-card" id="lineage-top">
+      <h4>Facilities by delivery volume, {QUARTER}</h4>
+      <dl>
+        <dt>figure</dt><dd>deliveries_total, grain (facility, quarter)</dd>
+        <dt>inputs</dt><dd>117 facilities, {monthsHeld} months each</dd>
+        <dt>shown</dt><dd>top {top.length} by value</dd>
+        <dt>rule applied</dt><dd><code>DEFAULT-BATCH-01</code> on contested batches</dd>
+        <dt>caveat</dt><dd>Volume tracks tier; this is not a quality ranking.</dd>
+      </dl>
+    </div>
+
+    <div class="lineage-card" id="lineage-cause">
+      <h4>Neonatal deaths by cause, {QUARTER}</h4>
+      <dl>
+        <dt>figure</dt><dd>5 cause elements, grain (national, quarter)</dd>
+        <dt>codes</dt><dd>ICD-10 P21 asphyxia, P07 prematurity, P36 sepsis, Q00 to Q99 congenital</dd>
+        <dt>identity check</dt><dd>Cause columns sum to total neonatal deaths in 1,404 of 1,404 source rows.</dd>
+        <dt>definition</dt><dd>Sum over the quarter's held months.</dd>
+      </dl>
+    </div>
+
+    <div class="lineage-card" id="lineage-district">
+      <h4>Neonatal mortality by district, {QUARTER}</h4>
+      <dl>
+        <dt>figure</dt><dd>nmr, grain (district, quarter)</dd>
+        <dt>inputs</dt><dd>{districts.length} districts, {head.births.toLocaleString()} live births</dd>
+        <dt>provisional</dt><dd>{districts.filter((d) => d.provisional).length} of {districts.length}</dd>
+        <dt>grain note</dt><dd>District, not facility. Facility geography is not derivable from this source.</dd>
+        <dt>benchmark</dt><dd>National reported rate, approximately {NATIONAL_NMR} per 1,000.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    Generated from <code>assignment_csv</code> and <code>dhis2</code> &middot;
+    {head.provisionalDistricts} of {head.districts} district figures provisional &middot;
+    {withheldCount + withheldStrat} panels withheld<br />
+    Pipeline <code>run.py</code> (Hamilton, DuckDB, Parquet) &middot; site Astro, zero client JavaScript<br />
+    Rebuild: <code>uv run python run.py &amp;&amp; bun run build</code>
+  </footer>
+
+</div>
+</body>
+</html>

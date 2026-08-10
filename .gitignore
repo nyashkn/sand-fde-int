@@ -9,3 +9,6 @@ __pycache__/
 
 # OS
 .DS_Store
+deliverable-2-prototype/web/node_modules/
+deliverable-2-prototype/web/dist/
+deliverable-2-prototype/web/.astro/
