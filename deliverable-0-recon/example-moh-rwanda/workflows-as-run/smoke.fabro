@@ -1,0 +1,33 @@
+digraph moh_smoke {
+  rankdir=LR;
+  // Smoke test: prove one lane's live stack end-to-end (agent node, use_skill,
+  // infisical-wrapped search CLIs in the local sandbox, OpenRouter call, file write).
+  graph [
+    goal="{{ goal }}",
+    model_stylesheet="* { model: deepseek-v4-flash; }",
+    default_max_retries=1
+  ];
+
+  start [shape=Mdiamond, label="Start"];
+  exit  [shape=Msquare,  label="Exit"];
+  // NOT goal_gate: in 0.316 an unvisited goal_gate fails the run. halt just exits 1
+  // when a bad path reaches it; a bad path also leaves the terminal goal_gate (verify)
+  // unvisited, which fails the run too.
+  halt  [shape=parallelogram, script="echo 'smoke failed' >&2; exit 1"];
+  halt -> exit;
+
+  preflight [shape=parallelogram, label="Preflight (mkdir out)", script="mkdir -p out out/.raw"];
+
+  lane_systems [
+    label="L1 Systems (smoke)",
+    prompt="Follow the deep-web-search skill (call use_skill('deep-web-search') first). LANE = systems.\nFOCUS: Every digital-health system the Rwanda MoH runs or relies on — internal (HMIS/DHIS2, RapidSMS, e-LMIS, EMR/OpenMRS, lab/LIMS, CHW mobile tools, registries) and external (donor/partner platforms). For each: purpose, owner, status.\nTHEN double-click the 3-5 most central systems.\nWrite out/01-systems.md with inline source URLs. This is a smoke test — keep it to ~1 page but prove the search engines actually returned grounded, cited results."
+  ];
+
+  verify [shape=parallelogram, goal_gate=true, label="Verify lane output",
+    script="test -s out/01-systems.md || { echo 'MISSING out/01-systems.md' >&2; exit 1; }; echo 'lane ok — bytes:'; wc -c out/01-systems.md; echo '--- has a URL? ---'; grep -qE 'https?://' out/01-systems.md && echo 'cited ✓' || { echo 'NO citations' >&2; exit 1; }"];
+
+  start -> preflight;
+  preflight    -> lane_systems [condition="outcome=succeeded"]; preflight    -> halt;
+  lane_systems -> verify       [condition="outcome=succeeded"]; lane_systems -> halt;
+  verify       -> exit         [condition="outcome=succeeded"]; verify       -> halt;
+}

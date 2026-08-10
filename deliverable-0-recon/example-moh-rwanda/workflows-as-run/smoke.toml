@@ -1,0 +1,23 @@
+_version = 1
+
+[workflow]
+graph = "smoke.fabro"
+
+[run]
+goal = "Smoke test: research Rwanda MoH digital-health systems (one lane) and write a cited out/01-systems.md."
+working_dir = "/Users/njui/Documents/dev_work/job_applications/sand/moh-rwanda-research"
+
+[run.model]
+name = "deepseek-v4-flash"
+
+[run.environment]
+id = "local-host"
+
+[environments.local-host]
+provider = "local"
+
+[run.clone]
+enabled = false
+
+[run.artifacts]
+include = ["out/**"]

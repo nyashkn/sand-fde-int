@@ -1,0 +1,23 @@
+_version = 1
+
+[workflow]
+graph = "refine.fabro"
+
+[run]
+goal = "Refine the existing MoH-Rwanda html artifact: embed research source links + run a machine-vision review loop (kimi-k3 sees the rendered page and critiques it) to improve readability and visuals over two passes."
+working_dir = "/Users/njui/Documents/dev_work/job_applications/sand/moh-rwanda-research"
+
+[run.model]
+name = "deepseek-v4-flash"
+
+[run.environment]
+id = "local-host"
+
+[environments.local-host]
+provider = "local"
+
+[run.clone]
+enabled = false
+
+[run.artifacts]
+include = ["out/moh-rwanda-architecture.html", "out/sources.md", "out/review/**", "out/render/**"]

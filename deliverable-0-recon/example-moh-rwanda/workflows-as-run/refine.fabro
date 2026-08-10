@@ -1,0 +1,74 @@
+digraph moh_refine {
+  rankdir=LR;
+  // Refine the EXISTING artifact (does NOT re-run the 10-min research pipeline):
+  //   1. embed research source links (believability),
+  //   2. a MACHINE-VISION review loop — kimi-k3 SEES a screenshot and critiques it,
+  //      then a refine agent applies the fixes. Two passes.
+  // fabro agent nodes are text-only (read_file does not attach images), so vision runs
+  // in `command` nodes via scripts/vision_review.py (OpenRouter kimi-k3 vision) and the
+  // TEXT critique is handed back to the graph. See §14 building-blocks.
+  graph [
+    model_stylesheet="* { model: deepseek-v4-flash; } .visual { model: kimi-k3; }",
+    default_max_retries=1
+  ];
+
+  start [shape=Mdiamond, label="Start"];
+  exit  [shape=Msquare,  label="Exit"];
+  halt  [shape=parallelogram, script="echo 'refine failed at an upstream node' >&2; exit 1"];
+  halt -> exit;
+
+  // Deterministic glue: dirs + keep a pristine baseline copy to fall back on.
+  preflight [shape=parallelogram, label="Preflight",
+    script="mkdir -p out/render out/review && cp -n out/moh-rwanda-architecture.html out/moh-rwanda-architecture.baseline.html; echo prepped"];
+
+  // ── (i) Source links: extract + categorise every URL from the synthesis ──
+  sources [
+    label="Extract sources",
+    prompt="Read out/08-synthesis.md. Extract EVERY distinct source URL. De-duplicate. Group them under the artifact's five section themes: (1) Executive summary / systems inventory, (2) Systems map, (3) Persona journeys, (4) Integration & data-flow, (5) Data-protection & Law 058/2021. Write out/sources.md as a NUMBERED reference list per group: `1. <short source title> — <url>`. Prefer primary sources (MoH Rwanda, RBC, NCSA, MINICT, HISP/DHIS2, OpenHIE, WHO, Global Fund, peer-reviewed). Aim for the 25-45 most load-bearing sources, not all 166. This file feeds the Sources section the refine step embeds."
+  ];
+
+  // ── Baseline render + first machine-vision review ──
+  render0 [shape=parallelogram, label="Render baseline PNG",
+    script="bash scripts/shoot.sh \"$PWD/out/moh-rwanda-architecture.html\" out/render/pass0.png"];
+  vreview0 [shape=parallelogram, label="Vision review (baseline)",
+    script="infisical-kn-personal-dev python3 scripts/vision_review.py out/render/pass0.png out/review/pass0.md 'PASS0 baseline'"];
+
+  // ── Pass 1: embed links + apply the baseline visual critique ──
+  refine1 [
+    label="Refine pass 1 (links + visual)",
+    class="visual",
+    prompt="You are improving the single-page artifact out/moh-rwanda-architecture.html. It must stay ONE self-contained file: inline CSS/SVG only, no external assets, no CDN.\n\nDo BOTH:\n(A) SOURCES + CITATIONS. Read out/sources.md. Add a styled, numbered 'Sources & further reading' section near the end (grouped by the five themes). Add inline superscript citation links on the most load-bearing claims (systems, deployment numbers, laws, integration edges) that jump to the matching source entry (in-page anchors). Make links visually distinct but restrained.\n(B) VISUAL FIXES. Read out/review/pass0.md and apply its punch-list: fix any overlapping/clipped SVG labels and truncated text, raise low-contrast/too-small text to a legible floor, add padding to cramped boxes, colour-code the systems-map categories with a legend, connect persona-journey steps into a left-to-right flow, and add the suggested KPI stat strip and the DP-posture count summary.\n\nUse targeted edits (apply_patch or edit_file); if you rewrite the file, output the COMPLETE document — never truncate. Preserve ALL existing content and factual claims. Then confirm the file is still self-contained and larger than before."
+  ];
+
+  render1 [shape=parallelogram, label="Render pass 1 PNG",
+    script="bash scripts/shoot.sh \"$PWD/out/moh-rwanda-architecture.html\" out/render/pass1.png"];
+  vreview1 [shape=parallelogram, label="Vision review (pass 1)",
+    script="infisical-kn-personal-dev python3 scripts/vision_review.py out/render/pass1.png out/review/pass1.md 'PASS1'"];
+
+  // ── Pass 2: apply remaining critique, final polish ──
+  refine2 [
+    label="Refine pass 2 (polish)",
+    class="visual",
+    prompt="Final polish of out/moh-rwanda-architecture.html (must stay ONE self-contained file: inline CSS/SVG only). Read out/review/pass1.md and apply the remaining fixes it lists, prioritising: any residual SVG label overlaps or clipped/overflowing text, weak diagrams (make the integration/data-flow diagram the clear centrepiece with well-spaced nodes, a legend, and non-overlapping edge labels), visual hierarchy, and consistent colour coding. Do NOT remove the Sources section or citations added in pass 1. Use targeted edits (apply_patch or edit_file); if you rewrite, output the COMPLETE document. Preserve all content."
+  ];
+
+  render2 [shape=parallelogram, label="Render final PNG",
+    script="bash scripts/shoot.sh \"$PWD/out/moh-rwanda-architecture.html\" out/render/pass2.png"];
+
+  // ── Coverage gate: MECE completeness + link + render guarantees ──
+  coverage [shape=parallelogram, goal_gate=true, label="Coverage gate",
+    script="H=out/moh-rwanda-architecture.html; test -s $H || { echo 'html missing' >&2; exit 1; }; for s in 'Executive summary' 'Systems map' 'Persona journeys' 'Integration' 'Law 058'; do grep -qi \"$s\" $H || { echo \"section lost: $s\" >&2; exit 1; }; done; grep -qi 'Sources' $H || { echo 'no Sources section' >&2; exit 1; }; n=$(grep -oE 'href=\"https?://' $H | wc -l | tr -d ' '); test \"$n\" -ge 20 || { echo \"only $n external links (<20)\" >&2; exit 1; }; grep -qiE 'src=\"https?://|<script src=\"http' $H && { echo 'external asset leaked — not self-contained' >&2; exit 1; }; test -s out/render/pass2.png || { echo 'final render missing' >&2; exit 1; }; echo \"coverage ok — $n external links\""];
+
+  // ── Edges: gate forward on succeeded; unconditional -> halt sink ──
+  start    -> preflight [condition="outcome=succeeded"]; start    -> halt;
+  preflight-> sources   [condition="outcome=succeeded"]; preflight-> halt;
+  sources  -> render0   [condition="outcome=succeeded"]; sources  -> halt;
+  render0  -> vreview0  [condition="outcome=succeeded"]; render0  -> halt;
+  vreview0 -> refine1   [condition="outcome=succeeded"]; vreview0 -> halt;
+  refine1  -> render1   [condition="outcome=succeeded"]; refine1  -> halt;
+  render1  -> vreview1  [condition="outcome=succeeded"]; render1  -> halt;
+  vreview1 -> refine2   [condition="outcome=succeeded"]; vreview1 -> halt;
+  refine2  -> render2   [condition="outcome=succeeded"]; refine2  -> halt;
+  render2  -> coverage  [condition="outcome=succeeded"]; render2  -> halt;
+  coverage -> exit      [condition="outcome=succeeded"]; coverage -> halt;
+}

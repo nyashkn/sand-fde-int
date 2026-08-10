@@ -1,0 +1,45 @@
+digraph recon_polish {
+  rankdir=LR;
+  // SUBTRACTIVE readability pass — CSS/layout only, NO new content. One kimi pass +
+  // machine-vision verify. Re-runnable: each run reads out/review/latest.md (the newest
+  // VLM verdict) and simplifies further, then overwrites latest.md. Re-run = one more
+  // iteration; the verify gate FAILS while the verdict is still "weak", so a failed run
+  // is the signal to run again.
+  graph [
+    model_stylesheet="* { model: deepseek-v4-flash; } .visual { model: kimi-k3; }",
+    default_max_retries=1
+  ];
+
+  start [shape=Mdiamond, label="Start"];
+  exit  [shape=Msquare,  label="Exit"];
+  halt  [shape=parallelogram, script="echo 'polish failed / still weak' >&2; exit 1"];
+  halt -> exit;
+
+  // Seed latest.md with the most recent prior verdict if it isn't there yet; keep a
+  // pristine copy of the incoming (link-rich) html to fall back on.
+  preflight [shape=parallelogram, label="Preflight",
+    script="mkdir -p out/render out/review; cp -n out/review/pass2-final.md out/review/latest.md 2>/dev/null; cp -n out/architecture.html out/architecture.prepolish.html 2>/dev/null; echo prepped"];
+
+  // Model = deepseek-v4-flash (default), NOT kimi: this is CSS/layout editing, needs no
+  // vision or premium reasoning, is far cheaper, and — critically — kimi-k3's 131k max_output
+  // demands ~$2 of OpenRouter credit headroom per request, which a low balance rejects.
+  subpass [
+    label="Subtractive restyle (CSS only)",
+    prompt="Improve the READABILITY of out/architecture.html. A vision reviewer rated it 'weak — an information-dense dump, 9pt text, no hierarchy, unreadable for executives'. Read the full critique in out/review/latest.md and fix it.\n\nHARD CONSTRAINTS — this is a SUBTRACTIVE restyle, not an edit:\n- Do NOT add, remove, reword, or reorder any FACT, claim, number, link, citation, or source. The text content and all 45 external links must be preserved verbatim.\n- Do NOT add new sections, KPI strips, diagrams, or decorative elements.\n- Change ONLY presentation: the inline <style> block, class attributes, SVG sizing/spacing, and whitespace.\n\nApply: darken all body/secondary text to #333 or darker (WCAG-AA on the cream background); set a 13px minimum body font (12px absolute floor for captions); cap prose line-length to ~72ch; increase section spacing and card padding for clear visual hierarchy; make section headers clearly larger/bolder; REDUCE the visual density of the systems-map and data-flow SVGs (more spacing, mute non-essential chrome, ensure labels don't overlap) WITHOUT dropping any node or edge. The page must read as a calm executive briefing, not a wall of text.\n\nPrefer targeted edits (apply_patch/edit_file) on the <style> block and specific elements over a full rewrite. Keep ONE self-contained file (inline CSS/SVG, no external assets). When done, confirm the external-link count is still >= 45."
+  ];
+
+  render [shape=parallelogram, label="Render PNG",
+    script="bash scripts/shoot.sh \"$PWD/out/architecture.html\" out/render/latest.png"];
+  vreview [shape=parallelogram, label="Vision verify",
+    script="infisical-kn-personal-dev python3 scripts/vision_review.py out/render/latest.png out/review/latest.md 'POLISH iteration'"];
+
+  verify [shape=parallelogram, goal_gate=true, label="Readability gate",
+    script="H=out/architecture.html; test -s $H || { echo 'html missing' >&2; exit 1; }; for s in 'Executive summary' 'Systems map' 'Persona journeys' 'Integration' 'data-protection' 'Sources'; do grep -qi \"$s\" $H || { echo \"lost: $s\" >&2; exit 1; }; done; n=$(grep -oE 'href=\"https?://' $H|wc -l|tr -d ' '); test \"$n\" -ge 45 || { echo \"links dropped to $n (<45)\" >&2; exit 1; }; grep -qiE 'src=\"https?://|<script src=\"http' $H && { echo 'external asset leaked' >&2; exit 1; }; grep -iE 'VERDICT' out/review/latest.md | grep -qi 'weak' && { echo 'STILL WEAK — re-run polish' >&2; exit 1; }; echo \"readable ok — $n links, verdict >= acceptable\""];
+
+  start    -> preflight [condition="outcome=succeeded"]; start    -> halt;
+  preflight-> subpass   [condition="outcome=succeeded"]; preflight-> halt;
+  subpass  -> render    [condition="outcome=succeeded"]; subpass  -> halt;
+  render   -> vreview   [condition="outcome=succeeded"]; render   -> halt;
+  vreview  -> verify    [condition="outcome=succeeded"]; vreview  -> halt;
+  verify   -> exit      [condition="outcome=succeeded"]; verify   -> halt;
+}

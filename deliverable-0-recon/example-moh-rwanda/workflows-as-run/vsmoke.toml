@@ -1,0 +1,23 @@
+_version = 1
+
+[workflow]
+graph = "vsmoke.fabro"
+
+[run]
+goal = "Vision smoke: prove a fabro agent can see out/render/full.png via read_file + kimi-k3 vision."
+working_dir = "/Users/njui/Documents/dev_work/job_applications/sand/moh-rwanda-research"
+
+[run.model]
+name = "kimi-k3"
+
+[run.environment]
+id = "local-host"
+
+[environments.local-host]
+provider = "local"
+
+[run.clone]
+enabled = false
+
+[run.artifacts]
+include = ["out/vision-test.md"]

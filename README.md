@@ -5,7 +5,8 @@ repo, not a polished submission folder: the research, the dead ends, the decisio
 throwaway prototypes are all here, because how the answer was reached matters as much as the
 answer.
 
-The four deliverables map 1:1 to the folders below.
+The deliverables map 1:1 to the folders below (D0 is a reusable recon pipeline that precedes the
+four assignment deliverables).
 
 ---
 
@@ -17,6 +18,7 @@ The four deliverables map 1:1 to the folders below.
 | `research/` | What I learned before deciding anything. Product research, source videos, the analysis script. |
 | `decisions/` | Numbered decision records. Every non-obvious call, with the reasoning and what would reverse it. |
 | `artifacts/` | Rendered HTML visuals referenced from the written docs. Open them in a browser. |
+| `deliverable-0-recon/` | **D0** — reusable pre-engagement recon pipeline (fabro); produces a sourced landscape artifact. |
 | `deliverable-1-scoping/` | **D1** — discovery process and problem selection. |
 | `deliverable-2-prototype/` | **D2** — solution design + working bulletin prototype. |
 | `deliverable-3-hardening/` | **D3** — top 5 production-readiness gaps. |

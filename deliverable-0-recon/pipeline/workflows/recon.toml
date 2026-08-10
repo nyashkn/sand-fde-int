@@ -1,0 +1,27 @@
+_version = 1
+
+[workflow]
+graph = "recon.fabro"
+
+# ── EDIT ME per engagement ────────────────────────────────────────────────────
+# Name the TARGET organisation, its sector, and its jurisdiction in the goal.
+# The 7 lanes read this goal; optionally add domain seed-terms in recon.fabro's
+# `SEED:` FOCUS lines.
+[run]
+goal = "MECE technical deep-research of <TARGET ORGANISATION> (<sector>, <jurisdiction>): its internal + external systems, where they are deployed, its vendors including AI, how those systems handle data protection, its personas and their journeys, how the systems integrate, and the jurisdiction's data-protection law + how comparable organisations solved it — ending in a self-contained html-kit artifact."
+working_dir = "/ABSOLUTE/PATH/TO/your-recon-workspace"
+
+[run.model]
+name = "deepseek-v4-flash"
+
+[run.environment]
+id = "local-host"
+
+[environments.local-host]
+provider = "local"
+
+[run.clone]
+enabled = false
+
+[run.artifacts]
+include = ["out/**"]
