@@ -5,7 +5,7 @@ unfalsifiable as posed, and so it never gets fixed. A validation layer converts 
 something measurable: a named check, a number, a denominator, and a disposition.
 
 The sweep recorded in `artifacts/04-data-quality-audit.html` found 4 blockers and 13
-material contradictions in 117 facilities and 1,404 facility-months — every one of them
+material contradictions in 117 facilities and 1,404 facility-months, every one of them
 reproducible by a one-line check. It also found 31 checks clean, which is what makes the
 defect list credible rather than a fishing expedition.
 
@@ -35,7 +35,7 @@ to make. That is validation's job, not a reviewer's memory.
 - **BREAKING for DUP-01** (previously drafted as "keep the latest submission"). That rule is
   withdrawn: nothing in the source establishes row order as submission order, both rows are
   always internally consistent, and there is no directional bias (113 vs 119 of 234). The
-  replacement resolves at *batch* scope and defers to a human — 2 decisions, not 234.
+  replacement resolves at *batch* scope and defers to a human, 2 decisions, not 234.
 - Introduce **structural guards**: checks that block a class of *analysis*, not just a class
   of row. A correlation that does not survive stratification, and a period-over-period delta
   on a series with no temporal signal, must both be refused at source.
@@ -66,6 +66,6 @@ spec to delta against.
 - **Constrains** `explore-surface`: the triage queue is a surface over conflict records, so
   its shape is fixed here.
 - **Supplies** the handover artifact. The check registry, not the cleaned data, is what
-  outlives the engagement — it generalises to the next quarter's file and the next country's.
+  outlives the engagement, it generalises to the next quarter's file and the next country's.
 - **Inputs**: `artifacts/04-data-quality-audit.html` (17 findings, 31 clean checks, each with
   a runnable reproduction), `decisions/0008-technical-stack.md`, `decisions/0006-problem-a-plus-handover-act.md`.

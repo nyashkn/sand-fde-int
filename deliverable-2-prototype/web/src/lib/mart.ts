@@ -151,26 +151,30 @@ export async function guards() {
     trials, disposition, reason FROM temporal_signal_guard`);
   const strat = await q(`SELECT covariate, pooled_r, within_strata, stratified_by,
     disposition, reason FROM stratification_guard`);
-  return {
-    temporal: temporal.map((r) => ({
-      element: String(r.data_element),
-      observed: num(r.observed_lag1),
-      nullMean: num(r.null_mean),
-      nullSd: num(r.null_sd),
-      seed: num(r.seed),
-      trials: num(r.trials),
-      withheld: String(r.disposition) === 'withheld',
-      reason: String(r.reason),
-    })),
-    strat: strat.map((r) => ({
-      covariate: String(r.covariate),
-      pooled: num(r.pooled_r),
-      within: String(r.within_strata),
-      by: String(r.stratified_by),
-      withheld: String(r.disposition) === 'withheld',
-      reason: String(r.reason),
-    })),
-  };
+  const temporalRows = temporal.map((r) => ({
+    element: String(r.data_element),
+    observed: num(r.observed_lag1),
+    nullMean: num(r.null_mean),
+    nullSd: num(r.null_sd),
+    seed: num(r.seed),
+    trials: num(r.trials),
+    withheld: String(r.disposition) === 'withheld',
+    reason: String(r.reason),
+  }));
+  const stratRows = strat.map((r) => ({
+    covariate: String(r.covariate),
+    pooled: num(r.pooled_r),
+    within: String(r.within_strata),
+    by: String(r.stratified_by),
+    withheld: String(r.disposition) === 'withheld',
+    reason: String(r.reason),
+  }));
+  // Panels, not rows. A guard withholds one panel however many covariates it examined,
+  // and counting rows here once made the email report 6 where the bulletin said 2.
+  // Both surfaces read this field so the two cannot disagree again.
+  const withheldPanels =
+    (temporalRows.some((t) => t.withheld) ? 1 : 0) + (stratRows.some((s) => s.withheld) ? 1 : 0);
+  return { temporal: temporalRows, strat: stratRows, withheldPanels };
 }
 
 export async function icdCodes(): Promise<Record<string, string>> {

@@ -1,6 +1,6 @@
 ## Context
 
-See `proposal.md` — Why.
+See `proposal.md`, Why.
 
 Constraints, in the order they bind:
 
@@ -36,7 +36,7 @@ Constraints, in the order they bind:
 
 **Inherit the MoH artifact's tokens rather than choosing a palette.**
 Two documents for one client that look unrelated undercut both. *Alternative considered:*
-designing a bulletin-specific palette. Rejected — the engagement already has a system, and
+designing a bulletin-specific palette. Rejected, the engagement already has a system, and
 the reflex answer for this domain (white and teal "healthcare") is the first-order category
 cliché the design laws call out by name.
 
@@ -51,7 +51,7 @@ that may have no network.
 **Charts share one grammar across static and interactive.** Observable Plot renders SVG in
 Node at build time; Mosaic's vgplot is built on Observable Plot and drives the interactive
 surface. One chart registry can therefore serve both. *Alternative considered:* `vl-convert`
-in Python, which was this document's earlier decision. Rejected by ADR 0010 — it works, and
+in Python, which was this document's earlier decision. Rejected by ADR 0010, it works, and
 it keeps rendering in the wrong layer. *Alternative considered:* `microsoft/flint-chart`,
 whose npm-only packaging was the original objection. That objection disappears now the
 frontend is TypeScript, so it returns to the table for the chart layer; not adopted now on
@@ -60,14 +60,14 @@ schedule grounds alone.
 **A chart registry keyed by figure kind, not by panel.**
 `ranking` gets a horizontal bar; `distribution across units` gets a sorted bar with a
 reference line; `composition` gets a stacked bar; `per-unit rate against a benchmark` gets a
-dot plot with a benchmark rule. *Alternative considered:* choosing per panel. Rejected — that
+dot plot with a benchmark rule. *Alternative considered:* choosing per panel. Rejected, that
 is how a document ends up with five chart types that encode the same thing differently, and
 it makes the choice unreviewable.
 
 **State gets a non-colour channel.**
 Provisional is a hatched fill and a dotted rule; withheld is a full-width block occupying the
 position the panel would have had; unmeasured is an explicit glyph, never an empty cell.
-*Alternative considered:* colour-coded tags, which is the current implementation. Rejected —
+*Alternative considered:* colour-coded tags, which is the current implementation. Rejected , 
 it fails a reader scanning rather than reading, and fails entirely without colour.
 
 **The withheld panel keeps the real panel's position and prominence.**
@@ -76,7 +76,7 @@ Demoting it to a footnote would make refusal look like absence. The refusal is a
 **Fix the two ban violations structurally, not by recolouring.**
 Callouts lose `border-left` and gain a tinted background with a rule above; em dashes are
 removed from generated copy and a check over the output enforces it. *Alternative considered:*
-keeping the stripes since they read acceptably. Rejected — a mechanically checkable rule that
+keeping the stripes since they read acceptably. Rejected, a mechanically checkable rule that
 is knowingly violated is worse than no rule.
 
 **DESIGN.md is derived from tokens in use, not authored fresh.**

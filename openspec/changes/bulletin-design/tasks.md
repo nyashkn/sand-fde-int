@@ -12,8 +12,8 @@
 - [x] 1b.2 Read gold Parquet at build time with `@duckdb/node-api`
 - [x] 1b.3 Port the eight bulletin sections to Astro components
 - [x] 1b.4 Verify the static build emits zero script tags and zero external asset references
-- [ ] 1b.5 Add the inline-CSS step required for the email surface
-- [ ] 1b.6 Delete `pipeline/render.py` once parity is confirmed against the committed output
+- [x] 1b.5 Add the inline-CSS step required for the email surface
+- [x] 1b.6 Delete `pipeline/render.py` once parity is confirmed against the committed output
 
 ## 2. Reading order
 
@@ -21,7 +21,7 @@
 - [x] 2.2 Declare, per reader, the question they arrive with and the section that answers it
 - [x] 2.3 Reorder sections so the primary reader's question is answered in the first screen
 - [ ] 2.4 Verify a secondary reader reaches their section without reading the first
-- [ ] 2.5 Verify the first screen at 1280x800 and at a phone viewport
+- [x] 2.5 Verify the first screen at 1280x800 and at a phone viewport
 
 ## 3. Chart registry
 
@@ -30,7 +30,7 @@
 - [x] 3.3 Implement `ranking` as a horizontal bar, for top facilities by volume
 - [x] 3.4 Implement `distribution across units` as a sorted bar with a reference line, for district mortality
 - [x] 3.5 Implement `composition` as a stacked bar, for cause-of-death breakdown
-- [ ] 3.6 Implement `per-unit rate against a benchmark` as a dot plot with a benchmark rule
+- [x] 3.6 Implement `per-unit rate against a benchmark` as a dot plot with a benchmark rule
 - [x] 3.7 Verify a figure kind absent from the registry fails the render rather than improvising
 - [x] 3.8 Verify every visual channel used maps to a measure present in that figure
 - [x] 3.9 Produce both a choropleth and a sorted dot plot for district mortality, and decide from the output
@@ -40,8 +40,8 @@
 - [x] 4.1 Implement provisional as a hatched fill in charts and a dotted rule in tables
 - [x] 4.2 Implement withheld as a full-width block holding the position the panel would have had
 - [x] 4.3 Implement unmeasured as an explicit glyph, never an empty cell
-- [ ] 4.4 Verify all three remain distinguishable with colour removed
-- [ ] 4.5 Verify a scanning reader perceives provisional figures without reading labels
+- [x] 4.4 Verify all three remain distinguishable with colour removed
+- [x] 4.5 Verify a scanning reader perceives provisional figures without reading labels
 
 ## 5. Ban conformance
 
@@ -53,10 +53,10 @@
 ## 6. Verify in a browser
 
 - [x] 6.1 Render both quarters and screenshot the first screen of each
-- [ ] 6.2 Measure the rendered byte size against the email clipping threshold, with charts included
+- [x] 6.2 Measure the rendered byte size against the email clipping threshold, with charts included
 - [x] 6.3 Confirm zero script tags and zero external asset references
 - [x] 6.4 Confirm every chart renders with no network
-- [ ] 6.5 Confirm chart text is legible at published dimensions
+- [x] 6.5 Confirm chart text is legible at published dimensions
 - [ ] 6.6 Run `$impeccable critique` against the rendered output and record the findings
 
 ## 7. Record and hand off

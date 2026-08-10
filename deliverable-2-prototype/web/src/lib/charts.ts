@@ -21,7 +21,9 @@ const TOKENS = {
   olive: '#6f855a',
   oat: '#efebe0',
   paper: '#ffffff',
-  mono: 'ui-monospace, "SF Mono", Menlo, Monaco, monospace',
+  // No quoted family names: Plot writes this into an SVG style attribute, and the
+  // HTML-escaped quotes it emits there are not parseable CSS for the email inliner.
+  mono: 'ui-monospace, Menlo, Monaco, monospace',
 } as const;
 
 /** Diagonal hatch marking provisional values, so state survives greyscale. */

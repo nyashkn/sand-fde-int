@@ -1,4 +1,4 @@
-# Deliverable 2 — Rapid Prototyping
+# Deliverable 2, Rapid Prototyping
 
 Working prototype for Problem A: automating the MoH Quarterly Health Bulletin.
 
@@ -8,8 +8,9 @@ Working prototype for Problem A: automating the MoH Quarterly Health Bulletin.
 cd pipeline
 uv sync                          # duckdb, pandas, pyarrow, sf-hamilton
 uv run python run.py             # build the mart
-uv run python render.py          # render 2024-Q3
-uv run python render.py --quarter 2024-Q1
+cd web && bun install
+bun run publish                  # build + publish 2024-Q1 and 2024-Q3
+bun run verify                   # build, inline email, run all three checks
 open ../output/bulletin-2024-Q1.html
 ```
 
@@ -18,7 +19,7 @@ file with no external assets and no JavaScript.
 
 ## What it produces
 
-`output/bulletin-<quarter>.html` — the bulletin, with every figure carrying its value, its
+`output/bulletin-<quarter>.html`, the bulletin, with every figure carrying its value, its
 state, and a link to the rows and rules behind it. Lineage records live in the same file as
 anchors, so it works offline and survives being forwarded.
 
@@ -26,10 +27,10 @@ Four required metrics, one of which is refused:
 
 | Brief requirement | Status |
 |---|---|
-| Top 10 facilities by volume | rendered — labelled as volume, not quality |
-| Maternal health indicators | rendered — bound to ICD-10 perinatal codes |
+| Top 10 facilities by volume | rendered, labelled as volume, not quality |
+| Maternal health indicators | rendered, bound to ICD-10 perinatal codes |
 | Facility performance scores | **reframed** as a capability inventory |
-| Trend vs previous quarters | **withheld** — the data has no temporal signal |
+| Trend vs previous quarters | **withheld**, the data has no temporal signal |
 
 The last two are the interesting ones. Both are decided by computed guards, not editorial
 judgement, and the bulletin prints the measurement that decided each.
@@ -39,7 +40,7 @@ judgement, and the bulletin prints the measurement that decided each.
 ```
 pipeline/
   run.py                 build the mart          Hamilton -> DuckDB -> Parquet
-  render.py              render the bulletin     DuckDB -> HTML
+  web/                   render every surface    Parquet -> HTML
   dataflow/
     bronze.py            source data, verbatim, nothing dropped
     silver.py            canonical observations at DHIS2 grain
@@ -62,21 +63,21 @@ output/
 | A new measure from an existing source | one row in `crosswalk.csv` |
 | A facility identity from another system | one row in `org_unit_map.csv` |
 | A data quality check | `guards.py`, or a `@check_output` on the silver node |
-| A new bulletin panel | a method on `Bulletin` in `render.py` |
+| A new bulletin panel | a section in `web/src/pages/index.astro` |
 
 ## Three decisions worth reading the code for
 
-**`batch` is in the silver key** — `dataflow/silver.py`. The sample ships 2024-01 and
+**`batch` is in the silver key**, `dataflow/silver.py`. The sample ships 2024-01 and
 2024-03 twice with differing values. Without batch in the key they collide and one silently
 wins, which is the defect rather than a fix for it. Both are retained; figures drawing on
 them are provisional and name the conflict.
 
-**Identity resolves through a declared table** — `mart/org_unit_map.csv`. Not exact-key
+**Identity resolves through a declared table**, `mart/org_unit_map.csv`. Not exact-key
 auto-matching. Two systems using the string `NYA001` is evidence they share a code space,
 not proof, and fusing on string equality is how an identity graph merges two distinct real
 entities. An unresolved key raises rather than quietly inventing a facility.
 
-**Guards refuse claims, not rows** — `dataflow/guards.py`. Ordinary validation rejects a
+**Guards refuse claims, not rows**, `dataflow/guards.py`. Ordinary validation rejects a
 bad row. These reject a bad *claim*: a trend line on a series with no temporal signal, or a
 pooled correlation that vanishes inside every stratum. They are code rather than a
 documented rule because during this engagement the ecological fallacy was explicitly warned
@@ -97,5 +98,19 @@ against and then committed three messages later, by the person who raised it.
 ## Specification
 
 Behaviour is specified in `../openspec/specs/` and `../openspec/changes/`. The specs are
-deliberately ahead of the code — what is specified and unbuilt is the honest answer to
+deliberately ahead of the code, what is specified and unbuilt is the honest answer to
 Deliverable 3, rather than five paragraphs of intent.
+
+## Checks
+
+`bun run verify` runs three, each of which has caught a real defect in this build:
+
+| Check | Holds | Caught |
+|---|---|---|
+| `check-style.mjs` | em dashes, side stripes, script tags, external assets | a latent em dash, and a false positive in its own first rule |
+| `check-email.mjs` | 102 KB clip ceiling, no SVG, no flex or grid, state as words | `display:grid` shipped in the email stylesheet |
+| `check-agreement.mjs` | six shared figures identical across both surfaces | email published 6 withheld panels where the bulletin said 2 |
+
+`bun run publish` additionally refuses to write a file whose name and contents disagree
+on the quarter. That guard exists because the unchecked version shipped `bulletin-2024-Q3.html`
+containing Q1 figures.

@@ -1,4 +1,4 @@
-# 0002 — Use native video-input LLM analysis, not audio transcription alone
+# 0002, Use native video-input LLM analysis, not audio transcription alone
 
 - **Date:** 2026-08-09
 - **Status:** Accepted
@@ -24,7 +24,7 @@ Split by content type rather than using one method for everything:
 
 This is what produced the single most consequential finding in the whole research pack: the
 product is called `Bluelake Admin`, its full nav structure, its chart inventory, and the
-confirmation that the EMR is OpenMRS — none of which is written down anywhere public.
+confirmation that the EMR is OpenMRS, none of which is written down anywhere public.
 
 ## Alternatives
 
@@ -37,7 +37,7 @@ confirmation that the EMR is OpenMRS — none of which is written down anywhere 
 
 ## Reverses if
 
-Cost becomes a factor at higher volume, or a longer video needs analysis — the 5:11 clip
+Cost becomes a factor at higher volume, or a longer video needs analysis, the 5:11 clip
 failed repeatedly on provider-side gateway timeouts regardless of resolution
 (`research/sand-product-research.md` §7.4). At that point, segment the video or fall back
 to audio.

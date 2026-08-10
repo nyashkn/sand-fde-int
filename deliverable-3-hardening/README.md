@@ -1,4 +1,4 @@
-# Deliverable 3 — Production Hardening
+# Deliverable 3, Production Hardening
 
 Top 5 things to fix before this is production-ready.
 

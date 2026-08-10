@@ -1,0 +1,44 @@
+@import './tokens.css';
+/* ── Email edition ──────────────────────────────────────────────────────────
+   Table layout, no flex or grid: Outlook's Word engine supports neither
+   reliably. Everything here must survive being inlined onto the element. */
+body.email { background: var(--paper); }
+.email-page { max-width: 600px; padding: 24px 20px 40px; }
+.email-h1 { font-size: 26px; margin: 4px 0 20px; }
+.email-answer { padding: 20px; margin: 0 0 20px; }
+.email-figure { font-size: 52px; }
+.state-line {
+  margin: 10px 0 0; padding: 8px 10px;
+  background: var(--oat); color: var(--ink-soft);
+  font-size: 13px; border-top: 2px solid var(--clay);
+}
+.email-table { width: 100%; margin: 0 0 20px; }
+.email-table th {
+  text-align: left; font-weight: 600; font-size: 13px;
+  color: var(--ink-soft); width: 34%; white-space: nowrap;
+}
+.email-table td { font-size: 13px; vertical-align: top; }
+.email-table td.st { color: var(--muted); font-size: 12px; }
+.email-block { margin: 0 0 20px; }
+.email-block p { font-size: 13px; margin: 0 0 8px; }
+.email-cta { margin: 0 0 24px; font-size: 15px; }
+.email-cta a { color: var(--clay-d); font-weight: 600; }
+.email-cta .st { font-size: 12px; color: var(--muted); }
+.email-colophon { margin-top: 0; font-size: 11px; }
+
+
+/* Base rules the email edition needs, copied rather than imported: bulletin.css
+   carries flex and grid, which check-email.mjs rejects even when unused. */
+.email .block {
+  background: var(--cream); border-top: 2px solid var(--rule);
+  padding: 14px 16px; margin: 0 0 20px;
+}
+.email .block.quiet { background: var(--g100, #f5f4ee); }
+.email .block .t {
+  font-family: var(--serif); font-size: 15px; font-weight: 600;
+  color: var(--ink); margin: 0 0 8px;
+}
+.email code {
+  font-family: ui-monospace, Menlo, Monaco, monospace;
+  font-size: 12px; background: var(--oat); padding: 1px 4px;
+}

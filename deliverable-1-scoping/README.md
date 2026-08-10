@@ -1,10 +1,10 @@
-# Deliverable 1 — Problem Decomposition and Scoping
+# Deliverable 1, Problem Decomposition and Scoping
 
 **Role:** Forward Deployed Engineer · **Country:** Rwanda · **Sprint:** 6 weeks, 2 FDEs
 **Sponsor:** MoH Director · **Internal:** Solutions Manager, Country Director, Operations Specialist
 
 > **Revision note.** This is v2. The problem selection survived an adversarial review by three
-> independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5) — all three independently
+> independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5), all three independently
 > chose Problem A. The *justification* did not survive: they found four errors unanimously and
 > around a dozen more between them. Every one is corrected below, and the corrections are logged
 > in [`../decisions/0007-cross-provider-redteam-amendments.md`](../decisions/0007-cross-provider-redteam-amendments.md).
@@ -20,14 +20,14 @@ falsifiable.
 
 Assumptions are flagged **[A#]** and collected in §2.5.
 
-**[A1]** The country is Rwanda — the brief says "one of our expansion countries (i.e. Rwanda)" and
+**[A1]** The country is Rwanda, the brief says "one of our expansion countries (i.e. Rwanda)" and
 the provided data uses Rwandan facility names, districts and RWF.
 **[A2]** I have no access to a live Sand or MoH environment. Everything below is built against the
 provided data and public sources, and I have tried not to convert either into an existence proof.
 
 ---
 
-# Section 1 — Discovery Process
+# Section 1, Discovery Process
 
 ## 1.1 "Our data is a mess" is a symptom report, not a problem statement
 
@@ -41,7 +41,7 @@ The sentence contains at least four distinct failure classes, implying four diff
 | **Last mile** | Believed, never reaches a decision | Workflow problem |
 
 Week 1's job is to find which dominates. **I do not know which it is, and the phrase does not tell
-me.** "We cannot make good decisions" is compatible with all four — it could mean missing data,
+me.** "We cannot make good decisions" is compatible with all four, it could mean missing data,
 late data, inaccessible data, untrusted data, weak analysis, or absent decision authority.
 Distrust is the hypothesis I would test *first* because it is the cheapest to check and the most
 commonly missed, not because the sentence establishes it.
@@ -52,12 +52,12 @@ commonly missed, not because the sentence establishes it.
 |---|---|---|
 | **1** | Solutions Manager, Country Director | *Why were the use cases chosen before discovery?* What does the MoU commit us to in writing, and what has been promised to whom? |
 | **1–2** | **MoH Director** (sponsor) | *"Tell me about a decision last quarter you'd have made differently with better data."* Then: *"When the numbers you're shown disagree with what you believe, which do you act on?"* |
-| **2** | **The bulletin analyst** | The most important interview. Not "what do you need" — *"show me last quarter's, and open the files you built it from."* |
+| **2** | **The bulletin analyst** | The most important interview. Not "what do you need", *"show me last quarter's, and open the files you built it from."* |
 | **2–3** | DHIS2 / HMIS focal point | *Where does the 2–3 week delay actually accrue?* And critically: **how do the paper facilities report today?** (see §1.3) |
-| **3** | 2 district health officers — one strong district, one weak | *"What did you look at immediately before your last resource decision?"* If the answer isn't data, B solves the wrong problem |
-| **3–4** | 1 HealthTrack hospital, 1 OpenMRS clinic, 1 paper-only facility — the **data clerk**, not the medical director | Watch month-end reporting happen |
+| **3** | 2 district health officers, one strong district, one weak | *"What did you look at immediately before your last resource decision?"* If the answer isn't data, B solves the wrong problem |
+| **3–4** | 1 HealthTrack hospital, 1 OpenMRS clinic, 1 paper-only facility, the **data clerk**, not the medical director | Watch month-end reporting happen |
 | **4** | TB and HIV programme managers | Size C honestly: how many co-infected, how identified today, what happens when one is missed |
-| **4** | **MoH ICT / InfoSec** | Hosting, data residency, service accounts, approval lead times. See §2.4 — this is the classic six-week killer |
+| **4** | **MoH ICT / InfoSec** | Hosting, data residency, service accounts, approval lead times. See §2.4, this is the classic six-week killer |
 | **5** | Other FDE, Central FDEs, Product | What patterns already exist. Do not rebuild |
 
 **Question discipline.** Every question is **counterfactual** ("what did you do last month") or
@@ -85,7 +85,7 @@ So Week 1 must establish the actual distribution across at least six states, not
 
 **Why this changes things materially:** if most of the 175 do reach DHIS2 as monthly aggregates,
 then (a) the bulletin's coverage is far better than I assumed and the sampling-bias warning in
-§2.4.1 becomes conditional rather than certain, and (b) the argument against B shifts — B fails
+§2.4.1 becomes conditional rather than certain, and (b) the argument against B shifts, B fails
 not on *absence* but on *granularity and freshness*, since monthly aggregates cannot drive
 real-time facility status regardless of how many facilities send them.
 
@@ -96,7 +96,7 @@ real-time facility status regardless of how many facilities send them.
 - **Shadow spreadsheets.** Every emailed Excel file is a system failing someone. The brief already
   names one (immunisation).
 - **The reconciliation tell.** No answer to "what happens when sources disagree" means nobody is
-  checking — that is the mess.
+  checking, that is the mess.
 - **Decision latency vs. data latency.** *Decisive for B.* If districts decide monthly or
   quarterly, 3-week-old data is not the binding constraint.
 - **The denominator problem.** Do current catchment populations exist? Every *rate* depends on
@@ -110,14 +110,14 @@ real-time facility status regardless of how many facilities send them.
 ## 1.5 What I would observe directly, not take on report
 
 1. **Sit through a bulletin build with a stopwatch**, screen-recorded with permission. The critical
-   measurement is the **mechanical : judgement ratio** — it sets the automation ceiling.
+   measurement is the **mechanical : judgement ratio**, it sets the automation ceiling.
 2. **Open the actual DHIS2 export.** Completeness per district, missing org units, duplicate
    submissions, how late the late ones are, and **when in the cycle the data actually lands**.
 3. **Attempt to reproduce last quarter's published figures from source.** If I cannot, the correct
-   conclusion is *"this is not independently reproducible from the materials supplied"* — not
+   conclusion is *"this is not independently reproducible from the materials supplied"*, not
    "nobody can." The analyst may hold undocumented exclusions and corrections, and finding those
    is the point.
-4. **Watch month-end at a paper-only facility** — the register, the transcription, the person, the
+4. **Watch month-end at a paper-only facility**, the register, the transcription, the person, the
    light. This is also how §1.3 gets answered.
 5. **Watch a district officer make a real decision.** Not describe one.
 6. **Measure the infrastructure claim.** "4–6 hrs/day power, spotty 3G" is inherited from the
@@ -135,18 +135,18 @@ real-time facility status regardless of how many facilities send them.
 
 ---
 
-# Section 2 — Problem Selection
+# Section 2, Problem Selection
 
 ## 2.1 A, B and C are solutions, not problems
 
 The brief states three *things to build*. Mapping them back to needs surfaces siblings the brief
-omits — and one opportunity it misses entirely.
+omits, and one opportunity it misses entirely.
 
 **The quoted statements below are my hypotheses phrased in stakeholder language, not interview
 evidence.** They are what I would go and try to falsify in Week 1, not things anyone has said.
 
 ```
-OUTCOME — MoH leadership acts on health-system data it can defend,
+OUTCOME, MoH leadership acts on health-system data it can defend,
           early enough to change the next planning cycle
 │
 ├─ O1  the MoH analyst  [hypothesis]
@@ -168,7 +168,7 @@ OUTCOME — MoH leadership acts on health-system data it can defend,
 │  ├─ S-C2  Weekly reconciliation report, no merging
 │  └─ S-C3  Shared patient identifier (policy, not software)
 │
-└─ O4  the MoH Director  [hypothesis — NOT IN THE BRIEF]
+└─ O4  the MoH Director  [hypothesis, NOT IN THE BRIEF]
    "I cannot defend the numbers I am shown, so I do not act on them."
    ├─ S-D1  Every figure traceable to its DHIS2 value + snapshot
    ├─ S-D2  Publish completeness beside every indicator
@@ -176,14 +176,14 @@ OUTCOME — MoH leadership acts on health-system data it can defend,
 ```
 
 **Note the root outcome changed in this revision, and why it matters.** My first draft wrote
-*"acts on data within the period it describes."* That root **selects for B** — no quarterly
-retrospective artifact can support in-period action — and I then chose A anyway. That was a
+*"acts on data within the period it describes."* That root **selects for B**, no quarterly
+retrospective artifact can support in-period action, and I then chose A anyway. That was a
 reverse-fit: picking the shippable wedge and retrofitting an outcome it cannot serve. The root
 above is what A can honestly serve. The gap between the two is real and is stated in §2.2.
 
 **Two things the A/B/C framing hides:**
 
-**O4 may be the Director's actual complaint** — and if it is, none of A, B or C answers it
+**O4 may be the Director's actual complaint**, and if it is, none of A, B or C answers it
 directly, because all three answer throughput. Whatever ships should therefore carry S-D1 and S-D2
 as requirements. This is a hypothesis to test in Week 1, not a finding.
 
@@ -198,22 +198,22 @@ brief does not consider it. Worth putting to the programme managers regardless.
 > Officer independently producing a bulletin from a replayed quarter before I leave.
 
 **What I am giving up, stated first.** The highest-value outcome for this Ministry is probably
-operational — closer to O2 than O1. A does not deliver that. I am choosing the reachable wedge
+operational, closer to O2 than O1. A does not deliver that. I am choosing the reachable wedge
 over the valuable-but-unreachable one, and the honest framing to the Director is *"this is the
 thing I can finish and prove in six weeks; here is what it does not do."* Selling A as though it
 serves the operational need would be the failure mode.
 
 Three arguments for A:
 
-**1 — It is the only option that can finish and be proven inside six weeks.** C is disqualified on
+**1, It is the only option that can finish and be proven inside six weeks.** C is disqualified on
 clinical-safety grounds. B requires facility-level freshness that monthly aggregate reporting
 cannot supply, regardless of how many facilities report (§1.3). A operates on data that already
 arrives, in a shape that already exists.
 
-**2 — It is the only option with a baseline that plausibly already exists.** Subject to §2.5 A3 —
+**2, It is the only option with a baseline that plausibly already exists.** Subject to §2.5 A3 , 
 the baseline must be measured, not assumed. B and C would need one built first.
 
-**3 — It is the trust wedge.** Delivering a defensible artifact to the analyst and the Director
+**3, It is the trust wedge.** Delivering a defensible artifact to the analyst and the Director
 buys the standing to attempt B. In a first-country, template-setting engagement, proof is the
 currency.
 
@@ -221,10 +221,10 @@ currency.
 independent reviewers rejected this and they are right. A builds an **aggregate, period-grain**
 mart refreshed on bulletin cadence. B needs facility-status freshness, stock/supply event data,
 intra-period updates, alert state and freshness monitoring. What genuinely transfers is the
-**org-unit dimension and the indicator dictionary** — real, reusable, and far less than "most."
+**org-unit dimension and the indicator dictionary**, real, reusable, and far less than "most."
 I was narrating a reporting mart as B's foundation because that resolves the internal conflict with
 the Solutions Manager, not because the architecture says so. The honest sequencing pitch is
-*"A gives us the org-unit hierarchy, the indicator dictionary, and a working relationship — B is
+*"A gives us the org-unit hierarchy, the indicator dictionary, and a working relationship, B is
 still most of a project."*
 
 **On "nothing greenfield."** I over-claimed. Superset, dbt and Airflow appear in Sand's own FDE job
@@ -241,10 +241,10 @@ Ministry's artifact. §2.5 A5 resolves this; I will not redefine the bulletin wi
 
 ### Why not B
 
-Not because it is unimportant — it is closest to the Solutions Manager's pre-commitment and closest
+Not because it is unimportant, it is closest to the Solutions Manager's pre-commitment and closest
 to the maternal/neonatal priority. Because B needs **facility-level freshness**, and the reporting
 substrate is monthly aggregates on a 2–3 week lag. That is a granularity and cadence gap, not
-merely a coverage gap, and closing it is a separate project. B is out of reach *in this sprint* —
+merely a coverage gap, and closing it is a separate project. B is out of reach *in this sprint* , 
 not impossible.
 
 ### Why not C
@@ -252,14 +252,14 @@ not impossible.
 Probabilistic identity matching across CommCare silos with no shared identifier, in six weeks, with
 no MoH clinical-safety review process. I will not overstate the causal chain: a unified *view* does
 not itself prescribe treatment, and the real risk depends on whether matching is advisory or
-authoritative and what review controls exist. But that is precisely the point — **C requires a
+authoritative and what review controls exist. But that is precisely the point, **C requires a
 hazard analysis I cannot complete in six weeks**, and shipping identity matching without one is the
 wrong first engagement. **S-C2 is the version of C I would propose.**
 
 ### The internal disagreement I would surface, not hide
 
 The Solutions Manager pre-identified the use cases before discovery, and his hypothesis points at
-B. Discovery points at A. I would put the sequencing in writing to him and the Director in Week 1 —
+B. Discovery points at A. I would put the sequencing in writing to him and the Director in Week 1 , 
 including the honest version of what A does and does not give B. An FDE who lets a pre-sold
 narrative survive contradicting evidence has chosen internal comfort over the client.
 
@@ -268,7 +268,7 @@ narrative survive contradicting evidence has chosen internal comfort over the cl
 The first draft committed to *"published within 5 working days of quarter close."* **That is
 impossible by construction** and all three reviewers caught it: DHIS2 runs 2–3 weeks behind, and
 nothing in A makes inputs arrive faster. Generating a document faster does not make its data
-appear. Worse, publishing fast on incomplete data would *reduce* trust — the opposite of the goal.
+appear. Worse, publishing fast on incomplete data would *reduce* trust, the opposite of the goal.
 
 The metric is therefore measured from **data availability**, not from quarter close:
 
@@ -287,7 +287,7 @@ to a 90% reduction, not to a number, until the stopwatch resolves it in Week 1.*
 hours → 30 minutes" before measuring is how a credibility problem gets manufactured in Week 2.
 
 **On lineage.** The honest claim is traceability to *the DHIS2 data value, org unit, period,
-version and extraction snapshot* — not to the underlying facility register or patient record. For
+version and extraction snapshot*, not to the underlying facility register or patient record. For
 paper-sourced aggregates, record-level provenance does not exist to trace to.
 
 **One adoption measure, because hours saved is production efficiency, not health value:** is the
@@ -297,7 +297,7 @@ assigned action? If A meets every engineering metric and this stays "no," A has 
 ## 2.4 Explicitly out of scope
 
 - **HealthTrack EMR integration** (45 hospitals, buggy, local servers). Its own project.
-- **Problem C in any form**, including S-C2 — proposed, not built.
+- **Problem C in any form**, including S-C2, proposed, not built.
 - **Real-time anything.** That is B.
 - **Correcting source data.** We surface completeness; we do not fix DHIS2's contents.
 - **Patient-level data.** Aggregate only.
@@ -315,7 +315,7 @@ reviewers flagged them as sprint-killers:
   at facility level, combined with geography, can re-identify. A suppression rule is required
   before publication, and access control, audit logging and retention remain in scope regardless.
 
-### 2.4.1 The 175 paper facilities — coverage gap, honestly bounded
+### 2.4.1 The 175 paper facilities, coverage gap, honestly bounded
 
 Out of scope for six weeks. Three things about it, deliberately shorter than the first draft:
 
@@ -323,7 +323,7 @@ Out of scope for six weeks. Three things about it, deliberately shorter than the
 aggregates via district clerks? Until that is known, the size of the gap is unknown.
 
 **Second, whatever the gap is, print it.** Paper-only facilities are plausibly smaller and more
-rural — and if so, that is where maternal and neonatal mortality is likely highest. *I am asserting
+rural, and if so, that is where maternal and neonatal mortality is likely highest. *I am asserting
 this, not evidencing it; it is checkable against the provided facility data and should be checked.*
 If it holds, a "top 10 facilities by volume" table computed over reporting facilities only
 systematically describes the better-resourced end of the system, and publishing that uncaveated
@@ -331,13 +331,13 @@ would be actively misleading.
 
 **Third, engagement 2 is a measurement, not a pipeline.** A VLM-assisted capture path (photograph
 the register, extract, human confirms, submit with the photo attached as provenance) is a plausible
-unlock — and it is a research programme, not a sketch I should be costing here. The only thing I
+unlock, and it is a research programme, not a sketch I should be costing here. The only thing I
 would commit to is the cheap experiment that decides it: **~50 real register photographs, extraction
 run, field-by-field accuracy against manual transcription, failure modes reported.** That number
 either justifies the project or kills it honestly.
 
 Two objections to record now rather than discover later: if the officer must confirm every digit on
-screen, that may be *slower* than typing aggregates into a simple form — so the design has to earn
+screen, that may be *slower* than typing aggregates into a simple form, so the design has to earn
 its complexity against that baseline. And a photograph of a register may capture names and
 diagnoses, which reintroduces the PHI exposure this sprint avoids.
 
@@ -346,7 +346,7 @@ diagnoses, which reintroduces the PHI exposure this sprint avoids.
 | # | Assumption | Why it matters | Validation | If false |
 |---|---|---|---|---|
 | **A3** | The reporting labour is mostly *mechanical* | The automation ceiling and the headline number | **Stopwatch**, Week 1 | Automate assembly only; reset the target publicly |
-| **A4** | DHIS2 API access granted to a service account | Ingest architecture | Ask Day 1, escalate Day 3 | CSV export drop — same mart, same output |
+| **A4** | DHIS2 API access granted to a service account | Ingest architecture | Ask Day 1, escalate Day 3 | CSV export drop, same mart, same output |
 | **A5** | The bulletin is reproducible as a templated artifact | Whether Superset can be the output at all | Inspect last 2 editions, Day 2 | Generate tables/charts only; narrative stays manual and is named as such |
 | **A6** | ≥2 machine-readable historical editions exist | Trends *and* the validation demo | Request Week 1 | Ship without trends in v1 |
 | **A7** | A **named** DHO with cleared hours exists | The handover act has no subject otherwise | **Written ask, Week 1 Day 2** | Downgrade honestly; stop calling it capacity transfer |
@@ -358,16 +358,16 @@ diagnoses, which reintroduces the PHI exposure this sprint avoids.
 ### 2.5a The Week 1 gate
 
 The first draft committed at the end of Week 1 while planning to resolve existential assumptions in
-Week 2. That is incoherent — A8 alone can invalidate the whole commitment. So the commitment in
+Week 2. That is incoherent, A8 alone can invalidate the whole commitment. So the commitment in
 §2.2 is **conditional on five gates**, assessed at end of Week 1:
 
 | Gate | Passes if |
 |---|---|
-| **G1 — Value** | At least one named decision-maker used the last bulletin for something identifiable |
-| **G2 — Mechanisability** | ≥ 60% of measured cycle time is mechanical assembly |
-| **G3 — Inputs** | DHIS2 access (API or scheduled export) confirmed, with a stated availability cutoff |
-| **G4 — Runtime** | A viable place to run and hand over the pipeline is identified and approvable |
-| **G5 — Operator** | A named person is assigned to receive it |
+| **G1, Value** | At least one named decision-maker used the last bulletin for something identifiable |
+| **G2, Mechanisability** | ≥ 60% of measured cycle time is mechanical assembly |
+| **G3, Inputs** | DHIS2 access (API or scheduled export) confirmed, with a stated availability cutoff |
+| **G4, Runtime** | A viable place to run and hand over the pipeline is identified and approvable |
+| **G5, Operator** | A named person is assigned to receive it |
 
 **G1 or G3 fails → A is the wrong commitment**, and I say so in Week 1 rather than Week 5.
 **G2 fails → the outcome is re-stated smaller** before anything is promised.
@@ -396,7 +396,7 @@ Because a Q[N+1] edition may not fall inside a six-week window (**A11**), this i
 Steps 2 and 5 are the ones that usually get skipped and are the ones that actually predict survival.
 
 **The Week 3 demo** is not a dashboard tour. It is: *"here is last quarter's published bulletin,
-here is the pipeline re-deriving it from source, here are the figures that match — and here is the
+here is the pipeline re-deriving it from source, here are the figures that match, and here is the
 one that doesn't, and why."* A reconciliation that surfaces a genuine discrepancy is a far stronger
 trust event than one that finds none.
 
@@ -423,9 +423,9 @@ from a warehouse rather than from zero.
 
 ---
 
-## Appendix — how this scoping was produced, and where it was wrong
+## Appendix, how this scoping was produced, and where it was wrong
 
-The problem selection was reviewed twice. First by a six-persona adversarial council — which was
+The problem selection was reviewed twice. First by a six-persona adversarial council, which was
 **single-provider**, and therefore could not distinguish "A is correct" from "one model's priors
 sampled six ways." That limitation was recorded rather than hidden, and it is why the second review
 happened.
@@ -434,7 +434,7 @@ Second, by **three independent model families** (GPT-5.6-sol, Gemini 3.1 Pro, Gr
 hostilely against this document.
 
 **Result: all three independently chose Problem A.** The convergence is therefore probably not a
-single-family artifact — A is the unique option that is clinically non-catastrophic, partially
+single-family artifact, A is the unique option that is clinically non-catastrophic, partially
 instrumented, and finishable.
 
 **But all three rejected the justification**, and four errors were unanimous:
@@ -452,7 +452,7 @@ by luck; and "if I cannot reproduce it, nobody can" was invalid reasoning.
 
 All are corrected above. The lesson worth carrying into the engagement is Grok's: *the blind spot
 was justification quality, not the letter A.* A confident, thorough, internally-consistent document
-can still be wrong in ways only an outside reader sees — which is the same reason §2.5a exists as a
+can still be wrong in ways only an outside reader sees, which is the same reason §2.5a exists as a
 gate rather than a formality.
 
 - Cross-provider reviews: [`../decisions/redteam-d1-cross-provider/`](../decisions/redteam-d1-cross-provider/)

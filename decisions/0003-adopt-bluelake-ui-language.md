@@ -1,4 +1,4 @@
-# 0003 — Build the prototype in the Bluelake Admin UI language
+# 0003, Build the prototype in the Bluelake Admin UI language
 
 - **Date:** 2026-08-09
 - **Status:** Accepted
@@ -6,12 +6,12 @@
 ## Context
 
 Deliverable 2 asks for a bulletin output "in a usable format (simple HTML, or dashboard)".
-That's an open brief — any competent dashboard would satisfy it literally.
+That's an open brief, any competent dashboard would satisfy it literally.
 
 But the video analysis established what Sand's real product looks like in specific detail:
 a two-level nav (`Dashboard | Operations | Finance | Situation Map` over
 `Operational | Financial | Clinical`), a persistent filter bar (facility, date range, gender,
-age group), and a repeating four-chart vocabulary — line for trend, donut for totals,
+age group), and a repeating four-chart vocabulary, line for trend, donut for totals,
 stacked bar for breakdowns, dot map for geography.
 
 ## Decision

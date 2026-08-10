@@ -6,12 +6,12 @@ that rejected rows stay retrievable and that findings attach to the rows they ex
 `trust-lineage` requires that provenance be *columns*, not logs, because a log is not
 addressable from a figure.
 
-Applying any of them means inventing the mart inside a validation task or a lineage task —
+Applying any of them means inventing the mart inside a validation task or a lineage task , 
 which is how a schema ends up decided by whichever piece of work reached it first, and then
 quietly contradicted by the next one.
 
 There is also a claim to make good on. The crosswalk is named throughout this engagement as
-the reusable asset — new source becomes new rows, not a new pipeline. With one source in
+the reusable asset, new source becomes new rows, not a new pipeline. With one source in
 bronze that claim is untested, and a crosswalk with a single source is a rename with extra
 ceremony.
 
@@ -24,7 +24,7 @@ the first real source. A mart shaped around DHIS2's own grain accepts all of the
 
 - Establish **three layers**: bronze as received and immutable, silver at DHIS2 grain with
   provenance, gold as the marts a bulletin reads.
-- Fix silver's grain at `(org_unit, period, data_element, batch)` — **batch is in the key**,
+- Fix silver's grain at `(org_unit, period, data_element, batch)`, **batch is in the key**,
   because without it the two January loads collide and one silently overwrites the other,
   which is the defect rather than a fix for it.
 - Establish the **crosswalk as a table**, not an in-code rename: source system, source field,
@@ -56,8 +56,8 @@ state requirements *on* a mart without specifying one.
 
 - **Depends on** `conceptual-model` for identity, grain, and the canonical vocabulary that
   the crosswalk maps to.
-- **Unblocks** `data-validation` — checks need Hamilton nodes over real tables to attach to.
-- **Unblocks** `trust-lineage` — the lineage projection needs columns to project over.
+- **Unblocks** `data-validation`, checks need Hamilton nodes over real tables to attach to.
+- **Unblocks** `trust-lineage`, the lineage projection needs columns to project over.
 - **Constrains** `bulletin-render` and `explore-surface`: both read gold Parquet directly.
   No service, no query API.
 - **Supplies** the reusability argument for Deliverable 4. The crosswalk and the silver grain

@@ -1,8 +1,8 @@
-# 0009 — Bind the vocabulary to DHIS2; invent only where no standard exists
+# 0009, Bind the vocabulary to DHIS2; invent only where no standard exists
 
 - **Date:** 2026-08-10
 - **Status:** Accepted
-- **Method:** noun harvest across four sources — 66 distinct fields in the sample CSVs, the
+- **Method:** noun harvest across four sources, 66 distinct fields in the sample CSVs, the
   Bluelake Admin UI, the DHIS2 data model, and the brief
 
 ## Context
@@ -16,7 +16,7 @@ Nothing downstream can proceed through that. `ingest-mart`'s crosswalk maps sour
 *to* canonical terms, so the canonical terms must exist first. Deeplinks address objects, so
 the objects must be named.
 
-The tempting move is to author a clean project vocabulary — pick the clearest word for each
+The tempting move is to author a clean project vocabulary, pick the clearest word for each
 concept, unencumbered by any legacy system's awkwardness.
 
 ## Decision
@@ -54,16 +54,16 @@ without reading code.
   also fails the ADR 0006 test: a named DHO restarting this alone should meet words their
   own HMIS already uses.
 - **Adopt Bluelake's vocabulary**, on the grounds that it is the Sand product this work sits
-  beside. Rejected — it is internally inconsistent (Health Post versus Facility on one
+  beside. Rejected, it is internally inconsistent (Health Post versus Facility on one
   screen), and it is a product vocabulary rather than a national data standard.
 - **Adopt the sample CSVs' field names**, since they are what the pipeline actually ingests.
-  Rejected — they are an artifact of one export, `facility_id` prefixes are ambiguous across
+  Rejected, they are an artifact of one export, `facility_id` prefixes are ambiguous across
   seven districts, and 9 of 66 fields are unusable. Binding canonical names to a defective
   export would bake the defects into the vocabulary.
 - **Model district and province as separate object types**, mirroring the sample's shape.
-  Rejected — it triples the URL patterns, forces three near-identical aggregation paths, and
+  Rejected, it triples the URL patterns, forces three near-identical aggregation paths, and
   diverges from DHIS2 for no gain.
-- **Invent nothing; force every concept onto an existing standard term.** Rejected — it would
+- **Invent nothing; force every concept onto an existing standard term.** Rejected, it would
   have meant calling a provenance-bearing, state-carrying record a `dataValue`, which
   misleads about what the object is.
 
@@ -72,14 +72,14 @@ without reading code.
 - Rwanda migrates off DHIS2, which would make the binding a translation cost rather than a
   saving.
 - A source arrives whose concepts genuinely do not fit the `orgUnit`/`period`/`dataElement`
-  triple — patient-level clinical data would be the obvious case, and would call for FHIR
+  triple, patient-level clinical data would be the obvious case, and would call for FHIR
   rather than an extension of this vocabulary.
 - The two invented terms turn out to have published equivalents we missed.
 
 ## Honest limits
 
-The noun harvest covers four sources. Two systems named in the brief — CommCare and the
-immunisation Excel workbook — were not available and are unrepresented. Their terms are
+The noun harvest covers four sources. Two systems named in the brief, CommCare and the
+immunisation Excel workbook, were not available and are unrepresented. Their terms are
 recorded as expected future synonyms, not as reconciled ones.
 
 Binding to DHIS2 imports its awkwardness: long `dataElement` names and opaque UIDs. That
@@ -88,7 +88,7 @@ already runs.
 
 ## Artifacts
 
-- `openspec/changes/conceptual-model/model.md` — the terminology conflict table, object map,
+- `openspec/changes/conceptual-model/model.md`, the terminology conflict table, object map,
   and URL contract this decision produces
-- `openspec/changes/conceptual-model/specs/conceptual-model/spec.md` — the requirements it
+- `openspec/changes/conceptual-model/specs/conceptual-model/spec.md`, the requirements it
   is held to

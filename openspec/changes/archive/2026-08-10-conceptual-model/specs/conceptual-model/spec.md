@@ -1,7 +1,7 @@
 ## Purpose
 
 Define the objects the system works with, their identity and grain rules, one canonical
-term per concept, and the URL contract that addresses them — so that every figure a reader
+term per concept, and the URL contract that addresses them, so that every figure a reader
 sees can be traced to a named, addressable thing rather than to an anonymous query result.
 
 ## ADDED Requirements

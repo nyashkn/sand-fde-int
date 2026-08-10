@@ -1,6 +1,6 @@
 ## Context
 
-See `proposal.md` — Why.
+See `proposal.md`, Why.
 
 Fixed upstream, not re-decided here:
 
@@ -39,12 +39,12 @@ point.
 **Wide-to-long at the bronze→silver boundary.**
 The CSVs are DHIS2's model pivoted wide; unpivoting recovers `(org_unit, period,
 data_element, value)`. *Alternative considered:* keeping silver wide, one column per measure.
-Rejected — every new source would add columns, provenance would have to be per-column rather
+Rejected, every new source would add columns, provenance would have to be per-column rather
 than per-observation, and the shape would diverge from the system the Ministry runs.
 
 **`batch` is part of the observation identity, not an attribute.**
 Without it the two January loads collide on the natural key and one silently wins. *Alternative
-considered:* deduplicating at ingest. Rejected — that is the defect. Nothing in the source
+considered:* deduplicating at ingest. Rejected, that is the defect. Nothing in the source
 establishes which load is correct, so the mart's job is to represent the ambiguity, not to
 resolve it.
 
@@ -56,29 +56,29 @@ provenance row. Columns make that state unrepresentable. *Alternative considered
 
 **The crosswalk is a table read at runtime, not a generated module.**
 It must be inspectable by a non-engineer at handover. *Alternative considered:* generating a
-Python module from the table at build time for speed. Rejected — the dataset is kilobytes,
+Python module from the table at build time for speed. Rejected, the dataset is kilobytes,
 and the generated artifact would become the thing people actually read.
 
 **Gold is Parquet, not SQLite or CSV.**
 Parquet supports HTTP range requests, so DuckDB-WASM pulls only the row groups and columns it
 needs; the same file serves the batch job. *Alternative considered:* SQLite, which DuckDB also
-reads. Rejected — no columnar range-request story, so a browser client would download the
-whole database. *Alternative considered:* CSV for inspectability. Rejected — no types, no
+reads. Rejected, no columnar range-request story, so a browser client would download the
+whole database. *Alternative considered:* CSV for inspectability. Rejected, no types, no
 predicate pushdown; a CSV export alongside is cheap if inspectability is wanted.
 
 **Unmapped is a recorded state, not an omission.**
 The 9 unusable fields stay in bronze with a stated reason. *Alternative considered:* dropping
-them at ingest. Rejected — a later source may supply a trustworthy version of the same field,
+them at ingest. Rejected, a later source may supply a trustworthy version of the same field,
 and the reason for exclusion is itself a finding worth publishing.
 
 **The second source is hand-written, small, and DHIS2-shaped.**
 Enough rows to prove convergence on a shared `org_unit` and `data_element`, using DHIS2's real
-field names. *Alternative considered:* a full synthetic DHIS2 export. Rejected — cost without
+field names. *Alternative considered:* a full synthetic DHIS2 export. Rejected, cost without
 additional proof; convergence is demonstrated by two rows as well as by two thousand.
 
 ## Risks / Trade-offs
 
-- **Long format inflates row count** — 1,404 facility-months × ~16 measures ≈ 22k observation
+- **Long format inflates row count**, 1,404 facility-months × ~16 measures ≈ 22k observation
   rows. Trivial at this scale; the DHIS2 shape is what makes the mart reusable, and that is
   worth paying for.
 - **Retaining rejected rows and both duplicate batches grows bronze** → kilobytes here;
@@ -96,14 +96,14 @@ additional proof; convergence is demonstrated by two rows as well as by two thou
 
 ## Migration Plan
 
-None — no implementation exists. Order of build: crosswalk table, then bronze loaders, then
+None, no implementation exists. Order of build: crosswalk table, then bronze loaders, then
 the unpivot to silver, then gold marts. `data-validation` attaches to the silver nodes once
 they exist; `trust-lineage` projects over silver's provenance columns.
 
 ## Open Questions
 
 - Whether bronze stores the source file verbatim as a blob in addition to parsed rows. It
-  strengthens the audit claim; it duplicates data. Deferrable — parsed rows with original
+  strengthens the audit claim; it duplicates data. Deferrable, parsed rows with original
   field names satisfy every stated requirement.
 - Partitioning strategy for gold Parquet. At kilobyte scale a single file per mart is
   simplest; period partitioning matters only when a browser client would otherwise fetch far

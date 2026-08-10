@@ -18,7 +18,7 @@ interrogated**, and which refuses to print claims the data cannot support.
 ## Users
 
 **The Director, MoH.** Primary. Quotes figures publicly and must defend them when
-challenged. Arrives asking *can I trust this document*, not *what is the number* — he can
+challenged. Arrives asking *can I trust this document*, not *what is the number*, he can
 already get numbers, he cannot currently defend them. Needs the headline figure, its state,
 and what backs it, in the first screen. Reads on a laptop, often forwarded by email.
 

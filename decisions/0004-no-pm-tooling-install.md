@@ -1,4 +1,4 @@
-# 0004 — Borrow decision/hypothesis patterns; don't install PM skill marketplaces
+# 0004, Borrow decision/hypothesis patterns; don't install PM skill marketplaces
 
 - **Date:** 2026-08-09
 - **Status:** Accepted
@@ -27,7 +27,7 @@ Install neither. Borrow the two patterns that earn their place:
   I can apply directly is a bad trade on a one-week deliverable.
 - **Install pm-brain and run its bootstrap interview.** Its stakeholder/ingestion/maintenance
   layers are built for multi-week PM cadences. On a one-week assignment they'd generate
-  scaffolding with nothing in it — the exact "process theatre" that makes a repo look
+  scaffolding with nothing in it, the exact "process theatre" that makes a repo look
   busier rather than better.
 
 ## Reasoning

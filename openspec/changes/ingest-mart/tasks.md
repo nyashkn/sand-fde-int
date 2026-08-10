@@ -27,7 +27,7 @@
 ## 4. Second source
 
 - [x] 4.1 Hand-write a small DHIS2-shaped export using real DHIS2 field names (`dataElement`, `orgUnit`, `period`, `value`), covering a few org_units and periods already present from the CSVs
-- [x] 4.2 Add its crosswalk rows only — no new loader logic beyond format parsing
+- [x] 4.2 Add its crosswalk rows only, no new loader logic beyond format parsing
 - [x] 4.3 Verify both sources produce silver rows carrying the same canonical data_element and resolving to the same org_unit identity
 - [x] 4.4 Verify the two observations are retained separately and neither is silently preferred
 

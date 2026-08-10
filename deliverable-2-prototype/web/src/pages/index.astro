@@ -1,11 +1,13 @@
 ---
-import '../styles/tokens.css';
+import '../styles/bulletin.css';
 import {
   completeness, headlineNmr, districtNmr, topFacilities, causeBreakdown, guards, icdCodes,
 } from '../lib/mart';
 import { chart } from '../lib/charts';
 
-const QUARTER = import.meta.env.QUARTER ?? '2024-Q1';
+// process.env, not import.meta.env: Astro only surfaces PUBLIC_-prefixed vars there,
+// and the difference silently published a file named Q3 holding Q1 figures.
+const QUARTER = process.env.QUARTER ?? '2024-Q1';
 
 const [comp, head, districts, top, causes, g, codes] = await Promise.all([
   completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER),
@@ -15,8 +17,6 @@ const [comp, head, districts, top, causes, g, codes] = await Promise.all([
 const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
 const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
 const monthsHeld = comp.length - absent.length;
-const withheldCount = g.temporal.filter((t) => t.withheld).length > 0 ? 1 : 0;
-const withheldStrat = g.strat.filter((s) => s.withheld).length > 0 ? 1 : 0;
 
 const NATIONAL_NMR = 19; // WHO / national reporting, used as the benchmark rule
 
@@ -94,7 +94,7 @@ const monthsPhrase = absent.length
       </div>
       <div class="receipt">
         <div class="k">Panels withheld</div>
-        <div class="v warn">{withheldCount + withheldStrat}</div>
+        <div class="v warn">{g.withheldPanels}</div>
         <div class="d">data cannot support them, see &sect;4</div>
       </div>
     </div>
@@ -294,7 +294,7 @@ const monthsPhrase = absent.length
   <footer class="colophon">
     Generated from <code>assignment_csv</code> and <code>dhis2</code> &middot;
     {head.provisionalDistricts} of {head.districts} district figures provisional &middot;
-    {withheldCount + withheldStrat} panels withheld<br />
+    {g.withheldPanels} panels withheld<br />
     Pipeline <code>run.py</code> (Hamilton, DuckDB, Parquet) &middot; site Astro, zero client JavaScript<br />
     Rebuild: <code>uv run python run.py &amp;&amp; bun run build</code>
   </footer>

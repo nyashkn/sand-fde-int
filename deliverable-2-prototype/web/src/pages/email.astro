@@ -1,0 +1,120 @@
+---
+/**
+ * The email edition.
+ *
+ * Not the bulletin inlined. Embedded SVG is unsupported in Gmail, Outlook and Yahoo
+ * (caniemail: ~38%), and Microsoft began retiring it in Outlook in Aug 2025, so a chart
+ * sent this way is bytes that do not draw. Inlining the full document measured 99KB
+ * against a ~102KB clip threshold to ship charts that most recipients cannot see.
+ *
+ * So this surface carries what survives a client that can draw nothing: the figure, its
+ * state, what backs it, what is missing, and a link. Every state that the bulletin shows
+ * with hatch or hollow markers is spelled here as a word, which is the same reason
+ * DESIGN.md bans colour as the only channel, extended one surface further.
+ */
+import '../styles/email.css';
+import { completeness, headlineNmr, districtNmr, guards } from '../lib/mart';
+
+// process.env, not import.meta.env: Astro only surfaces PUBLIC_-prefixed vars there,
+// and the difference silently published a file named Q3 holding Q1 figures.
+const QUARTER = process.env.QUARTER ?? '2024-Q1';
+const BULLETIN_URL = process.env.BULLETIN_URL ?? `https://moh.gov.rw/bulletin/${QUARTER}`;
+
+const [comp, head, districts, g] = await Promise.all([
+  completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER), guards(),
+]);
+
+const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
+const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
+const monthsHeld = comp.length - absent.length;
+const worst = districts[0];
+const best = districts[districts.length - 1];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quarterly Health Bulletin, {QUARTER}</title>
+</head>
+<body class="email">
+<div class="page email-page">
+
+  <div class="kicker">Ministry of Health, Rwanda &middot; neonatal &middot; {QUARTER}</div>
+  <h1 class="email-h1">Quarterly Health Bulletin</h1>
+
+  <div class="answer email-answer">
+    <div class="answer-label">Neonatal mortality, {QUARTER}</div>
+    <div class="answer-figure email-figure">
+      {head.rate.toFixed(1)}<span class="answer-unit"> per 1,000 live births</span>
+    </div>
+    <div class="state-line">
+      <b>Provisional.</b> All {head.provisionalDistricts} district figures rest on contested
+      input and may change.
+    </div>
+    <p class="answer-basis">
+      {head.deaths.toLocaleString()} deaths across {head.births.toLocaleString()} live births,
+      WHO GHO definition, {monthsHeld} of {comp.length} expected months.
+    </p>
+  </div>
+
+  <table class="email-table">
+    <tbody>
+      <tr>
+        <th>Months held</th>
+        <td>{monthsHeld} of {comp.length}</td>
+        <td class="st">{absent.length ? `${absent.join(', ')} absent from the source` : 'complete'}</td>
+      </tr>
+      <tr>
+        <th>Facilities reporting</th>
+        <td>{Math.max(...comp.map((c) => c.facilities_received))} of {comp[0]?.facilities_expected}</td>
+        <td class="st">in the months held</td>
+      </tr>
+      <tr>
+        <th>Figures provisional</th>
+        <td>{head.provisionalDistricts} of {head.districts}</td>
+        <td class="st">{contested.length ? `${contested.join(' and ')} each loaded twice with differing values` : 'none contested'}</td>
+      </tr>
+      <tr>
+        <th>Panels withheld</th>
+        <td>{g.withheldPanels}</td>
+        <td class="st">trend, and what drives mortality</td>
+      </tr>
+      <tr>
+        <th>District range</th>
+        <td>{best?.value.toFixed(1)} to {worst?.value.toFixed(1)}</td>
+        <td class="st">{best?.district} lowest, {worst?.district} highest</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="block quiet email-block">
+    <div class="t">Two panels are withheld</div>
+    <p>
+      <b>Trend against previous quarter.</b> Shuffling each facility's months among
+      themselves reproduces the observed movement, so there is no real signal to report.
+    </p>
+    <p>
+      <b>What drives mortality.</b> Every candidate driver is confounded by facility tier.
+      Pooled, staff training correlates at {g.strat[0]?.pooled.toFixed(2)}; inside each tier
+      it disappears.
+    </p>
+  </div>
+
+  <p class="email-cta">
+    <a href={BULLETIN_URL}>Read the full bulletin</a><br />
+    <span class="st">
+      Charts, all {districts.length} districts, cause breakdown, the seven known defects in
+      the source data, and a lineage record for every figure.
+    </span>
+  </p>
+
+  <p class="colophon email-colophon">
+    Generated from <code>assignment_csv</code> and <code>dhis2</code>.
+    Figures marked provisional are not yet settled and are expected to change.
+  </p>
+
+</div>
+</body>
+</html>

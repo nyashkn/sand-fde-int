@@ -1,6 +1,6 @@
 # Decision records
 
-One file per non-obvious decision. Numbered, append-only — superseded decisions get a
+One file per non-obvious decision. Numbered, append-only, superseded decisions get a
 `Superseded by` line rather than an edit, so the reasoning trail stays intact.
 
 The point is not ceremony. It's that six weeks into an engagement, "why is it built this
@@ -9,7 +9,7 @@ way?" has a cheap answer, and a handover has something to hand over.
 ## Format
 
 ```
-# NNNN — <decision, stated as the thing chosen>
+# NNNN, <decision, stated as the thing chosen>
 
 - **Date:**
 - **Status:** Accepted | Superseded by NNNN | Reversed
@@ -19,7 +19,7 @@ way?" has a cheap answer, and a handover has something to hand over.
 - **Reverses if:** the observation that would make this wrong
 ```
 
-`Reverses if` is the field that earns its keep — a decision you can't imagine reversing
+`Reverses if` is the field that earns its keep, a decision you can't imagine reversing
 usually wasn't a decision.
 
 ## Index
@@ -40,5 +40,5 @@ usually wasn't a decision.
 ---
 
 *Schema adapted from the decision-record pattern in
-[phuryn/pm-brain](https://github.com/phuryn/pm-brain) — pattern borrowed, tooling not
+[phuryn/pm-brain](https://github.com/phuryn/pm-brain), pattern borrowed, tooling not
 installed (see 0004).*

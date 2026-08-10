@@ -2,7 +2,7 @@
 
 Make every published figure interrogable. A reader who doubts a number must be able to
 reach the rows behind it, the rules applied to them, what was missing, and who decided
-what — without asking anyone, and without the answer depending on a surface that can run code.
+what, without asking anyone, and without the answer depending on a surface that can run code.
 
 ## ADDED Requirements
 
@@ -75,7 +75,7 @@ state in order to present provenance.
 ### Requirement: Gaps are presented, not merely recorded
 
 Where a figure is derived from incomplete input, the presentation SHALL name what is absent
-at the point the figure appears — not in an appendix, a footnote elsewhere, or a log.
+at the point the figure appears, not in an appendix, a footnote elsewhere, or a log.
 
 #### Scenario: A partial period names what is missing beside the figure
 

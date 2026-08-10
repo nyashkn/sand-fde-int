@@ -1,4 +1,4 @@
-# Deliverable 4 — Handover & Deployment
+# Deliverable 4, Handover & Deployment
 
 Documentation, training plan, exit criteria.
 

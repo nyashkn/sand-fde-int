@@ -44,7 +44,13 @@ const RULES = [
   {
     id: 'no-external-assets',
     why: 'The document must render offline and survive forwarding. Every asset is inline.',
-    test: (html) => [...html.matchAll(/(?:src|href)="https?:\/\/[^"]+"/gi)].map((m) => m[0]),
+    // Assets only. An anchor to the full bulletin is a hyperlink: it is the point of the
+    // email edition, and an unfollowed link still leaves the document complete offline.
+    test: (html) => [
+      ...html.matchAll(/\bsrc\s*=\s*"https?:\/\/[^"]+"/gi),
+      ...html.matchAll(/<link\b[^>]*\bhref\s*=\s*"https?:\/\/[^"]+"/gi),
+      ...html.matchAll(/url\(\s*['"]?https?:\/\//gi),
+    ].map((m) => m[0]),
   },
 ];
 

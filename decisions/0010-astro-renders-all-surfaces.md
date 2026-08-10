@@ -1,4 +1,4 @@
-# 0010 — Astro renders every surface; Python stops at Parquet
+# 0010, Astro renders every surface; Python stops at Parquet
 
 - **Date:** 2026-08-10
 - **Status:** Accepted
@@ -98,5 +98,5 @@ rendered static bulletins remain committed as output until the Astro build repla
 
 ## Artifacts
 
-- `openspec/changes/bulletin-design/` — the visual system this decision renders
-- `deliverable-2-prototype/pipeline/` — unchanged below Parquet
+- `openspec/changes/bulletin-design/`, the visual system this decision renders
+- `deliverable-2-prototype/pipeline/`, unchanged below Parquet

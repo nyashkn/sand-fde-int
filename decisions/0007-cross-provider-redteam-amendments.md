@@ -1,8 +1,8 @@
-# 0007 — Red-team D1 across three model families, and amend
+# 0007, Red-team D1 across three model families, and amend
 
 - **Date:** 2026-08-09
 - **Status:** Accepted
-- **Supersedes nothing.** Amends decision [0006](0006-problem-a-plus-handover-act.md) — the choice
+- **Supersedes nothing.** Amends decision [0006](0006-problem-a-plus-handover-act.md), the choice
   stands, the justification was rebuilt.
 
 ## Context
@@ -16,7 +16,7 @@ a review process that had structurally disqualified itself from validating it.
 
 ## Decision
 
-Run a hostile cross-provider review of the D1 document — not a second council. Three frontier
+Run a hostile cross-provider review of the D1 document, not a second council. Three frontier
 models from three different families, one pass each, prompted explicitly against sycophancy and
 told how the first review was produced and why it was suspect:
 
@@ -39,10 +39,10 @@ So the *choice* is not a single-family artifact. Grok stated the finding precise
 
 | # | Error | Fix |
 |---|---|---|
-| 1 | "Published within 5 working days of quarter close" is **impossible** — DHIS2 runs 2–3 weeks behind and nothing in A makes inputs arrive faster | Metric re-based on **data availability**, not quarter close |
-| 2 | "A's mart is most of B's data layer" is **false** — aggregate period-grain ≠ real-time operational | Claim withdrawn explicitly; replaced with what actually transfers (org-unit dimension, indicator dictionary) |
-| 3 | "40 hrs/month" vs "40 hrs/cycle" for a *quarterly* artifact — ~3× ROI inflation | No number committed; a **90% reduction** against a Week-1 measured baseline |
-| 4 | "Nothing greenfield" converted **job-posting copy into an existence proof** — against my own research file, which grades it *strong*, not *confirmed* | Downgraded to a Week 1 question; added gate G4 |
+| 1 | "Published within 5 working days of quarter close" is **impossible**, DHIS2 runs 2–3 weeks behind and nothing in A makes inputs arrive faster | Metric re-based on **data availability**, not quarter close |
+| 2 | "A's mart is most of B's data layer" is **false**, aggregate period-grain ≠ real-time operational | Claim withdrawn explicitly; replaced with what actually transfers (org-unit dimension, indicator dictionary) |
+| 3 | "40 hrs/month" vs "40 hrs/cycle" for a *quarterly* artifact, ~3× ROI inflation | No number committed; a **90% reduction** against a Week-1 measured baseline |
+| 4 | "Nothing greenfield" converted **job-posting copy into an existence proof**, against my own research file, which grades it *strong*, not *confirmed* | Downgraded to a Week 1 question; added gate G4 |
 
 ### The single most valuable catch (GPT-5.6-sol)
 
@@ -56,7 +56,7 @@ with aggregate-reporting-via-district is the standard African HMIS model.
 New §1.3 disaggregates six reporting states and makes establishing the real distribution a Week 1
 task. Consequences: the bulletin's coverage may be much better than assumed; the sampling-bias
 warning becomes conditional; and the argument against B shifts from *absence* to *granularity and
-cadence* — which is both more accurate and more durable.
+cadence*, which is both more accurate and more durable.
 
 ### Other accepted corrections
 
@@ -71,19 +71,19 @@ cadence* — which is both more accurate and more durable.
 - **"Aggregate-only, therefore out of PHI scope entirely" is too categorical** (GPT, Grok).
   Small-cell suppression added as a requirement.
 - **Committing at end of Week 1 while validating existential assumptions in Week 2 is incoherent**
-  (GPT). Added §2.5a — five explicit pass/fail gates.
+  (GPT). Added §2.5a, five explicit pass/fail gates.
 - **Success criteria assumed a quarter boundary falls inside the sprint by luck** (Grok, GPT).
   Replaced with a controlled **replay protocol** including a seeded failure and the approval step.
 - **"If I cannot reproduce it, nobody can" is invalid** (GPT). The analyst may hold undocumented
-  exclusions — the correct conclusion is "not independently reproducible from materials supplied."
+  exclusions, the correct conclusion is "not independently reproducible from materials supplied."
 - **The clinical-safety argument against C overstated the causal chain** (GPT). A unified *view*
   does not itself prescribe treatment. Re-argued: C needs a hazard analysis that does not fit in
-  six weeks — which is the real reason, and a defensible one.
-- **Invented precision** — "~80% of the win", "two of six weeks" — removed.
+  six weeks, which is the real reason, and a defensible one.
+- **Invented precision**, "~80% of the win", "two of six weeks", removed.
 - **The VLM section was a research programme presented as a sketch** (Grok) and its confirm-each-digit
   loop may be slower than plain data entry (Gemini). Cut back to the one thing worth committing to:
   the ~50-photo accuracy measurement. Both objections recorded in-line.
-- **Missing an adoption measure** (GPT) — hours saved is production efficiency, not health value.
+- **Missing an adoption measure** (GPT), hours saved is production efficiency, not health value.
   Added: is the bulletin reviewed before a named decision meeting, and does any exception generate
   an assigned action?
 - **Missing post-exit ownership** beyond one named person (Grok, GPT). Added to §2.6.
@@ -91,14 +91,14 @@ cadence* — which is both more accurate and more durable.
 ### Rejected
 
 - **Gemini's TOP_FIX: shift the bulletin to monthly cadence (S-A2) to justify ROI.** Sound in
-  principle — and it is already S-A2 in the opportunity tree — but changing the Ministry's
+  principle, and it is already S-A2 in the opportunity tree, but changing the Ministry's
   publication cadence is a Ministry decision, not an FDE decision, and taking it unilaterally in a
   first engagement is precisely the overreach §2.4 exists to prevent. Correct move is to propose it
   once A works, with the automation as the evidence that it is now cheap.
 
 ## Reverses if
 
-Nothing here reverses the choice of Problem A — three independent families converged on it. The
+Nothing here reverses the choice of Problem A, three independent families converged on it. The
 Week 1 gates in §2.5a are what would reverse it, and G1 (does anyone use the bulletin) is the one
 most likely to fire.
 

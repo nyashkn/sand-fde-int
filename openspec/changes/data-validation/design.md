@@ -1,6 +1,6 @@
 ## Context
 
-See `proposal.md` — Why. The finding inventory is `artifacts/04-data-quality-audit.html`.
+See `proposal.md`, Why. The finding inventory is `artifacts/04-data-quality-audit.html`.
 
 Constraints that shape the approach:
 
@@ -13,7 +13,7 @@ Constraints that shape the approach:
 - 17 findings across 5 scopes are already known. The registry is being designed against a
   real inventory, not an imagined one, so the scope enum and disposition set can be closed
   rather than open-ended.
-- Two findings are not row defects at all — they invalidate a *class of analysis*. Nothing in
+- Two findings are not row defects at all, they invalidate a *class of analysis*. Nothing in
   a conventional row-level validation framework expresses that.
 
 ## Goals / Non-Goals
@@ -37,24 +37,24 @@ Constraints that shape the approach:
 **Checks are Hamilton nodes with `@check_output`, not a separate validation pass.**
 A check lives on the node whose output it guards, so it cannot be skipped by running the
 pipeline differently, and its position in the lineage graph is its scope. *Alternative
-considered:* a standalone validation stage after load. Rejected — it can be bypassed, and it
+considered:* a standalone validation stage after load. Rejected, it can be bypassed, and it
 loses the lineage attachment that makes a finding reachable from a figure.
 
 **Findings and resolutions are two tables, never one.**
 Findings are machine-produced and immutable. Resolutions are human-produced and append-only,
 keyed to a finding, with `supersedes` for a changed mind. *Alternative considered:* a mutable
-status column on the finding. Rejected — it destroys the decision history, which is the part
+status column on the finding. Rejected, it destroys the decision history, which is the part
 that answers *"why is this number what it is."*
 
 **Provisional is a column that propagates, not a flag computed at render time.**
 Any aggregate over a provisional input is provisional, and the count of provisional inputs
 travels with it. *Alternative considered:* recomputing provisional state in the renderer.
-Rejected — two renderers would disagree, and the email render (no JavaScript) is the one
+Rejected, two renderers would disagree, and the email render (no JavaScript) is the one
 least able to compute it.
 
 **Batch-scope conflicts are first-class, not 234 row conflicts sharing a reason.**
 The duplicate finding is a property of the load, so the resolution attaches to the load.
-*Alternative considered:* per-record conflicts with a bulk-resolve action. Rejected — it
+*Alternative considered:* per-record conflicts with a bulk-resolve action. Rejected, it
 presents an analyst with 234 decisions where there are 2, and invites resolving them
 inconsistently.
 
@@ -62,14 +62,14 @@ inconsistently.
 The temporal-signal guard tests the series against a within-entity permutation of itself and
 records the result; the renderer reads that result. The stratification guard requires any
 association presented as explanatory to declare the variable it was stratified against.
-*Alternative considered:* a documented rule that reviewers enforce. Rejected — this
+*Alternative considered:* a documented rule that reviewers enforce. Rejected, this
 engagement has already demonstrated that a reviewer, having explicitly warned against the
 ecological fallacy, then committed it three messages later. A rule a human must remember is
 not a control.
 
 **Clean results are recorded with their population.**
 `ran, examined N, found 0` is a different fact from silence, and it is what makes the defect
-list credible. *Alternative considered:* logging only failures. Rejected — it makes a broken
+list credible. *Alternative considered:* logging only failures. Rejected, it makes a broken
 check indistinguishable from a clean dataset.
 
 ## Risks / Trade-offs
@@ -91,13 +91,13 @@ check indistinguishable from a clean dataset.
 
 ## Migration Plan
 
-None — no implementation exists. DUP-01 as previously drafted was never implemented, so its
+None, no implementation exists. DUP-01 as previously drafted was never implemented, so its
 withdrawal is a documentation change, recorded in the proposal as BREAKING for traceability.
 
 ## Open Questions
 
 - The permutation-test threshold for declaring "no temporal signal". The observed case is
-  unambiguous (true 0.867 versus a null of 0.876±0.004 — the null exceeds the true value), so
+  unambiguous (true 0.867 versus a null of 0.876±0.004, the null exceeds the true value), so
   any sane threshold decides it identically. Deferrable until a borderline series appears.
 - Whether informational findings should ever surface in the triage queue or only in the
   edition summary. Affects queue volume, not the record shape.
