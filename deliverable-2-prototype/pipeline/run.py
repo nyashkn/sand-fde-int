@@ -15,16 +15,19 @@ import duckdb
 from hamilton import driver
 
 from dataflow import bronze as bronze_mod
+from dataflow import gold as gold_mod
 from dataflow import silver as silver_mod
 
 OUT = Path(__file__).resolve().parent / "mart"
 
 
 def main() -> int:
-    dr = driver.Builder().with_modules(bronze_mod, silver_mod).build()
+    dr = driver.Builder().with_modules(bronze_mod, silver_mod, gold_mod).build()
 
+    GOLD = ["facility_quarter", "district_quarter", "nmr_district_quarter",
+            "nmr_facility_quarter", "completeness_summary"]
     result = dr.execute(["bronze", "bronze_dhis2", "silver", "org_units",
-                        "crosswalk", "org_unit_map"])
+                         "crosswalk", "org_unit_map", "observations_resolved"] + GOLD)
 
     silver = result["silver"]
     org_units = result["org_units"]
@@ -49,12 +52,15 @@ def main() -> int:
     publish("bronze_dhis2", result["bronze_dhis2"])
     publish("crosswalk", result["crosswalk"])
     publish("org_unit_map", result["org_unit_map"])
+    publish("observations_resolved", result["observations_resolved"])
+    for name in GOLD:
+        publish(name, result[name])
 
     # Parquet, not the DuckDB file, is the published artifact: it supports HTTP range
     # requests, so a browser pulls only the row groups it needs and the batch job reads
     # the same bytes. No service between the pipeline and the surface.
-    con.execute(f"COPY silver TO '{OUT / 'silver.parquet'}' (FORMAT PARQUET)")
-    con.execute(f"COPY org_units TO '{OUT / 'org_units.parquet'}' (FORMAT PARQUET)")
+    for name in ["silver", "org_units"] + GOLD:
+        con.execute(f"COPY {name} TO '{OUT / (name + '.parquet')}' (FORMAT PARQUET)")
 
     print(f"bronze     {sum(len(d) for d in result['bronze'].values()):>7,} rows "
           f"across {len(result['bronze'])} files")
@@ -62,7 +68,9 @@ def main() -> int:
     print(f"silver     {len(silver):>7,} observations")
     print(f"org_units  {len(org_units):>7,} "
           f"({', '.join(f'{k}:{v}' for k, v in org_units['level'].value_counts().items())})")
-    print(f"\nwrote {OUT/'silver.parquet'}")
+    for name in GOLD:
+        print(f"gold       {len(result[name]):>7,}  {name}")
+    print(f"\nwrote {len(GOLD)+2} parquet files to {OUT}")
     con.close()
     return 0
 
