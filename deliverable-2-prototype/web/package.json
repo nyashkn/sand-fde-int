@@ -10,8 +10,9 @@
     "email": "node scripts/email.mjs",
     "check:email": "node scripts/check-email.mjs",
     "check:agreement": "node scripts/check-agreement.mjs",
-    "verify": "astro build && node scripts/email.mjs && node scripts/check-style.mjs && node scripts/check-email.mjs && node scripts/check-agreement.mjs",
-    "publish": "node scripts/publish.mjs 2024-Q1 2024-Q3"
+    "verify": "node scripts/check-tokens.mjs && astro build && node scripts/email.mjs && node scripts/check-style.mjs && node scripts/check-email.mjs && node scripts/check-agreement.mjs",
+    "publish": "node scripts/publish.mjs 2024-Q1 2024-Q3",
+    "check:tokens": "node scripts/check-tokens.mjs"
   },
   "dependencies": {
     "@duckdb/node-api": "^1.5.5-r.3",

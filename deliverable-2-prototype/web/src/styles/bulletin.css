@@ -167,3 +167,17 @@ footer.colophon {
   table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   figure svg { max-width: 100%; height: auto; }
 }
+
+/* ---- section index ---- */
+.index {
+  display: flex; flex-wrap: wrap; gap: 0 var(--s-5);
+  margin: 0 0 var(--s-7); padding: var(--s-3) 0;
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+.index a {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--muted); text-decoration: none;
+  padding: 2px 0; border-bottom: 1px solid transparent;
+}
+.index a:hover { color: var(--clay-d); border-bottom-color: var(--clay); }
+@media print { .index { display: none; } }

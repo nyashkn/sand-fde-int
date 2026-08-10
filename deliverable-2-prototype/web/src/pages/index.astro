@@ -100,7 +100,19 @@ const monthsPhrase = absent.length
     </div>
   </div>
 
-  <section>
+  {/* The Director reads the first screen. Everyone else came for one section, and
+      without this they scroll 5,500px to find it. Plain anchors: works in print,
+      works with no JavaScript, works in a forwarded file. */}
+  <nav class="index" aria-label="Sections">
+    <a href="#s1">&sect;1 Facilities</a>
+    <a href="#s2">&sect;2 Cause of death</a>
+    <a href="#s3">&sect;3 By district</a>
+    <a href="#s4">&sect;4 Withheld</a>
+    <a href="#s5">&sect;5 Known defects</a>
+    <a href="#s6">&sect;6 Lineage</a>
+  </nav>
+
+  <section id="s1">
     <h2><span class="n">&sect;1</span>Facilities by delivery volume</h2>
     <p>
       Ranked on total deliveries. This ranks <b>volume, not quality</b>: delivery volume tracks
@@ -111,7 +123,7 @@ const monthsPhrase = absent.length
     <figcaption>Top {top.length} of 117 facilities. Hatched bars are provisional.</figcaption>
   </section>
 
-  <section>
+  <section id="s2">
     <h2><span class="n">&sect;2</span>Neonatal deaths by cause</h2>
     <p>
       Bound to ICD-10 perinatal codes, so these are comparable with national reporting rather
@@ -134,7 +146,7 @@ const monthsPhrase = absent.length
     </table>
   </section>
 
-  <section>
+  <section id="s3">
     <h2><span class="n">&sect;3</span>Neonatal mortality by district</h2>
     <p>
       District is the finest grain this data supports: facility coordinates in the source are
@@ -147,7 +159,7 @@ const monthsPhrase = absent.length
     </figcaption>
   </section>
 
-  <section>
+  <section id="s4">
     <h2><span class="n">&sect;4</span>Withheld</h2>
     <p>
       Two panels a quarterly bulletin would normally carry are not printed. Both are withheld by
@@ -208,7 +220,7 @@ const monthsPhrase = absent.length
     </div>
   </section>
 
-  <section>
+  <section id="s5">
     <h2><span class="n">&sect;5</span>Known defects in the source data</h2>
     <p>
       Published rather than corrected silently. Each was found by a one-line check that runs on
@@ -237,7 +249,7 @@ const monthsPhrase = absent.length
     </div>
   </section>
 
-  <section>
+  <section id="s6">
     <h2><span class="n">&sect;6</span>Lineage</h2>
     <p>
       One record per figure above. In the full system these are addressable URLs

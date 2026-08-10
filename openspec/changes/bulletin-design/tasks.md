@@ -20,7 +20,7 @@
 - [x] 2.1 Resolve the open question in `design.md`: is the Director's first question "is mortality getting worse" or "can I trust this"
 - [x] 2.2 Declare, per reader, the question they arrive with and the section that answers it
 - [x] 2.3 Reorder sections so the primary reader's question is answered in the first screen
-- [ ] 2.4 Verify a secondary reader reaches their section without reading the first
+- [x] 2.4 Verify a secondary reader reaches their section without reading the first
 - [x] 2.5 Verify the first screen at 1280x800 and at a phone viewport
 
 ## 3. Chart registry
@@ -63,4 +63,4 @@
 
 - [ ] 7.1 Record the Flint decision in Deliverable 3 as the productionization path, with the reason it was not adopted now
 - [x] 7.2 Answer or explicitly defer the two open questions in `design.md`
-- [ ] 7.3 Confirm `explore-surface` can inherit the same token set
+- [x] 7.3 Confirm `explore-surface` can inherit the same token set
