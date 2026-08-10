@@ -74,6 +74,13 @@ means "iterate again". One cheap pass flipped it back to *Acceptable*.
 | `recon` | 8 sourced lane files + first artifact; systems/deployment/vendors/integration all grounded (DHIS2/HMIS, OpenMRS, e-LMIS, RapidPro, RHIE/OpenHIE, NHIC) | $0.31 |
 | `refine` | 45 external source links + 88 in-page citations embedded; still self-contained; **but vision verdict regressed to Weak** (density) | $4.24 |
 | `polish` | subtractive pass on a cheap model; **verdict Weak → Acceptable**, all 45 links kept | $0.05 |
+| `v2 redesign` | rebuilt fresh from `synthesis.md` against the reference exemplar — personas as **SVG swimlane journeys** + a **persona×systems access matrix**, tiered diagrams, 102→65 KB, 45 links kept | — |
+
+The refine/polish loop restyles but cannot restructure; the v2 redesign is what turned a dense
+draft into a visual-first briefing. Its design system is extracted to
+[`pipeline/assets/design-system.css`](pipeline/assets/design-system.css) and the required section
+structure is baked into [`pipeline/skills/html-artifact/SKILL.md`](pipeline/skills/html-artifact/SKILL.md),
+so future recon runs inherit it.
 
 Full artifact set (final + baseline HTML, synthesis, the seven lanes, the extracted sources, and
 every vision-review verdict) is under [`example-moh-rwanda/artifacts/`](example-moh-rwanda/artifacts/).

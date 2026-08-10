@@ -42,3 +42,28 @@ sibling of the existing Sand product docs, not a foreign template.
 - Responsive-ish: readable at 1280px and on a laptop; no horizontal scroll for text.
 - Write to the path in your node prompt (`out/moh-rwanda-architecture.html`). After writing, verify
   it exists and is substantial (a real page, not a stub).
+
+## Structure (v2 — required for a "polished", not "analyst-draft", artifact)
+
+Learned the hard way: an add-only refine loop plateaus at *dense but acceptable*. Build visual-first
+from the start, and inline `../assets/design-system.css` as the `<style>` base (a `:root` palette —
+ink/cream/sage/clay + per-category + per-persona vars — plus reusable component classes).
+
+Target ~50–65 KB, prose subtracted. Seven sections:
+
+1. Header + executive summary + a **KPI stat-band** (4–5 tiles of the load-bearing numbers).
+2. **Systems map** — a tiered SVG (national/district/facility/community/external), boxes
+   colour-coded by category, with a legend. Not a list.
+3. **Persona × systems access matrix** — a CSS-grid matrix (personas × system categories,
+   uses/feeds/reads glyphs).
+4. **Persona journeys — SVG swimlanes.** One horizontal lane per persona; left→right
+   trigger → systems touched → data in/out → outcome, connectors + system chips, one accent colour
+   per persona. This must read as a flow, not a card grid — it is the headline visual.
+5. **Integration & data-flow** — SVG of the exchange/interop layer; space nodes out and give every
+   edge label its own vertical offset (overlapping edge labels are the classic defect).
+6. **Data-protection posture** — a compact obligation × (documented/partial/gap) matrix with status
+   chips.
+7. **Sources appendix** — the numbered links, with inline citation superscripts in the body.
+
+Keep body text ≥13px and secondary/`--muted` text at ≥7:1 contrast on cream. Keep SVG label sizes
+and their containers in sync — bumping label font-size without widening the box reintroduces overlap.

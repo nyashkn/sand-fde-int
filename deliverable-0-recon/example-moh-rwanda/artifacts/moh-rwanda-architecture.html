@@ -4,92 +4,84 @@
 <head>
  <meta charset="UTF-8">
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Rwanda MoH — digital-health systems map, persona journeys &amp; data-protection posture</title>
+ <title>Rwanda MoH digital-health landscape — architecture briefing</title>
  <style>
   :root {
-   --ivory: #FAF9F5;
+   /* ---- design system ---- */
+   --ink: #1A1917;
+   --ink-soft: #3D3D3A;
    --paper: #FFFFFF;
-   --slate: #141413;
-   --clay: #D97757;
-   --clay-d: #B85C3E;
-   --oat: #E3DACC;
-   --olive: #788C5D;
+   --cream: #FAF9F5;
+   --oat: #EFEBE0;
    --sage: #A8B89A;
-   --rose: #C97B7B;
-   --g100: #F0EEE6;
-   --g200: #E6E3DA;
-   --g300: #D1CFC5;
-   --g500: #5E5D55;
-   --g600: #46463F;
-   --g700: #3D3D3A;
-   /* systems-map category colours (A–I) */
-   --ca: #C05B2E;
-   --cb: #788C5D;
-   --cc: #4E8098;
-   --cd: #B08A2E;
-   --ce: #7B5EA7;
-   --cf: #2F6F6B;
-   --cg: #8A6D5A;
-   --ch: #B0413E;
-   --ci: #66788C;
+   --olive: #6F855A;
+   --clay: #C36A47;
+   --clay-d: #A9532F;
+   --muted: #5A5248;
+   --rule: #DED9CC;
+   --rule-2: #ECE8DD;
+   /* category accents */
+   --cat-a: #C36A47; /* reporting / surveillance */
+   --cat-b: #3E857C; /* facility EMR */
+   --cat-c: #8A6B9E; /* community / mHealth */
+   --cat-d: #B58A34; /* supply chain */
+   --cat-e: #5E7FA6; /* laboratory */
+   --cat-f: #6F855A; /* identity / interop */
+   --cat-g: #94806F; /* workforce / admin */
+   --cat-h: #A9532F; /* analytics / NHIC */
+   --cat-i: #86857D; /* external / partner */
+   /* persona accents */
+   --p1: #4C6B8A;
+   --p2: #6F855A;
+   --p3: #3E857C;
+   --p4: #B58A34;
+   --p5: #C0603E;
+   --p6: #8A6B9E;
    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
   }
 
-  * {
-   box-sizing: border-box;
-   margin: 0;
-   padding: 0;
-  }
-
-  html {
-   scroll-behavior: smooth;
-  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-   background: var(--ivory);
-   color: #2A2A28;
+   background: var(--cream);
+   color: var(--ink-soft);
    font-family: var(--sans);
-   font-size: 15px;
+   font-size: 14.5px;
    line-height: 1.6;
-   padding: 44px 24px 80px;
+   padding: 46px 24px 90px;
   }
 
-  .page {
-   max-width: 1160px;
-   margin: 0 auto;
-  }
+  .page { max-width: 1160px; margin: 0 auto; }
 
   .eyebrow {
    font-family: var(--mono);
-   font-size: 11.5px;
+   font-size: 10px;
    letter-spacing: 0.08em;
    text-transform: uppercase;
-   color: var(--g500);
-   margin-bottom: 8px;
+   color: var(--muted);
+   margin-bottom: 9px;
   }
 
   h1 {
    font-family: var(--serif);
-   font-weight: 600;
-   font-size: 34px;
+   font-weight: 500;
+   font-size: 32px;
    line-height: 1.2;
-   color: var(--slate);
-   margin-bottom: 14px;
+   color: var(--ink);
+   margin-bottom: 13px;
+   letter-spacing: -0.01em;
   }
 
-  .summary {
-   max-width: 72ch;
-   font-size: 15px;
-  }
+  .summary { max-width: 900px; font-size: 15px; }
+  .summary b { color: var(--ink); font-weight: 600; }
 
-  .summary code,
   code.inline {
    font-family: var(--mono);
-   font-size: 12.5px;
-   background: var(--g100);
-   border: 1px solid var(--g200);
+   font-size: 11px;
+   background: var(--oat);
+   border: 1px solid var(--rule);
    padding: 1px 5px;
    border-radius: 4px;
   }
@@ -97,623 +89,198 @@
   h2 {
    font-family: var(--serif);
    font-weight: 500;
-   font-size: 21px;
-   color: var(--slate);
-   margin: 38px 0 6px;
+   font-size: 22px;
+   color: var(--ink);
+   margin: 46px 0 6px;
+   letter-spacing: -0.01em;
   }
 
-  .sect-sub {
-   font-size: 13.5px;
-   color: #43433E;
-   max-width: 900px;
-   margin-bottom: 14px;
-   line-height: 1.55;
-  }
-
-  /* ---------- inline citations ---------- */
-  sup.cite {
-   font-size: 0.68em;
-   line-height: 0;
-  }
-
-  sup.cite a {
-   color: #55554E;
-   text-decoration: none;
+  .sec-num {
    font-family: var(--mono);
-   white-space: nowrap;
-  }
-
-  sup.cite a:hover {
-   color: var(--clay-d);
-   text-decoration: underline;
-  }
-
-  /* ---------- executive summary ---------- */
-  .exec {
-   list-style: none;
-   margin-top: 8px;
-  }
-
-  .exec li {
-   position: relative;
-   padding-left: 24px;
-   margin-bottom: 11px;
-   max-width: 74ch;
-   font-size: 14.5px;
-  }
-
-  .exec li::before {
-   content: "–";
-   position: absolute;
-   left: 4px;
+   font-size: 12px;
    color: var(--clay);
-   font-weight: 700;
+   margin-right: 8px;
   }
 
-  .exec b {
-   color: var(--slate);
+  .lede {
+   font-size: 13.5px;
+   color: var(--muted);
+   max-width: 900px;
+   margin-bottom: 18px;
   }
 
-  /* ---------- evidence-base callout ---------- */
-  .evidence {
-   border: 1.5px solid var(--g300);
-   border-left: 4px solid var(--clay);
-   border-radius: 10px;
-   background: var(--paper);
-   padding: 13px 17px;
-   margin-top: 16px;
-   max-width: 960px;
-  }
-
-  .evidence h3 {
+  sup a {
    font-family: var(--mono);
-   font-size: 10.5px;
-   font-weight: 700;
-   text-transform: uppercase;
-   letter-spacing: 0.08em;
+   font-size: 9.5px;
    color: var(--clay-d);
-   margin-bottom: 7px;
+   text-decoration: none;
+   padding: 0 1px;
   }
+  sup a:hover { text-decoration: underline; }
 
-  .evidence p {
-   font-size: 12.5px;
-   color: var(--g700);
-   line-height: 1.6;
-  }
-
-  /* ---------- KPI stat strip ---------- */
-  .kpis {
+  /* ---------- stat band ---------- */
+  .stat-band {
    display: grid;
-   grid-template-columns: repeat(4, 1fr);
-   gap: 10px;
-   margin: 24px 0 6px;
+   grid-template-columns: repeat(5, 1fr);
+   gap: 12px;
+   margin: 26px 0 6px;
   }
+  @media (max-width: 860px) { .stat-band { grid-template-columns: repeat(2, 1fr); } }
 
-  .kpi {
-   border: 1px solid var(--g200);
+  .stat {
+   background: var(--paper);
+   border: 1.5px solid var(--rule);
    border-radius: 11px;
-   background: var(--paper);
-   padding: 13px 15px;
+   padding: 15px 16px;
+   border-top: 3px solid var(--clay);
   }
-
-  .kv {
+  .stat .fig {
    font-family: var(--serif);
-   font-size: 24px;
-   color: var(--clay-d);
-   line-height: 1.1;
+   font-size: 27px;
+   color: var(--ink);
+   line-height: 1.05;
+   letter-spacing: -0.01em;
+  }
+  .stat .fig small { font-size: 15px; color: var(--muted); }
+  .stat .lbl {
+   font-size: 10px;
+   color: var(--muted);
+   margin-top: 6px;
+   line-height: 1.35;
   }
 
-  .kl {
-   font-size: 11.5px;
-   color: var(--g600);
-   margin-top: 7px;
-   line-height: 1.45;
+  /* ---------- generic panel ---------- */
+  .panel {
+   border: 1.5px solid var(--rule);
+   border-radius: 13px;
+   background: var(--paper);
+   padding: 16px;
+   overflow-x: auto;
   }
 
-  @media (max-width: 900px) {
-   .kpis {
-    grid-template-columns: repeat(2, 1fr);
-   }
-  }
+  svg.diagram { display: block; max-width: 100%; height: auto; }
+  .diagram text { font-family: var(--sans); fill: var(--ink); }
 
-  /* ---------- legend strip ---------- */
+  /* ---------- legend ---------- */
   .legend {
-   display: flex;
-   flex-wrap: wrap;
-   gap: 20px;
-   align-items: center;
-   background: var(--oat);
-   border: 1.5px solid var(--g200);
-   border-radius: 10px;
-   padding: 11px 18px;
-   margin: 20px 0 8px;
-   font-size: 13px;
-  }
-
-  .legend .k {
-   display: inline-flex;
-   align-items: center;
-   gap: 7px;
-  }
-
-  .legend .sw {
-   width: 24px;
-   height: 14px;
-   border-radius: 3px;
-   display: inline-block;
-  }
-
-  .sw.confirmed {
-   background: var(--paper);
-   border: 1.5px solid var(--g300);
-  }
-
-  .sw.hot {
-   background: rgba(217, 119, 87, 0.14);
-   border: 1.5px solid var(--clay);
-  }
-
-  .sw.inferred {
-   background: var(--paper);
-   border: 1.5px dashed var(--g500);
-  }
-
-  .sw.dead {
-   background: rgba(201, 123, 123, 0.12);
-   border: 1.5px dashed var(--rose);
-  }
-
-  /* ---------- in-panel map legend (compact) ---------- */
-  .maplegend {
-   margin: 0 0 12px;
-   padding: 9px 14px;
-   font-size: 12.5px;
-   gap: 10px 18px;
-  }
-
-  /* ---------- category legend (systems map) ---------- */
-  .catlegend {
    display: flex;
    flex-wrap: wrap;
    gap: 8px 18px;
    align-items: center;
-   font-size: 12.5px;
-   color: #3D3D3A;
-   margin-top: 12px;
-   padding-left: 2px;
-  }
-
-  .catlegend .k {
-   display: inline-flex;
-   align-items: center;
-  }
-
-  .catlegend .cw {
-   width: 12px;
-   height: 12px;
-   border-radius: 3px;
-   display: inline-block;
-   margin-right: 6px;
-  }
-
-  /* ---------- diagram ---------- */
-  .diagram-panel {
-   border: 1.5px solid var(--g300);
-   border-radius: 12px;
-   background: var(--paper);
-   padding: 18px;
-   overflow-x: auto;
-  }
-
-  svg.flow {
-   display: block;
-   max-width: 100%;
-   height: auto;
-  }
-
-  .flow text {
-   font-family: var(--mono);
-   font-size: 12px;
-   fill: var(--slate);
-  }
-
-  .flow .sub {
-   font-size: 10.5px;
-   fill: #33332F;
-  }
-
-  .flow .tag {
-   font-size: 11px;
-   fill: var(--g700);
-   paint-order: stroke;
-   stroke: var(--paper);
-   stroke-width: 3.5px;
-   stroke-linejoin: round;
-  }
-
-  .flow .band-label {
-   font-size: 11px;
-   fill: var(--g500);
-   letter-spacing: 0.1em;
-   font-weight: 600;
-  }
-
-  .flow .gchip-t {
-   font-size: 10.5px;
-   font-weight: 600;
-   fill: #33332F;
-  }
-
-  /* category colour strips on boxes */
-  .flow .cs {
-   opacity: 0.9;
-  }
-
-  .flow .cs-a { fill: var(--ca); }
-  .flow .cs-b { fill: var(--cb); }
-  .flow .cs-c { fill: var(--cc); }
-  .flow .cs-d { fill: var(--cd); }
-  .flow .cs-e { fill: var(--ce); }
-  .flow .cs-f { fill: var(--cf); }
-  .flow .cs-g { fill: var(--cg); }
-  .flow .cs-h { fill: var(--ch); }
-  .flow .cs-i { fill: var(--ci); }
-
-  .flow .container {
-   fill: var(--g100);
-   stroke: var(--g200);
-   stroke-width: 1.5;
-  }
-
-  /* subtle per-tier tints for visual grouping */
-  .flow .t-ext { fill: #F4F0E6; }
-  .flow .t-nat { fill: #ECEFEF; }
-  .flow .t-fac { fill: #F1EDE4; }
-  .flow .t-com { fill: #EDF1E8; }
-
-  .flow .box {
-   fill: #fff;
-   stroke: var(--g300);
-   stroke-width: 1.5;
-  }
-
-  .flow .box.hot {
-   fill: rgba(217, 119, 87, 0.16);
-   stroke: var(--clay);
-   stroke-width: 2.5;
-  }
-
-  .flow .box.inferred {
-   fill: #fff;
-   stroke: var(--g500);
-   stroke-width: 1.5;
-   stroke-dasharray: 6 3.5;
-  }
-
-  .flow .box.dead {
-   fill: rgba(201, 123, 123, 0.10);
-   stroke: var(--rose);
-   stroke-width: 1.5;
-   stroke-dasharray: 6 3.5;
-  }
-
-  .flow .arrow {
-   stroke: var(--g500);
-   stroke-width: 2;
-   fill: none;
-  }
-
-  .flow .arrow.hot {
-   stroke: var(--clay);
-   stroke-width: 2.2;
-  }
-
-  .flow .arrow.inferred {
-   stroke-dasharray: 6 4;
-  }
-
-  .flow .arrow.gap {
-   stroke: var(--rose);
-   stroke-width: 2.2;
-   stroke-dasharray: 2 3;
-  }
-
-  .map-note {
-   font-family: var(--mono);
-   font-size: 11.5px;
-   color: var(--g600);
-   margin-top: 10px;
-   line-height: 1.55;
-  }
-
-  /* ---------- persona lanes (left→right flow) ---------- */
-  .lane {
-   border: 1.5px solid var(--g300);
-   border-radius: 11px;
-   background: var(--paper);
-   padding: 18px 20px;
-   margin-bottom: 16px;
-  }
-
-  .lane-head {
-   display: flex;
-   gap: 12px;
-   align-items: flex-start;
-   margin-bottom: 10px;
-  }
-
-  .pnum {
-   font-family: var(--mono);
-   background: var(--slate);
-   color: var(--ivory);
-   border-radius: 6px;
-   padding: 3px 9px;
-   font-size: 11.5px;
-   margin-top: 1px;
-  }
-
-  .pname {
-   font-weight: 600;
-   color: var(--slate);
-   font-size: 14px;
-  }
-
-  .psurf {
-   font-family: var(--mono);
-   font-size: 11.5px;
-   color: var(--g600);
-  }
-
-  .psteps {
-   list-style: none;
-   counter-reset: st;
-   display: flex;
-   flex-wrap: nowrap;
-   align-items: stretch;
-   overflow-x: auto;
-   scrollbar-width: thin;
-   gap: 24px;
-   padding: 2px 2px 10px;
-   /* right-edge fade signals horizontal scroll */
-   -webkit-mask-image: linear-gradient(90deg, #000 92%, rgba(0, 0, 0, 0.35) 100%);
-   mask-image: linear-gradient(90deg, #000 92%, rgba(0, 0, 0, 0.35) 100%);
-  }
-
-  .psteps li {
-   counter-increment: st;
-   position: relative;
-   border: 1px solid var(--g300);
-   background: var(--g100);
-   border-radius: 8px;
-   padding: 16px;
-   font-size: 12.5px;
-   flex: 0 0 218px;
-   line-height: 1.5;
-  }
-
-  .psteps li::before {
-   content: counter(st);
-   font-family: var(--mono);
-   font-size: 10px;
-   color: var(--clay-d);
-   border: 1px solid var(--clay);
-   border-radius: 4px;
-   padding: 0 5px;
-   margin-right: 7px;
-  }
-
-  .psteps li:not(:last-child)::after {
-   content: "→";
-   position: absolute;
-   right: -19px;
-   top: 44%;
-   color: var(--clay-d);
-   font-weight: 700;
-   font-size: 14px;
-  }
-
-  .psteps b {
-   color: var(--slate);
-  }
-
-  .chip {
-   font-family: var(--mono);
-   font-size: 12px;
-   font-weight: 600;
-   background: var(--paper);
-   border: 1px solid var(--g300);
-   border-radius: 4px;
-   padding: 1px 5px;
-   white-space: nowrap;
-   color: #3D3D3A;
-  }
-
-  .pdata {
-   margin-top: 12px;
-   font-size: 12.5px;
-   color: #3D3D3A;
-   font-family: var(--mono);
-   line-height: 1.6;
-   border-left: 3px solid var(--g300);
-   background: var(--g100);
-   border-radius: 0 7px 7px 0;
-   padding: 9px 12px;
-  }
-
-  /* ---------- tables ---------- */
-  .matrix-wrap {
-   overflow-x: auto;
-   border: 1.5px solid var(--g300);
-   border-radius: 12px;
-   background: var(--paper);
-  }
-
-  table.matrix {
-   border-collapse: collapse;
-   width: 100%;
-   min-width: 900px;
-   font-size: 13px;
-  }
-
-  table.matrix th,
-  table.matrix td {
-   padding: 12px 11px;
-   border-bottom: 1px solid var(--g100);
-   text-align: left;
-   vertical-align: top;
-  }
-
-  table.matrix thead th {
-   font-family: var(--mono);
-   font-size: 10px;
-   text-transform: uppercase;
-   letter-spacing: 0.05em;
-   color: var(--g500);
-   font-weight: 500;
-   border-bottom: 1.5px solid var(--g200);
-   line-height: 1.3;
-  }
-
-  table.matrix tbody tr:hover {
-   background: var(--g100);
-  }
-
-  table.matrix tr.r-met td:first-child {
-   border-left: 3px solid var(--olive);
-  }
-
-  table.matrix tr.r-part td:first-child {
-   border-left: 3px solid var(--clay);
-  }
-
-  table.matrix tr.r-gap td:first-child {
-   border-left: 3px solid var(--rose);
-  }
-
-  table.matrix td.c {
-   text-align: center;
-   white-space: nowrap;
-  }
-
-  /* heat-map tint on the status column */
-  table.matrix tr.r-met td.c {
-   background: rgba(120, 140, 93, 0.12);
-  }
-
-  table.matrix tr.r-part td.c {
-   background: rgba(217, 119, 87, 0.10);
-  }
-
-  table.matrix tr.r-gap td.c {
-   background: rgba(201, 123, 123, 0.12);
-  }
-
-  table.matrix td b {
-   color: var(--slate);
-  }
-
-  .st {
-   font-size: 16px;
-   line-height: 1;
-  }
-
-  .st.met {
-   color: var(--olive);
-  }
-
-  .st.part {
-   color: var(--clay);
-  }
-
-  .st.gap {
-   color: var(--rose);
-  }
-
-  .sl {
-   font-family: var(--mono);
-   font-size: 10px;
-   color: var(--g600);
-   margin-left: 6px;
-   text-transform: uppercase;
-   letter-spacing: 0.04em;
-  }
-
-  .acc-key {
-   display: flex;
-   gap: 18px;
-   flex-wrap: wrap;
-   font-size: 12.5px;
-   color: var(--g600);
-   margin-top: 10px;
-   padding-left: 2px;
-  }
-
-  /* ---------- DP-posture count summary ---------- */
-  .dpsum {
-   border: 1.5px solid var(--g300);
-   border-radius: 11px;
-   background: var(--paper);
-   padding: 14px 16px;
-   margin-bottom: 12px;
-  }
-
-  .dpbar {
-   display: flex;
-   height: 20px;
+   background: var(--oat);
+   border: 1.5px solid var(--rule);
    border-radius: 10px;
-   overflow: hidden;
+   padding: 10px 16px;
+   margin: 12px 0 4px;
+   font-size: 12px;
+   color: var(--ink-soft);
   }
+  .legend .k { display: inline-flex; align-items: center; gap: 7px; }
+  .legend .sw { width: 20px; height: 12px; border-radius: 3px; display: inline-block; border: 1.5px solid; }
 
-  .dpb {
+  /* ---------- access matrix (CSS grid) ---------- */
+  .matrix {
+   display: grid;
+   grid-template-columns: 190px repeat(9, 1fr);
+   border: 1.5px solid var(--rule);
+   border-radius: 13px;
+   overflow: hidden;
+   background: var(--paper);
+   min-width: 900px;
+   font-size: 12px;
+  }
+  .matrix .mx-wrap { overflow-x: auto; }
+  .mx-scroll { overflow-x: auto; }
+  .matrix .h {
+   font-family: var(--mono);
+   font-size: 9.5px;
+   text-transform: uppercase;
+   letter-spacing: 0.03em;
+   color: var(--muted);
+   padding: 10px 6px;
+   text-align: center;
+   border-bottom: 1.5px solid var(--rule);
+   background: var(--oat);
+   display: flex;
+   align-items: flex-end;
+   justify-content: center;
+   line-height: 1.25;
+  }
+  .matrix .h.corner { justify-content: flex-start; text-align: left; }
+  .matrix .rh {
+   font-weight: 600;
+   color: var(--ink);
+   padding: 11px 12px;
+   border-bottom: 1px solid var(--rule-2);
+   border-right: 1.5px solid var(--rule);
+   font-size: 11px;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+  }
+  .matrix .rh small { font-weight: 400; color: var(--muted); font-size: 10.5px; }
+  .matrix .c {
+   padding: 11px 6px;
+   border-bottom: 1px solid var(--rule-2);
+   text-align: center;
    display: flex;
    align-items: center;
    justify-content: center;
-   color: #FFF;
+   font-size: 15px;
+  }
+  .matrix .c.z { color: var(--rule); font-size: 10px; }
+  .mk-use { color: var(--clay); }
+  .mk-feed { color: var(--olive); }
+  .mk-read { color: var(--cat-e); }
+  .acc-key { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 10px; padding-left: 2px; }
+  .acc-key b { font-weight: 400; }
+
+  /* ---------- DP posture ---------- */
+  .dp-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+  .dp-wrap { overflow-x: auto; border: 1.5px solid var(--rule); border-radius: 13px; background: var(--paper); }
+  .dp-table th {
    font-family: var(--mono);
-   font-size: 10px;
-   font-weight: 700;
-   letter-spacing: 0.05em;
+   font-size: 9.5px;
+   text-transform: uppercase;
+   letter-spacing: 0.04em;
+   color: var(--muted);
+   text-align: left;
+   padding: 11px 14px;
+   background: var(--oat);
+   border-bottom: 1.5px solid var(--rule);
+  }
+  .dp-table td {
+   padding: 11px 14px;
+   border-bottom: 1px solid var(--rule-2);
+   font-size: 11px;
+   vertical-align: top;
+  }
+  .dp-table td.ob { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .dp-table td.ob small { display: block; font-weight: 400; color: var(--muted); font-family: var(--mono); font-size: 10px; margin-top: 2px; }
+  .dp-table tr:last-child td { border-bottom: none; }
+  .chip {
+   display: inline-block;
+   font-family: var(--mono);
+   font-size: 9.5px;
+   letter-spacing: 0.04em;
+   text-transform: uppercase;
+   padding: 3px 9px;
+   border-radius: 20px;
    white-space: nowrap;
+   font-weight: 600;
   }
-
-  .dpb.met {
-   background: var(--olive);
-  }
-
-  .dpb.part {
-   background: var(--clay);
-  }
-
-  .dpb.gap {
-   background: var(--rose);
-  }
-
-  .dpcounts {
-   display: flex;
-   gap: 20px;
-   flex-wrap: wrap;
-   align-items: center;
-   margin-top: 9px;
-   font-size: 12.5px;
-   color: var(--g700);
-  }
-
-  .dptotal {
-   margin-left: auto;
-   color: var(--g600);
-   font-family: var(--mono);
-   font-size: 11.5px;
-  }
+  .chip.doc { background: rgba(111,133,90,0.15); color: #4C5C38; border: 1px solid var(--sage); }
+  .chip.part { background: rgba(195,106,71,0.13); color: var(--clay-d); border: 1px solid var(--clay); }
+  .chip.gap { background: var(--oat); color: var(--muted); border: 1px solid var(--rule); }
 
   /* ---------- callout ---------- */
   .callout {
    border: 1.5px solid var(--clay);
-   border-radius: 12px;
-   background: rgba(217, 119, 87, 0.06);
-   padding: 17px 20px;
+   border-radius: 13px;
+   background: rgba(195,106,71,0.055);
+   padding: 16px 20px;
    margin-top: 22px;
   }
-
   .callout h3 {
    font-family: var(--sans);
    font-size: 11px;
@@ -721,1545 +288,943 @@
    text-transform: uppercase;
    letter-spacing: 0.08em;
    color: var(--clay);
-   margin-bottom: 9px;
+   margin-bottom: 8px;
   }
+  .callout p { font-size: 13px; margin-bottom: 7px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout b { color: var(--ink); }
 
-  .callout p {
-   font-size: 14px;
-   margin-bottom: 9px;
-  }
-
-  .callout p:last-child {
-   margin-bottom: 0;
-  }
-
-  /* ---------- deep details ---------- */
-  details.deep {
-   margin-top: 22px;
-   border: 1.5px solid var(--g300);
-   border-radius: 11px;
-   background: var(--paper);
-   box-shadow: 0 1px 0 var(--g200);
-  }
-
-  details.deep summary {
-   cursor: pointer;
-   padding: 14px 17px;
-   font-size: 13px;
-   font-weight: 600;
-   font-family: var(--mono);
-   color: var(--g700);
-   letter-spacing: 0.02em;
-   background: var(--g100);
-   border-radius: 9px;
-  }
-
-  details.deep[open] summary {
-   border-radius: 9px 9px 0 0;
-   border-bottom: 1px solid var(--g200);
-   margin-bottom: 10px;
-  }
-
-  details.deep .deep-body {
-   padding: 0 17px 16px;
-   font-size: 12.5px;
-  }
-
-  details.deep table {
-   width: 100%;
-   border-collapse: collapse;
-   margin-top: 6px;
-  }
-
-  details.deep th,
-  details.deep td {
-   text-align: left;
-   padding: 7px 9px;
-   border-bottom: 1px solid var(--g100);
-   font-size: 12px;
-   vertical-align: top;
-  }
-
-  details.deep th {
-   color: var(--g500);
-   font-family: var(--mono);
-   font-weight: 500;
-   text-transform: uppercase;
-   font-size: 10px;
-   letter-spacing: 0.05em;
-  }
-
-  /* ---------- sources ---------- */
-  .src-grid {
-   display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-   gap: 14px;
-   margin-top: 14px;
-  }
-
-  .src-group {
-   border: 1.5px solid var(--g300);
-   border-radius: 11px;
-   background: var(--paper);
-   padding: 14px 16px;
-  }
-
-  .src-group h3 {
+  /* ---------- sources appendix ---------- */
+  .src-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 26px; }
+  @media (max-width: 820px) { .src-grid { grid-template-columns: 1fr; } }
+  .src-group h4 {
    font-family: var(--mono);
    font-size: 11px;
-   font-weight: 700;
    text-transform: uppercase;
-   letter-spacing: 0.06em;
+   letter-spacing: 0.05em;
    color: var(--clay-d);
-   margin-bottom: 9px;
+   margin: 8px 0 8px;
+   padding-bottom: 5px;
+   border-bottom: 1.5px solid var(--rule);
   }
-
-  .src-list {
-   padding-left: 20px;
-   font-size: 12.5px;
-  }
-
-  .src-list li {
+  ol.src { list-style: none; counter-reset: s; }
+  ol.src li {
+   counter-increment: s;
+   font-size: 10px;
+   line-height: 1.45;
    margin-bottom: 7px;
-   line-height: 1.5;
-   scroll-margin-top: 24px;
+   padding-left: 26px;
+   position: relative;
   }
-
-  .src-list li:target {
-   background: var(--g100);
-   border-radius: 6px;
-  }
-
-  .src-list a {
-   color: var(--g700);
-   text-decoration: underline;
-   text-decoration-color: var(--g300);
-   text-underline-offset: 2px;
-  }
-
-  .src-list a:hover {
-   color: var(--clay-d);
-  }
-
-  .sm {
-   display: block;
+  ol.src li::before {
+   content: counter(s);
+   position: absolute;
+   left: 0;
+   top: 0;
    font-family: var(--mono);
-   font-size: 12px;
-   color: #46463F;
+   font-size: 10px;
+   color: var(--muted);
+   background: var(--oat);
+   border: 1px solid var(--rule);
+   border-radius: 4px;
+   width: 18px;
+   height: 18px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
   }
+  ol.src li a { color: var(--ink-soft); text-decoration: none; }
+  ol.src li a:hover { color: var(--clay-d); text-decoration: underline; }
+  ol.src li .st { color: var(--ink); font-weight: 600; }
 
-  .render-note {
-   margin-top: 40px;
-   font-family: var(--mono);
-   font-size: 12px;
-   color: #5E5D55;
-   line-height: 1.6;
-  }
+  .footnote { margin-top: 26px; font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.5; }
  </style>
 </head>
 
 <body>
  <div class="page">
 
-  <header data-component="header">
-   <div class="eyebrow">Rwanda Ministry of Health · digital-health landscape · MECE deep research · 2026-08-09</div>
-   <h1>Rwanda MoH — systems map, persona journeys &amp; data-protection posture</h1>
+  <!-- =============== 1. HEADER + SUMMARY + STAT BAND =============== -->
+  <header>
+   <div class="eyebrow">Ministry of Health · Rwanda · digital-health landscape — architecture briefing</div>
+   <h1>Rwanda's national digital-health stack, at a glance</h1>
    <p class="summary">
-    A single MECE model of the Rwandan Ministry of Health digital-health stack: <b>systems × actors × edges ×
-     controls</b>. Nine system categories (<code>A</code> reporting · <code>B</code> facility/community EMR ·
-    <code>C</code> community mHealth · <code>D</code> supply chain · <code>E</code> laboratory · <code>F</code>
-    identity/registries/interop · <code>G</code> workforce/financing/admin · <code>H</code> intelligence ·
-    <code>I</code> external/partner), six personas, thirty-two traced edges, and a control-by-control reading
-    against <b>Law n° 058/2021</b>. Gaps the research could not verify are drawn dashed — never papered over.
+    A <b>national-first, government-hosted, OpenHIE-interoperable</b> stack: 24 systems across 9 categories, hosted at
+    the National Data Centre and in Kigali. It is strong on <b>identity</b> (UPID/NIDA), <b>aggregate reporting</b>
+    (DHIS2 as the national HIS since 2012), <b>supply chain</b> (e-LMIS), <b>lab integration</b> (EMR&#8596;VLSM over
+    OpenHIM + HAPI&nbsp;FHIR), and <b>analytics</b> (NHIC, launched Apr&nbsp;2025)<sup><a href="#src-1-2">2</a></sup> — and it is
+    pushing AI to the edge (d-IDS in cEMR, mUbuzima ML on CHW phones). The open work sits in the
+    <b>data-protection layer</b>: consent capture, at-rest encryption, production audit and DPO/NCSA registration
+    under <b>Law&nbsp;No.&nbsp;058/2021</b>.
    </p>
+
+   <div class="stat-band">
+    <div class="stat">
+     <div class="fig">58,567</div>
+     <div class="lbl">community health workers digitised by end-2026 (cEMR / eCHIS)<sup><a href="#src-1-8">8</a></sup></div>
+    </div>
+    <div class="stat">
+     <div class="fig">42 <small>+ 450+</small></div>
+     <div class="lbl">hospitals + health centres running OpenMRS / eBuzima (~60% of facilities)</div>
+    </div>
+    <div class="stat">
+     <div class="fig">197 <small>/ 30</small></div>
+     <div class="lbl">RHIE-connected facilities across districts by Jan 2025<sup><a href="#src-1-1">1</a></sup></div>
+    </div>
+    <div class="stat">
+     <div class="fig">Apr 2025</div>
+     <div class="lbl">National Health Intelligence Center — 6-layer data lakehouse launched<sup><a href="#src-2-3">3</a></sup></div>
+    </div>
+    <div class="stat">
+     <div class="fig">2012</div>
+     <div class="lbl">DHIS2 running as the national health information system since</div>
+    </div>
+   </div>
   </header>
 
-  <div class="legend" data-component="status-strip">
-   <span class="k"><span class="sw confirmed"></span> In production (documented)</span>
-   <span class="k"><span class="sw hot"></span> Interop backbone / live feedback loop</span>
-   <span class="k"><span class="sw inferred"></span> Planned · under development · unverified (dashed, ⚠-tagged)</span>
-   <span class="k"><span class="sw dead"></span> Defunct (Babyl, Aug 2023)</span>
-  </div>
+  <!-- =============== 2. SYSTEMS MAP =============== -->
+  <h2><span class="sec-num">02</span>Systems map — tiered by where each system runs</h2>
+  <p class="lede">External partners fund and set standards; the national tier hosts registries, the interop bus, reporting
+   and analytics; facilities and the community produce the data. Boxes are coloured by category.</p>
 
-  <!-- ============================== 1 · EXECUTIVE SUMMARY ============================== -->
-  <h2>1 · Executive summary</h2>
-  <ul class="exec">
-   <li><b>National-first, government-hosted stack.</b> The National Data Centre has hosted DHIS2/RHMIS and the
-    RHIE since 2013<sup class="cite"><a href="#src-2-5">[2.5]</a></sup>; every health facility runs its own
-    on-prem OpenMRS/eBuzima server (42 hospitals + 450+ health centres, ~60% of facilities)<sup class="cite"><a
-      href="#src-1-1">[1.1]</a></sup>; the community tier is mobile-first and offline-first, scaling to
-    <b>58,567 CHWs by end-2026</b><sup class="cite"><a href="#src-1-8">[1.8]</a></sup>. No verified migration of
-    the national stack to AWS/Azure/GCP as of 2024–26.
-   </li>
-   <li><b>The OpenHIE interoperability backbone is real and live.</b> OpenHIM (v8.2, Grafana/Prometheus) mediates
-    a Client Registry (UPID keyed to NIDA, auto-filling ~90% of registration fields)<sup class="cite"><a
-      href="#src-2-1">[2.1]</a></sup>, Facility/Provider/Lab registries, and a FHIR Shared Health Record; the
-    EMR↔VLSM FHIR lab flow is implemented and validated at 197 PEPFAR sites across 30 districts<sup
-     class="cite"><a href="#src-4-1">[4.1]</a></sup>.</li>
-   <li><b>Two feedback loops make it a “live” HIS, not a passive reporter:</b> CHW d-IDS alerts → eIDSR (P5 →
-    P2), and facility EMR → DHIS2 monthly aggregate → NHIC dashboards (P3 → P1). The NHIC — a six-layer data
-    lakehouse launched 3 Apr 2025<sup class="cite"><a href="#src-2-3">[2.3]</a></sup><sup class="cite"><a
-      href="#src-2-4">[2.4]</a></sup> — is the national AI/analytics layer.</li>
-   <li><b>AI is moving to the edge.</b> d-IDS decision support inside the national cEMR (24.2% fewer
-    referrals)<sup class="cite"><a href="#src-3-6">[3.6]</a></sup>, mUbuzima ML wound-image screening offline on
-    CHW phones<sup class="cite"><a href="#src-3-7">[3.7]</a></sup>, Gates × OpenAI Horizon1000 (up to $50M, 1,000
-    clinics by 2028, Rwanda first)<sup class="cite"><a href="#src-1-2">[1.2]</a></sup>, an Anthropic–GoR MOU<sup
-     class="cite"><a href="#src-5-12">[5.12]</a></sup>. Babyl — the one documented PHI-out-of-Rwanda service
-    (Babylon’s AWS UK, ~2.8M users) — wound down in Aug 2023 with no successor<sup class="cite"><a
-      href="#src-3-8">[3.8]</a></sup>.</li>
-   <li><b>Data protection is strong where it is documented, thin where it is not.</b> Identity control, RBAC,
-    in-country residency, and the IeDEA C# de-identification pipeline (world-class for research reuse)<sup
-     class="cite"><a href="#src-5-8">[5.8]</a></sup> are evidenced; the Law 058/2021 close-list<sup
-     class="cite"><a href="#src-5-1">[5.1]</a></sup><sup class="cite"><a href="#src-5-2">[5.2]</a></sup> is
-    <b>consent capture, at-rest encryption, production audit trails, DPO appointment, and NCSA registration</b>
-    — the gates to clear before Horizon1000-class AI pipelines go live.</li>
-  </ul>
-
-  <div class="evidence" data-component="evidence-base">
-   <h3>Evidence base</h3>
-   <p>CII-CHIN RHIE ecosystem report (Jan 2025)<sup class="cite"><a href="#src-1-1">[1.1]</a></sup> · Global Fund
-    Rwanda digital-health case study (Jan 2026)<sup class="cite"><a href="#src-1-2">[1.2]</a></sup> · Rwanda
-    Digital Health Strategy 2018–2023 (WHO CPCD)<sup class="cite"><a href="#src-1-3">[1.3]</a></sup> · moh.gov.rw
-    / nhic.moh.gov.rw<sup class="cite"><a href="#src-2-3">[2.3]</a></sup><sup class="cite"><a
-      href="#src-2-4">[2.4]</a></sup> · OpenHIE impact stories<sup class="cite"><a href="#src-2-1">[2.1]</a></sup>
-    · PMC6918068<sup class="cite"><a href="#src-5-8">[5.8]</a></sup> / PMC12838494<sup class="cite"><a
-      href="#src-3-7">[3.7]</a></sup> · Law 058/2021 analyses (DLA Piper, Hogan Lovells, Securiti)<sup
-     class="cite"><a href="#src-5-1">[5.1]</a></sup><sup class="cite"><a href="#src-5-2">[5.2]</a></sup><sup
-     class="cite"><a href="#src-5-3">[5.3]</a></sup> · vendor policies (Sand, Helium Health, Zipline)<sup
-     class="cite"><a href="#src-5-10">[5.10]</a></sup><sup class="cite"><a href="#src-5-11">[5.11]</a></sup>.
-    Confidence: <b>HIGH</b> on the core stack · <b>MEDIUM</b> on admin systems + AI vendors · <b>LOW</b> where
-    flagged dashed.</p>
-  </div>
-
-  <div class="kpis" data-component="kpi-strip">
-   <div class="kpi">
-    <div class="kv">42 + 450+</div>
-    <div class="kl">hospitals + health centres on on-prem OpenMRS/eBuzima<sup class="cite"><a
-       href="#src-1-1">[1.1]</a></sup></div>
-   </div>
-   <div class="kpi">
-    <div class="kv">58,567</div>
-    <div class="kl">CHWs on the national cEMR by end-2026<sup class="cite"><a href="#src-1-8">[1.8]</a></sup>
-    </div>
-   </div>
-   <div class="kpi">
-    <div class="kv">197</div>
-    <div class="kl">PEPFAR sites live on the EMR↔VLSM FHIR lab flow · 30 districts<sup class="cite"><a
-       href="#src-4-1">[4.1]</a></sup></div>
-   </div>
-   <div class="kpi">
-    <div class="kv">~90%</div>
-    <div class="kl">of registration fields auto-filled via NIDA-keyed UPID<sup class="cite"><a
-       href="#src-2-1">[2.1]</a></sup></div>
-   </div>
-   <div class="kpi">
-    <div class="kv">32</div>
-    <div class="kl">directed integration edges traced (+ 2 documented anti-edges)</div>
-   </div>
-   <div class="kpi">
-    <div class="kv">12</div>
-    <div class="kl">source streams feeding the NHIC six-layer lakehouse<sup class="cite"><a
-       href="#src-2-3">[2.3]</a></sup></div>
-   </div>
-   <div class="kpi">
-    <div class="kv">−24.2%</div>
-    <div class="kl">CHW referrals with d-IDS decision support<sup class="cite"><a href="#src-3-6">[3.6]</a></sup>
-    </div>
-   </div>
-   <div class="kpi">
-    <div class="kv">2013</div>
-    <div class="kl">National Data Centre hosting DHIS2/RHIE since<sup class="cite"><a href="#src-2-5">[2.5]</a></sup>
-    </div>
-   </div>
-  </div>
-
-  <p class="map-note" style="margin:22px 0 8px">Orientation — the stack in one glance: community edge → facility →
-   national, with external partners above the MoH boundary. Full nine-category detail in §2.</p>
-  <div class="diagram-panel" data-component="overview-stack">
-   <svg class="flow" viewBox="0 0 1120 348" width="1120" height="348" role="img"
-    aria-label="Simplified three-tier stack: external partners above the MoH boundary; national tier at the National Data Centre with DHIS2/RHMIS, the RHIE/OpenHIM bus, Client Registry and NHIC; facility tier with on-prem OpenMRS, LIMS and eLMIS; community tier with CHW cEMR/eCHIS. Alerts and aggregates flow up; work lists and registry pushes flow down.">
+  <div class="panel">
+   <svg class="diagram" viewBox="0 0 1120 636" role="img" aria-label="Tiered systems map of Rwanda MoH digital health">
     <defs>
-     <marker id="ahO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
-      orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5E5D55"></path>
-     </marker>
-     <marker id="ahOHot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
-      orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D97757"></path>
+     <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#86857D"></path>
      </marker>
     </defs>
+    <style>
+     .diagram .bl { font-family: var(--mono); font-size: 11px; fill: #86857D; letter-spacing: 0.08em; font-weight: 600; }
+     .diagram .bx { stroke-width: 1.5; }
+     .diagram .t { font-size: 11px; fill: #1A1917; font-weight: 600; }
+     .diagram .s { font-size: 11px; fill: #55544E; }
+     .diagram .cont { fill: #FCFBF7; stroke: #DED9CC; stroke-width: 1.5; }
+     .diagram .lab { font-family: var(--mono); font-size: 10px; fill: #86857D; }
+    </style>
 
-    <!-- external partners: above the MoH boundary, dashed -->
+    <!-- EXTERNAL -->
+    <rect class="cont" x="20" y="30" width="1080" height="86" rx="11"></rect>
+    <text class="bl" x="34" y="50">EXTERNAL / PARTNER — donors · standards · AI vendors</text>
     <g>
-     <rect class="box inferred" x="20" y="14" width="1060" height="42" rx="9"></rect>
-     <text x="550" y="32" text-anchor="middle">EXTERNAL / PARTNERS — donors · standards · AI vendors</text>
-     <text class="sub" x="550" y="47" text-anchor="middle">Global Fund · PEPFAR · WHO · USAID · Gates ×
-      OpenAI · Anthropic · Zipline (category I — outside the MoH boundary)</text>
+     <rect class="bx" x="36" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="106" y="80" text-anchor="middle">Global Fund</text>
+     <text class="s" x="106" y="95" text-anchor="middle">DHIA accelerator</text>
     </g>
-    <line class="arrow inferred" x1="560" y1="56" x2="560" y2="70" marker-end="url(#ahO)"></line>
+    <g>
+     <rect class="bx" x="188" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="258" y="80" text-anchor="middle">CDC / PEPFAR</text>
+     <text class="s" x="258" y="95" text-anchor="middle">HIE + HIV CBS</text>
+    </g>
+    <g>
+     <rect class="bx" x="340" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="410" y="80" text-anchor="middle">WHO</text>
+     <text class="s" x="410" y="95" text-anchor="middle">strategy / arch</text>
+    </g>
+    <g>
+     <rect class="bx" x="492" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="562" y="80" text-anchor="middle">USAID / GHSC</text>
+     <text class="s" x="562" y="95" text-anchor="middle">e-LMIS support</text>
+    </g>
+    <g>
+     <rect class="bx" x="644" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="714" y="80" text-anchor="middle">Gates Fdn</text>
+     <text class="s" x="714" y="95" text-anchor="middle">Horizon1000</text>
+    </g>
+    <g>
+     <rect class="bx" x="796" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="866" y="80" text-anchor="middle">Anthropic</text>
+     <text class="s" x="866" y="95" text-anchor="middle">GoR MOU</text>
+    </g>
+    <g>
+     <rect class="bx" x="948" y="60" width="140" height="44" rx="7" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="t" x="1018" y="80" text-anchor="middle">OpenAI + Gates</text>
+     <text class="s" x="1018" y="95" text-anchor="middle">1,000 clinics</text>
+    </g>
 
-    <!-- national -->
-    <rect class="container t-nat" x="20" y="70" width="1060" height="66" rx="11"></rect>
-    <text class="band-label" x="36" y="88">NATIONAL TIER — National Data Centre (MoH, since 2013)</text>
-    <text x="550" y="107" text-anchor="middle">A1 DHIS2 / RHMIS · F1+F2 RHIE / OpenHIM bus · F3 Client
-     Registry (UPID ↕ NIDA) · F6 SHR · H1 NHIC</text>
-    <text class="sub" x="550" y="123" text-anchor="middle">aggregate reporting · interoperability · identity
-     · national analytics</text>
+    <line x1="560" y1="116" x2="560" y2="134" stroke="#86857D" stroke-width="1.6" marker-end="url(#a1)"></line>
+    <text class="lab" x="570" y="130">funds · standards · sub-processor DPAs</text>
 
-    <!-- national ↔ facility gap arrows -->
-    <line class="arrow hot" x1="300" y1="164" x2="300" y2="136" marker-end="url(#ahOHot)"></line>
-    <text class="sub" x="312" y="154">alerts · aggregates · lab results</text>
-    <line class="arrow" x1="760" y1="136" x2="760" y2="164" marker-end="url(#ahO)"></line>
-    <text class="sub" x="772" y="154">work lists · registry pushes (E15)</text>
+    <!-- NATIONAL -->
+    <rect class="cont" x="20" y="136" width="1080" height="300" rx="11"></rect>
+    <text class="bl" x="34" y="156">NATIONAL TIER — National Data Centre + Kigali</text>
 
-    <!-- facility -->
-    <rect class="container t-fac" x="20" y="164" width="1060" height="66" rx="11"></rect>
-    <text class="band-label" x="36" y="182">FACILITY TIER — 42 hospitals + 450+ health centres · on-prem
-     Ubuntu</text>
-    <text x="550" y="201" text-anchor="middle">B1 OpenMRS / eBuzima · E1/E2 LIMS + VLSM · D1 eLMIS · B3
-     OpenClinic (off-bus)</text>
-    <text class="sub" x="550" y="217" text-anchor="middle">encounter records · lab orders/results · commodity
-     consumption</text>
+    <g>
+     <rect class="bx" x="36" y="166" width="516" height="52" rx="8" fill="rgba(169,83,47,0.12)" stroke="#A9532F"></rect>
+     <text class="t" x="294" y="187" text-anchor="middle">H1 · NHIC — national data lakehouse + AI</text>
+     <text class="s" x="294" y="203" text-anchor="middle">6 layers · real-time analytics · launched Apr 2025</text>
+    </g>
+    <g>
+     <rect class="bx" x="568" y="166" width="520" height="52" rx="8" fill="rgba(111,133,90,0.12)" stroke="#6F855A"></rect>
+     <text class="t" x="828" y="187" text-anchor="middle">F1 RHIE / F2 OpenHIM — OpenHIE interoperability bus</text>
+     <text class="s" x="828" y="203" text-anchor="middle">HAPI FHIR · Mapping Mediator · audit + Grafana/Prometheus</text>
+    </g>
 
-    <!-- facility ↔ community gap arrows -->
-    <line class="arrow hot" x1="300" y1="258" x2="300" y2="230" marker-end="url(#ahOHot)"></line>
-    <text class="sub" x="312" y="248">SISCOM aggregates · d-IDS alerts (P5→P2)</text>
-    <line class="arrow" x1="760" y1="230" x2="760" y2="258" marker-end="url(#ahO)"></line>
-    <text class="sub" x="772" y="248">household work lists · training content</text>
+    <text class="lab" x="36" y="236">Registries / identity (F)</text>
+    <g font-size="11">
+     <rect class="bx" x="36" y="242" width="167" height="42" rx="6" fill="rgba(111,133,90,0.07)" stroke="#6F855A"></rect>
+     <text class="t" x="119" y="262" text-anchor="middle" font-size="11.5">F3 Client Reg</text>
+     <text class="s" x="119" y="276" text-anchor="middle">UPID ↔ NIDA</text>
+    </g>
+    <g>
+     <rect class="bx" x="211" y="242" width="167" height="42" rx="6" fill="rgba(111,133,90,0.07)" stroke="#6F855A"></rect>
+     <text class="t" x="294" y="262" text-anchor="middle" font-size="11.5">F4 Facility Reg</text>
+     <text class="s" x="294" y="276" text-anchor="middle">FOSA IDs</text>
+    </g>
+    <g>
+     <rect class="bx" x="386" y="242" width="167" height="42" rx="6" fill="rgba(111,133,90,0.07)" stroke="#6F855A"></rect>
+     <text class="t" x="469" y="262" text-anchor="middle" font-size="11.5">F5 Provider Reg</text>
+     <text class="s" x="469" y="276" text-anchor="middle">licence gate</text>
+    </g>
+    <g>
+     <rect class="bx" x="561" y="242" width="167" height="42" rx="6" fill="rgba(111,133,90,0.07)" stroke="#6F855A"></rect>
+     <text class="t" x="644" y="262" text-anchor="middle" font-size="11.5">F6 Shared Health Rec</text>
+     <text class="s" x="644" y="276" text-anchor="middle">FHIR encounters</text>
+    </g>
+    <g>
+     <rect class="bx" x="736" y="242" width="167" height="42" rx="6" fill="rgba(111,133,90,0.07)" stroke="#6F855A"></rect>
+     <text class="t" x="819" y="262" text-anchor="middle" font-size="11.5">F7 Terminology</text>
+     <text class="s" x="819" y="276" text-anchor="middle">ICD-11 · LOINC</text>
+    </g>
+    <g>
+     <rect class="bx" x="911" y="242" width="177" height="42" rx="6" fill="rgba(111,133,90,0.07)" stroke="#6F855A"></rect>
+     <text class="t" x="999" y="262" text-anchor="middle" font-size="11.5">F8 Laboratory Reg</text>
+     <text class="s" x="999" y="276" text-anchor="middle">EMR ↔ VLSM</text>
+    </g>
 
-    <!-- community -->
-    <rect class="container t-com" x="20" y="258" width="1060" height="66" rx="11"></rect>
-    <text class="band-label" x="36" y="276">COMMUNITY TIER — mobile-first · offline-first Android</text>
-    <text x="550" y="295" text-anchor="middle">B2/C1 cEMR + eCHIS + d-IDS — 58,567 CHWs by end-2026 · C2
-     RapidSMS · C3 RapidPro</text>
-    <text class="sub" x="550" y="311" text-anchor="middle">household registers · AI screening on-device
-     (mUbuzima) · Red Alert SMS</text>
+    <g>
+     <rect class="bx" x="36" y="296" width="1052" height="48" rx="7" fill="rgba(195,106,71,0.12)" stroke="#C36A47"></rect>
+     <text class="t" x="562" y="316" text-anchor="middle">A1 · RHMIS on DHIS2 — national HMIS since 2012</text>
+     <text class="s" x="562" y="332" text-anchor="middle">+ A2 eIDSR · A3 HIV CBS (197 PEPFAR sites) · A4 COVID modules · A5 programme registries (eTB, cancer, NCD)</text>
+    </g>
+    <g>
+     <rect class="bx" x="36" y="352" width="1052" height="48" rx="7" fill="rgba(148,128,111,0.13)" stroke="#94806F"></rect>
+     <text class="t" x="562" y="372" text-anchor="middle">G · Workforce · financing · administration</text>
+     <text class="s" x="562" y="388" text-anchor="middle">G1–G9 HWMS · iHRIS · licensing · RHAP · G10 PBF dashboard  ·  G11 RSSB Mutuelle de Santé (CBHI)</text>
+    </g>
+
+    <line x1="300" y1="436" x2="300" y2="418" stroke="#86857D" stroke-width="1.6" marker-end="url(#a1)"></line>
+    <text class="lab" x="310" y="432">monthly aggregate → DHIS2 · research de-id extracts</text>
+    <line x1="820" y1="436" x2="820" y2="418" stroke="#86857D" stroke-width="1.6" marker-end="url(#a1)"></line>
+    <text class="lab" x="620" y="432" text-anchor="end">SISCOM · d-IDS surveillance alerts →</text>
+
+    <!-- FACILITY -->
+    <rect class="cont" x="20" y="438" width="536" height="90" rx="11"></rect>
+    <text class="bl" x="34" y="458">FACILITY TIER — on-prem hospitals · labs · supply</text>
+    <g>
+     <rect class="bx" x="34" y="468" width="160" height="46" rx="7" fill="rgba(62,133,124,0.12)" stroke="#3E857C"></rect>
+     <text class="t" x="114" y="489" text-anchor="middle" font-size="11.5">B1 OpenMRS</text>
+     <text class="s" x="114" y="504" text-anchor="middle">eBuzima · on-prem</text>
+    </g>
+    <g>
+     <rect class="bx" x="202" y="468" width="160" height="46" rx="7" fill="rgba(94,127,166,0.12)" stroke="#5E7FA6"></rect>
+     <text class="t" x="282" y="489" text-anchor="middle" font-size="11.5">E1·E2 LIMS · VLSM</text>
+     <text class="s" x="282" y="504" text-anchor="middle">LabWare · HIV VL</text>
+    </g>
+    <g>
+     <rect class="bx" x="370" y="468" width="176" height="46" rx="7" fill="rgba(181,138,52,0.13)" stroke="#B58A34"></rect>
+     <text class="t" x="458" y="489" text-anchor="middle" font-size="11.5">D1 e-LMIS · D5 Zipline</text>
+     <text class="s" x="458" y="504" text-anchor="middle">commodities · drones</text>
+    </g>
+
+    <!-- COMMUNITY -->
+    <rect class="cont" x="564" y="438" width="536" height="90" rx="11"></rect>
+    <text class="bl" x="578" y="458">COMMUNITY TIER — CHW + mobile</text>
+    <g>
+     <rect class="bx" x="578" y="468" width="160" height="46" rx="7" fill="rgba(138,107,158,0.12)" stroke="#8A6B9E"></rect>
+     <text class="t" x="658" y="489" text-anchor="middle" font-size="11.5">C1 eCHIS / cEMR</text>
+     <text class="s" x="658" y="504" text-anchor="middle">offline Android</text>
+    </g>
+    <g>
+     <rect class="bx" x="746" y="468" width="160" height="46" rx="7" fill="rgba(138,107,158,0.12)" stroke="#8A6B9E"></rect>
+     <text class="t" x="826" y="489" text-anchor="middle" font-size="11.5">C2 · C3 RapidSMS/Pro</text>
+     <text class="s" x="826" y="504" text-anchor="middle">SMS · IVR · WhatsApp</text>
+    </g>
+    <g>
+     <rect class="bx" x="914" y="468" width="172" height="46" rx="7" fill="rgba(62,133,124,0.10)" stroke="#3E857C"></rect>
+     <text class="t" x="1000" y="489" text-anchor="middle" font-size="11.5">B2 cEMR + AI</text>
+     <text class="s" x="1000" y="504" text-anchor="middle">d-IDS · mUbuzima ML</text>
+    </g>
+
+    <line x1="300" y1="528" x2="300" y2="548" stroke="#DED9CC" stroke-width="0"></line>
+   </svg>
+  </div>
+  <div class="legend">
+   <span class="k"><span class="sw" style="background:rgba(195,106,71,0.12);border-color:#C36A47"></span> A reporting / surveillance</span>
+   <span class="k"><span class="sw" style="background:rgba(62,133,124,0.12);border-color:#3E857C"></span> B facility EMR</span>
+   <span class="k"><span class="sw" style="background:rgba(138,107,158,0.12);border-color:#8A6B9E"></span> C community / mHealth</span>
+   <span class="k"><span class="sw" style="background:rgba(181,138,52,0.13);border-color:#B58A34"></span> D supply chain</span>
+   <span class="k"><span class="sw" style="background:rgba(94,127,166,0.12);border-color:#5E7FA6"></span> E laboratory</span>
+   <span class="k"><span class="sw" style="background:rgba(111,133,90,0.10);border-color:#6F855A"></span> F identity / interop</span>
+   <span class="k"><span class="sw" style="background:rgba(148,128,111,0.13);border-color:#94806F"></span> G workforce / admin</span>
+   <span class="k"><span class="sw" style="background:rgba(169,83,47,0.12);border-color:#A9532F"></span> H analytics (NHIC)</span>
+   <span class="k"><span class="sw" style="background:#F1F0EC;border-color:#86857D"></span> I external / partner</span>
+  </div>
+
+  <!-- =============== 3. PERSONA × SYSTEMS ACCESS MATRIX =============== -->
+  <h2><span class="sec-num">03</span>Who touches what — persona &#215; system-category access</h2>
+  <p class="lede">Six personas traverse the nine categories. Each cell records the strongest relationship: a persona
+   <b>uses</b> a system as its daily surface, <b>feeds</b> data into it, or <b>reads</b> from it.</p>
+
+  <div class="mx-scroll">
+   <div class="matrix">
+    <div class="h corner">Persona</div>
+    <div class="h">A<br>report</div>
+    <div class="h">B<br>EMR</div>
+    <div class="h">C<br>mHealth</div>
+    <div class="h">D<br>supply</div>
+    <div class="h">E<br>lab</div>
+    <div class="h">F<br>ident</div>
+    <div class="h">G<br>admin</div>
+    <div class="h">H<br>NHIC</div>
+    <div class="h">I<br>ext/AI</div>
+
+    <div class="rh">National policy / planning<small>P1 · NHIC user</small></div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+
+    <div class="rh">Epidemiology / surveillance<small>P2 · eIDSR officer</small></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-feed">&#9670;</span></div>
+    <div class="c z">&#183;</div>
+
+    <div class="rh">Hospital clinicians<small>P3 · OpenMRS eBuzima</small></div>
+    <div class="c"><span class="mk-feed">&#9670;</span></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+
+    <div class="rh">District health officers<small>P4 · DHO + PBF</small></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c"><span class="mk-feed">&#9670;</span></div>
+    <div class="c z">&#183;</div>
+
+    <div class="rh">Community health workers<small>P5 · CHW (cEMR)</small></div>
+    <div class="c"><span class="mk-feed">&#9670;</span></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+
+    <div class="rh">Citizens / patients<small>P6 · service recipient</small></div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c z">&#183;</div>
+    <div class="c"><span class="mk-use">&#9679;</span></div>
+    <div class="c"><span class="mk-feed">&#9670;</span></div>
+    <div class="c"><span class="mk-read">&#9675;</span></div>
+   </div>
+  </div>
+  <div class="acc-key">
+   <span><span class="mk-use">&#9679;</span> <b>uses</b> — primary daily surface</span>
+   <span><span class="mk-feed">&#9670;</span> <b>feeds</b> — produces data into</span>
+   <span><span class="mk-read">&#9675;</span> <b>reads</b> — consumes / looks up</span>
+   <span><span style="color:var(--rule)">&#183;</span> no direct relationship</span>
+  </div>
+
+  <!-- =============== 4. PERSONA JOURNEYS — SWIMLANES =============== -->
+  <h2><span class="sec-num">04</span>Persona journeys — trigger &#8594; systems &#8594; data &#8594; outcome</h2>
+  <p class="lede">One lane per persona, read left to right. Each stage names the systems touched (chips); the final stage
+   is the decision or data produced. Two loops make this a <b>live</b> HIS: CHW&#8594;eIDSR (P5&#8594;P2) and
+   facility EMR&#8594;DHIS2&#8594;NHIC (P3/P4&#8594;P1).</p>
+
+  <div class="panel">
+   <svg class="diagram" viewBox="0 0 1200 792" role="img" aria-label="Six persona journey swimlanes">
+    <defs>
+     <marker id="a2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9C9A90"></path>
+     </marker>
+    </defs>
+    <style>
+     .diagram .lane-name { font-size: 13px; font-weight: 700; fill: #1A1917; }
+     .diagram .lane-sub { font-family: var(--mono); font-size: 9.5px; fill: #86857D; }
+     .diagram .stage { fill: #FCFBF7; stroke-width: 1.5; }
+     .diagram .stg-t { font-size: 10px; fill: #1A1917; font-weight: 600; }
+     .diagram .chip { font-family: var(--mono); font-size: 9.5px; }
+     .diagram .conn { stroke: #C9C6BB; stroke-width: 1.6; fill: none; }
+     .diagram .out { font-size: 11px; fill: #55544E; }
+    </style>
+
+    <!-- Lane geometry: gutter x0-190, 5 stages x200..1180, each ~178w gap 18. lane h=118 -->
+
+    <!-- P1 -->
+    <g>
+     <rect x="8" y="18" width="176" height="118" rx="9" fill="rgba(76,107,138,0.10)" stroke="#4C6B8A" stroke-width="1.5"></rect>
+     <rect x="8" y="18" width="6" height="118" rx="3" fill="#4C6B8A"></rect>
+     <text class="lane-name" x="26" y="62">National</text>
+     <text class="lane-name" x="26" y="79">policy analyst</text>
+     <text class="lane-sub" x="26" y="98">P1 · NHIC user</text>
+    </g>
+    <g>
+     <rect class="stage" x="200" y="34" width="178" height="86" rx="8" stroke="#4C6B8A"></rect>
+     <text class="stg-t" x="212" y="58">Morning brief</text>
+     <text class="out" x="212" y="76">executive dashboard</text>
+     <text class="chip" x="212" y="104" fill="#4C6B8A">[H1 NHIC portal]</text>
+    </g>
+    <path class="conn" d="M378 77 H396" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="398" y="34" width="178" height="86" rx="8" stroke="#4C6B8A"></rect>
+     <text class="stg-t" x="410" y="58">Trace a signal</text>
+     <text class="out" x="410" y="76">malaria spike drill-down</text>
+     <text class="chip" x="410" y="104" fill="#4C6B8A">[12 source streams]</text>
+    </g>
+    <path class="conn" d="M576 77 H594" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="596" y="34" width="178" height="86" rx="8" stroke="#4C6B8A"></rect>
+     <text class="stg-t" x="608" y="58">Cross-check</text>
+     <text class="out" x="608" y="76">surveillance + HR + supply</text>
+     <text class="chip" x="608" y="104" fill="#4C6B8A">[A2 · G2 · D1]</text>
+    </g>
+    <path class="conn" d="M774 77 H792" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="794" y="34" width="178" height="86" rx="8" stroke="#4C6B8A"></rect>
+     <text class="stg-t" x="806" y="58">Draft policy brief</text>
+     <text class="out" x="806" y="76">AI-assisted forecast</text>
+     <text class="chip" x="806" y="104" fill="#4C6B8A">[NHIC AI layer]</text>
+    </g>
+    <path class="conn" d="M972 77 H990" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="992" y="34" width="188" height="86" rx="8" fill="rgba(76,107,138,0.13)" stroke="#4C6B8A"></rect>
+     <text class="stg-t" x="1004" y="58">Feed planning</text>
+     <text class="out" x="1004" y="76">HSSP adjustments →</text>
+     <text class="chip" x="1004" y="104" fill="#4C6B8A">outcome: ministerial brief</text>
+    </g>
+
+    <!-- P2 -->
+    <g>
+     <rect x="8" y="146" width="176" height="118" rx="9" fill="rgba(111,133,90,0.10)" stroke="#6F855A" stroke-width="1.5"></rect>
+     <rect x="8" y="146" width="6" height="118" rx="3" fill="#6F855A"></rect>
+     <text class="lane-name" x="26" y="190">Epi /</text>
+     <text class="lane-name" x="26" y="207">surveillance</text>
+     <text class="lane-sub" x="26" y="226">P2 · eIDSR officer</text>
+    </g>
+    <g>
+     <rect class="stage" x="200" y="162" width="178" height="86" rx="8" stroke="#6F855A"></rect>
+     <text class="stg-t" x="212" y="186">Receive alert</text>
+     <text class="out" x="212" y="204">CHW flags a case</text>
+     <text class="chip" x="212" y="232" fill="#6F855A">[from P5 / clinician]</text>
+    </g>
+    <path class="conn" d="M378 205 H396" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="398" y="162" width="178" height="86" rx="8" stroke="#6F855A"></rect>
+     <text class="stg-t" x="410" y="186">Enter case</text>
+     <text class="out" x="410" y="204">eIDSR Tracker</text>
+     <text class="chip" x="410" y="232" fill="#6F855A">[A2 cbs2.moh.gov.rw]</text>
+    </g>
+    <path class="conn" d="M576 205 H594" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="596" y="162" width="178" height="86" rx="8" stroke="#6F855A"></rect>
+     <text class="stg-t" x="608" y="186">Lab linkage</text>
+     <text class="out" x="608" y="204">specimen + result</text>
+     <text class="chip" x="608" y="232" fill="#6F855A">[E2 VLSM via F2]</text>
+    </g>
+    <path class="conn" d="M774 205 H792" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="794" y="162" width="178" height="86" rx="8" stroke="#6F855A"></rect>
+     <text class="stg-t" x="806" y="186">Threshold logic</text>
+     <text class="out" x="806" y="204">program-rule alert</text>
+     <text class="chip" x="806" y="232" fill="#6F855A">[DHIS2 rules]</text>
+    </g>
+    <path class="conn" d="M972 205 H990" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="992" y="162" width="188" height="86" rx="8" fill="rgba(111,133,90,0.13)" stroke="#6F855A"></rect>
+     <text class="stg-t" x="1004" y="186">Weekly bulletin</text>
+     <text class="out" x="1004" y="204">line lists → NHIC</text>
+     <text class="chip" x="1004" y="232" fill="#6F855A">outcome: epi bulletin</text>
+    </g>
+
+    <!-- P3 -->
+    <g>
+     <rect x="8" y="274" width="176" height="118" rx="9" fill="rgba(62,133,124,0.10)" stroke="#3E857C" stroke-width="1.5"></rect>
+     <rect x="8" y="274" width="6" height="118" rx="3" fill="#3E857C"></rect>
+     <text class="lane-name" x="26" y="318">Hospital</text>
+     <text class="lane-name" x="26" y="335">clinician</text>
+     <text class="lane-sub" x="26" y="354">P3 · OpenMRS</text>
+    </g>
+    <g>
+     <rect class="stage" x="200" y="290" width="178" height="86" rx="8" stroke="#3E857C"></rect>
+     <text class="stg-t" x="212" y="314">Patient arrives</text>
+     <text class="out" x="212" y="332">search SHR + UPID</text>
+     <text class="chip" x="212" y="360" fill="#3E857C">[F6 SHR · F3 CR]</text>
+    </g>
+    <path class="conn" d="M378 333 H396" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="398" y="290" width="178" height="86" rx="8" stroke="#3E857C"></rect>
+     <text class="stg-t" x="410" y="314">Encounter</text>
+     <text class="out" x="410" y="332">chart · ART / TB</text>
+     <text class="chip" x="410" y="360" fill="#3E857C">[B1 eBuzima on-prem]</text>
+    </g>
+    <path class="conn" d="M576 333 H594" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="596" y="290" width="178" height="86" rx="8" stroke="#3E857C"></rect>
+     <text class="stg-t" x="608" y="314">Lab order</text>
+     <text class="out" x="608" y="332">JSON &#8594; FHIR &#8594; result</text>
+     <text class="chip" x="608" y="360" fill="#3E857C">[F2 OpenHIM · HAPI]</text>
+    </g>
+    <path class="conn" d="M774 333 H792" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="794" y="290" width="178" height="86" rx="8" stroke="#3E857C"></rect>
+     <text class="stg-t" x="806" y="314">Monthly upload</text>
+     <text class="out" x="806" y="332">aggregates to HMIS</text>
+     <text class="chip" x="806" y="360" fill="#3E857C">[A1 DHIS2]</text>
+    </g>
+    <path class="conn" d="M972 333 H990" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="992" y="290" width="188" height="86" rx="8" fill="rgba(62,133,124,0.13)" stroke="#3E857C"></rect>
+     <text class="stg-t" x="1004" y="314">Research extract</text>
+     <text class="out" x="1004" y="332">IeDEA C# de-id</text>
+     <text class="chip" x="1004" y="360" fill="#3E857C">outcome: scrubbed cohort</text>
+    </g>
+
+    <!-- P4 -->
+    <g>
+     <rect x="8" y="402" width="176" height="118" rx="9" fill="rgba(181,138,52,0.10)" stroke="#B58A34" stroke-width="1.5"></rect>
+     <rect x="8" y="402" width="6" height="118" rx="3" fill="#B58A34"></rect>
+     <text class="lane-name" x="26" y="446">District</text>
+     <text class="lane-name" x="26" y="463">health officer</text>
+     <text class="lane-sub" x="26" y="482">P4 · DHO + PBF</text>
+    </g>
+    <g>
+     <rect class="stage" x="200" y="418" width="178" height="86" rx="8" stroke="#B58A34"></rect>
+     <text class="stg-t" x="212" y="442">District review</text>
+     <text class="out" x="212" y="460">ANC · deliveries · OPD</text>
+     <text class="chip" x="212" y="488" fill="#B58A34">[A1 DHIS2 dashboard]</text>
+    </g>
+    <path class="conn" d="M378 461 H396" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="398" y="418" width="178" height="86" rx="8" stroke="#B58A34"></rect>
+     <text class="stg-t" x="410" y="442">Verify PBF</text>
+     <text class="out" x="410" y="460">quantity + quality</text>
+     <text class="chip" x="410" y="488" fill="#B58A34">[G10 PBF dashboard]</text>
+    </g>
+    <path class="conn" d="M576 461 H594" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="596" y="418" width="178" height="86" rx="8" stroke="#B58A34"></rect>
+     <text class="stg-t" x="608" y="442">CHW review</text>
+     <text class="out" x="608" y="460">SISCOM cooperatives</text>
+     <text class="chip" x="608" y="488" fill="#B58A34">[SISCOM &#8594; A1]</text>
+    </g>
+    <path class="conn" d="M774 461 H792" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="794" y="418" width="178" height="86" rx="8" stroke="#B58A34"></rect>
+     <text class="stg-t" x="806" y="442">Workforce 4&#215;4</text>
+     <text class="out" x="806" y="460">staffing deployment</text>
+     <text class="chip" x="806" y="488" fill="#B58A34">[G2 HWMS]</text>
+    </g>
+    <path class="conn" d="M972 461 H990" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="992" y="418" width="188" height="86" rx="8" fill="rgba(181,138,52,0.14)" stroke="#B58A34"></rect>
+     <text class="stg-t" x="1004" y="442">Feed NHIC</text>
+     <text class="out" x="1004" y="460">Imihigo contracts</text>
+     <text class="chip" x="1004" y="488" fill="#B58A34">outcome: perf. review</text>
+    </g>
+
+    <!-- P5 -->
+    <g>
+     <rect x="8" y="530" width="176" height="118" rx="9" fill="rgba(192,96,62,0.10)" stroke="#C0603E" stroke-width="1.5"></rect>
+     <rect x="8" y="530" width="6" height="118" rx="3" fill="#C0603E"></rect>
+     <text class="lane-name" x="26" y="574">Community</text>
+     <text class="lane-name" x="26" y="591">health worker</text>
+     <text class="lane-sub" x="26" y="610">P5 · CHW</text>
+    </g>
+    <g>
+     <rect class="stage" x="200" y="546" width="178" height="86" rx="8" stroke="#C0603E"></rect>
+     <text class="stg-t" x="212" y="570">Work list</text>
+     <text class="out" x="212" y="588">assigned households</text>
+     <text class="chip" x="212" y="616" fill="#C0603E">[C1 cEMR offline]</text>
+    </g>
+    <path class="conn" d="M378 589 H396" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="398" y="546" width="178" height="86" rx="8" stroke="#C0603E"></rect>
+     <text class="stg-t" x="410" y="570">Household visit</text>
+     <text class="out" x="410" y="588">ANC · malnutrition · NCD</text>
+     <text class="chip" x="410" y="616" fill="#C0603E">[B2 cEMR register]</text>
+    </g>
+    <path class="conn" d="M576 589 H594" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="596" y="546" width="178" height="86" rx="8" stroke="#C0603E"></rect>
+     <text class="stg-t" x="608" y="570">AI screening</text>
+     <text class="out" x="608" y="588">wound ML · d-IDS</text>
+     <text class="chip" x="608" y="616" fill="#C0603E">[mUbuzima · -24% refs]</text>
+    </g>
+    <path class="conn" d="M774 589 H792" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="794" y="546" width="178" height="86" rx="8" stroke="#C0603E"></rect>
+     <text class="stg-t" x="806" y="570">Refer or treat</text>
+     <text class="out" x="806" y="588">iCCM at household</text>
+     <text class="chip" x="806" y="616" fill="#C0603E">[monthly SISCOM]</text>
+    </g>
+    <path class="conn" d="M972 589 H990" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="992" y="546" width="188" height="86" rx="8" fill="rgba(192,96,62,0.14)" stroke="#C0603E"></rect>
+     <text class="stg-t" x="1004" y="570">Surveillance alert</text>
+     <text class="out" x="1004" y="588">notifiable case &#8594; A2</text>
+     <text class="chip" x="1004" y="616" fill="#C0603E">outcome: closes to P2</text>
+    </g>
+
+    <!-- P6 -->
+    <g>
+     <rect x="8" y="658" width="176" height="118" rx="9" fill="rgba(138,107,158,0.10)" stroke="#8A6B9E" stroke-width="1.5"></rect>
+     <rect x="8" y="658" width="6" height="118" rx="3" fill="#8A6B9E"></rect>
+     <text class="lane-name" x="26" y="702">Citizen /</text>
+     <text class="lane-name" x="26" y="719">patient</text>
+     <text class="lane-sub" x="26" y="738">P6 · recipient</text>
+    </g>
+    <g>
+     <rect class="stage" x="200" y="674" width="178" height="86" rx="8" stroke="#8A6B9E"></rect>
+     <text class="stg-t" x="212" y="698">Enroll CBHI</text>
+     <text class="out" x="212" y="716">Mutuelle de Santé</text>
+     <text class="chip" x="212" y="744" fill="#8A6B9E">[G11 RSSB]</text>
+    </g>
+    <path class="conn" d="M378 717 H396" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="398" y="674" width="178" height="86" rx="8" stroke="#8A6B9E"></rect>
+     <text class="stg-t" x="410" y="698">Visit centre</text>
+     <text class="out" x="410" y="716">eligibility check</text>
+     <text class="chip" x="410" y="744" fill="#8A6B9E">[manual at intake]</text>
+    </g>
+    <path class="conn" d="M576 717 H594" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="596" y="674" width="178" height="86" rx="8" stroke="#8A6B9E"></rect>
+     <text class="stg-t" x="608" y="698">Encounter</text>
+     <text class="out" x="608" y="716">recorded + billed</text>
+     <text class="chip" x="608" y="744" fill="#8A6B9E">[B1 / A1]</text>
+    </g>
+    <path class="conn" d="M774 717 H792" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="794" y="674" width="178" height="86" rx="8" stroke="#8A6B9E" stroke-dasharray="4 3"></rect>
+     <text class="stg-t" x="806" y="698">Teleconsult</text>
+     <text class="out" x="806" y="716">Babyl — dark since</text>
+     <text class="chip" x="806" y="744" fill="#8A6B9E">[I12 · gap Aug 2023]</text>
+    </g>
+    <path class="conn" d="M972 717 H990" marker-end="url(#a2)"></path>
+    <g>
+     <rect class="stage" x="992" y="674" width="188" height="86" rx="8" fill="rgba(138,107,158,0.13)" stroke="#8A6B9E" stroke-dasharray="4 3"></rect>
+     <text class="stg-t" x="1004" y="698">Future: Portal</text>
+     <text class="out" x="1004" y="716">view own records</text>
+     <text class="chip" x="1004" y="744" fill="#8A6B9E">outcome: B4 (under dev)</text>
+    </g>
    </svg>
   </div>
 
-  <!-- ============================== 2 · SYSTEMS MAP ============================== -->
-  <h2>2 · Systems map — nine categories across four tiers</h2>
-  <p class="sect-sub">Tiered from community edge up to external partners. Boxes carry the inventory ID used
-   throughout this page (A1…I15) and a colour strip per category (legend below the map). Arrows show only the
-   structural relationships; the full directed data-flow is in §4.</p>
+  <!-- =============== 5. INTEGRATION & DATA FLOW =============== -->
+  <h2><span class="sec-num">05</span>Integration &#38; data flow — the RHIE / OpenHIM exchange</h2>
+  <p class="lede">Producer systems on the left push transactions through the OpenHIM mediator (translating JSON &#8596; FHIR
+   against HAPI registries) to national consumers on the right. RapidPro / RapidSMS reach DHIS2 through a dedicated
+   integration app; CRVS feeds NHIC directly.<sup><a href="#src-4-1">1</a></sup></p>
 
-  <div class="diagram-panel" data-component="systems-map">
-   <div class="legend maplegend" data-component="map-legend">
-    <span class="k"><span class="sw confirmed"></span> Documented / in production — solid border</span>
-    <span class="k"><span class="sw hot"></span> Interop backbone / live loop — clay</span>
-    <span class="k"><span class="sw inferred"></span> Planned · unverified — dashed, ⚠-tagged</span>
-    <span class="k"><span class="sw dead"></span> Defunct — rose dashed (Babyl)</span>
-   </div>
-   <svg class="flow" viewBox="0 0 1120 970" width="1120" height="970" role="img"
-    aria-label="Rwanda MoH systems map: external partners, national tier at the National Data Centre, facility tier with on-prem OpenMRS, community tier with CHW mobile tools">
+  <div class="panel">
+   <svg class="diagram" viewBox="0 0 1140 520" role="img" aria-label="RHIE OpenHIM integration and data flow">
     <defs>
-     <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5E5D55"></path>
-     </marker>
-     <marker id="ahHot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
-      orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D97757"></path>
+     <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#7C7B73"></path>
      </marker>
     </defs>
+    <style>
+     .diagram .prod { fill: #FCFBF7; stroke-width: 1.5; }
+     .diagram .nt { font-size: 12px; fill: #1A1917; font-weight: 600; }
+     .diagram .ns { font-size: 10.5px; fill: #55544E; }
+     .diagram .edge { stroke: #B8B5AA; stroke-width: 1.6; fill: none; }
+     .diagram .edge.dash { stroke-dasharray: 5 3; }
+     .diagram .el { font-family: var(--mono); font-size: 10px; fill: #55544E; }
+     .diagram .colh { font-family: var(--mono); font-size: 10px; fill: #86857D; letter-spacing: 0.06em; }
+    </style>
 
-    <!-- ============ EXTERNAL / PARTNER ============ -->
-    <rect class="container t-ext" x="20" y="26" width="1080" height="134" rx="11"></rect>
-    <text class="band-label" x="32" y="48">EXTERNAL / PARTNER TIER — donors · standards · AI vendors</text>
+    <text class="colh" x="40" y="30">PRODUCERS</text>
+    <text class="colh" x="452" y="30">INTEROPERABILITY LAYER</text>
+    <text class="colh" x="900" y="30">CONSUMERS</text>
+
+    <!-- Producers -->
     <g>
-     <rect class="box" x="36" y="58" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="41" y="61" width="154" height="4" rx="2"></rect>
-     <text x="118" y="76" text-anchor="middle">I1 Global Fund · DHIA</text>
-     <text class="sub" x="118" y="91" text-anchor="middle">US$1.9B since 2003</text>
+     <rect class="prod" x="40" y="52" width="180" height="52" rx="8" fill="rgba(62,133,124,0.10)" stroke="#3E857C"></rect>
+     <text class="nt" x="130" y="74" text-anchor="middle">B1 OpenMRS</text>
+     <text class="ns" x="130" y="91" text-anchor="middle">facility EMR</text>
     </g>
     <g>
-     <rect class="box" x="212" y="58" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="217" y="61" width="154" height="4" rx="2"></rect>
-     <text x="294" y="76" text-anchor="middle">I2 CDC / PEPFAR (TSSS)</text>
-     <text class="sub" x="294" y="91" text-anchor="middle">funded foundational HIE</text>
+     <rect class="prod" x="40" y="138" width="180" height="52" rx="8" fill="rgba(94,127,166,0.10)" stroke="#5E7FA6"></rect>
+     <text class="nt" x="130" y="160" text-anchor="middle">E2 VLSM · LabWare</text>
+     <text class="ns" x="130" y="177" text-anchor="middle">HIV viral load lab</text>
     </g>
     <g>
-     <rect class="box" x="388" y="58" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="393" y="61" width="154" height="4" rx="2"></rect>
-     <text x="470" y="76" text-anchor="middle">I3 WHO</text>
-     <text class="sub" x="470" y="91" text-anchor="middle">strategy + advisory</text>
+     <rect class="prod" x="40" y="248" width="180" height="52" rx="8" fill="rgba(138,107,158,0.10)" stroke="#8A6B9E"></rect>
+     <text class="nt" x="130" y="270" text-anchor="middle">C3 RapidPro</text>
+     <text class="ns" x="130" y="287" text-anchor="middle">SMS / IVR flows</text>
     </g>
     <g>
-     <rect class="box" x="564" y="58" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="569" y="61" width="154" height="4" rx="2"></rect>
-     <text x="646" y="76" text-anchor="middle">I4 USAID / GHSC-PSM</text>
-     <text class="sub" x="646" y="91" text-anchor="middle">logistics · Tubeho cEMR</text>
+     <rect class="prod" x="40" y="334" width="180" height="52" rx="8" fill="rgba(138,107,158,0.10)" stroke="#8A6B9E"></rect>
+     <text class="nt" x="130" y="356" text-anchor="middle">C2 RapidSMS</text>
+     <text class="ns" x="130" y="373" text-anchor="middle">45,000 feature phones</text>
     </g>
     <g>
-     <rect class="box" x="740" y="58" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="745" y="61" width="154" height="4" rx="2"></rect>
-     <text x="822" y="76" text-anchor="middle">I9 Gates Foundation</text>
-     <text class="sub" x="822" y="91" text-anchor="middle">Horizon1000 co-funder</text>
-    </g>
-    <g>
-     <rect class="box" x="916" y="58" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="921" y="61" width="154" height="4" rx="2"></rect>
-     <text x="998" y="76" text-anchor="middle">I6 Mastercard / Msft</text>
-     <text class="sub" x="998" y="91" text-anchor="middle">interop standards</text>
-    </g>
-    <g>
-     <rect class="box" x="36" y="110" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="41" y="113" width="154" height="4" rx="2"></rect>
-     <text x="118" y="128" text-anchor="middle">I11 Horizon1000</text>
-     <text class="sub" x="118" y="143" text-anchor="middle">OpenAI × Gates · $50M</text>
-    </g>
-    <g>
-     <rect class="box" x="212" y="110" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="217" y="113" width="154" height="4" rx="2"></rect>
-     <text x="294" y="128" text-anchor="middle">I10 Anthropic MOU</text>
-     <text class="sub" x="294" y="143" text-anchor="middle">MINICT · 3-year</text>
-    </g>
-    <g>
-     <rect class="box" x="388" y="110" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="393" y="113" width="154" height="4" rx="2"></rect>
-     <text x="470" y="128" text-anchor="middle">I13 Insightiv</text>
-     <text class="sub" x="470" y="143" text-anchor="middle">imaging AI · mUbuzima</text>
-    </g>
-    <g>
-     <rect class="box" x="564" y="110" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="569" y="113" width="154" height="4" rx="2"></rect>
-     <text x="646" y="128" text-anchor="middle">I14 Digital Umuganda</text>
-     <text class="sub" x="646" y="143" text-anchor="middle">Kinyarwanda LLMs</text>
-    </g>
-    <g>
-     <rect class="box inferred" x="740" y="110" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="745" y="113" width="154" height="4" rx="2"></rect>
-     <text x="822" y="128" text-anchor="middle">I15 OpenEvidence × RBC</text>
-     <text class="sub" x="822" y="143" text-anchor="middle">⚠ reported — low confidence</text>
-    </g>
-    <g>
-     <rect class="box dead" x="916" y="110" width="164" height="44" rx="8"></rect>
-     <rect class="cs cs-i" x="921" y="113" width="154" height="4" rx="2"></rect>
-     <text x="998" y="128" text-anchor="middle">I12 Babyl — defunct</text>
-     <text class="sub" x="998" y="143" text-anchor="middle">AI triage · AWS UK · 2020–23</text>
+     <rect class="prod" x="40" y="430" width="180" height="52" rx="8" fill="rgba(148,128,111,0.12)" stroke="#94806F"></rect>
+     <text class="nt" x="130" y="452" text-anchor="middle">F9 CRVS</text>
+     <text class="ns" x="130" y="469" text-anchor="middle">births · deaths</text>
     </g>
 
-    <line class="arrow" x1="560" y1="160" x2="560" y2="186" marker-end="url(#ah)"></line>
-    <text class="sub" x="572" y="178">funds · co-design · standards</text>
+    <!-- Interop container -->
+    <rect x="420" y="46" width="264" height="170" rx="10" fill="rgba(111,133,90,0.09)" stroke="#6F855A" stroke-width="1.5"></rect>
+    <text class="nt" x="552" y="72" text-anchor="middle">F2 OpenHIM mediator</text>
+    <text class="ns" x="552" y="89" text-anchor="middle">routing · JSON &#8596; FHIR mapping</text>
+    <rect x="440" y="104" width="224" height="46" rx="7" fill="#FCFBF7" stroke="#6F855A" stroke-width="1.3"></rect>
+    <text class="nt" x="552" y="124" text-anchor="middle" font-size="11.5">HAPI FHIR registries</text>
+    <text class="ns" x="552" y="140" text-anchor="middle">CR · FR · PR · SHR · Term · Lab</text>
+    <text class="el" x="552" y="176" text-anchor="middle">audit log · Grafana / Prometheus</text>
+    <text class="el" x="552" y="194" text-anchor="middle">record + element-level deny (consent)</text>
 
-    <!-- ============ NATIONAL TIER ============ -->
-    <rect class="container t-nat" x="20" y="186" width="1080" height="368" rx="11"></rect>
-    <text class="band-label" x="32" y="208">NATIONAL TIER — National Data Centre (MoH since 2013) + Kigali</text>
-
+    <!-- Consumers -->
     <g>
-     <rect class="box" x="36" y="220" width="226" height="66" rx="9"></rect>
-     <rect class="cs cs-f" x="41" y="223" width="216" height="4" rx="2"></rect>
-     <text x="149" y="242" text-anchor="middle">F3 Client Registry — UPID</text>
-     <text class="sub" x="149" y="258" text-anchor="middle">HAPI FHIR · ↕ NIDA</text>
-     <text class="sub" x="149" y="272" text-anchor="middle">auto-fills ~90% of registration</text>
+     <rect class="prod" x="900" y="86" width="200" height="76" rx="8" fill="rgba(195,106,71,0.11)" stroke="#C36A47"></rect>
+     <text class="nt" x="1000" y="112" text-anchor="middle">A1 · A2 · A3 DHIS2</text>
+     <text class="ns" x="1000" y="130" text-anchor="middle">HMIS · eIDSR</text>
+     <text class="ns" x="1000" y="146" text-anchor="middle">HIV CBS line lists</text>
     </g>
     <g>
-     <rect class="box" x="278" y="220" width="226" height="66" rx="9"></rect>
-     <rect class="cs cs-f" x="283" y="223" width="216" height="4" rx="2"></rect>
-     <text x="391" y="240" text-anchor="middle">F6 Shared Health Records</text>
-     <text class="sub" x="391" y="254" text-anchor="middle">OpenMRS-based · FHIR store</text>
-     <text class="sub" x="391" y="267" text-anchor="middle">462,865 encounters / 7 mo</text>
-     <text class="sub" x="391" y="280" text-anchor="middle">(Kibagabaga)</text>
+     <rect class="prod" x="900" y="248" width="200" height="76" rx="8" fill="rgba(169,83,47,0.12)" stroke="#A9532F"></rect>
+     <text class="nt" x="1000" y="274" text-anchor="middle">H1 NHIC</text>
+     <text class="ns" x="1000" y="292" text-anchor="middle">6-layer lakehouse</text>
+     <text class="ns" x="1000" y="308" text-anchor="middle">real-time analytics + AI</text>
     </g>
     <g>
-     <rect class="box inferred" x="520" y="220" width="226" height="66" rx="9"></rect>
-     <rect class="cs cs-f" x="525" y="223" width="216" height="4" rx="2"></rect>
-     <text x="633" y="240" text-anchor="middle">F4 Facility · F5 Provider</text>
-     <text class="sub" x="633" y="254" text-anchor="middle">F7 Terminology · F8 Lab · F9 CRVS</text>
-     <text class="sub" x="633" y="267" text-anchor="middle">⚠ testing env —</text>
-     <text class="sub" x="633" y="280" text-anchor="middle">operationalisation pending</text>
-    </g>
-    <g>
-     <rect class="box" x="762" y="220" width="318" height="66" rx="9"></rect>
-     <rect class="cs cs-h" x="767" y="223" width="308" height="4" rx="2"></rect>
-     <text x="921" y="242" text-anchor="middle">H1 NHIC — Health Intelligence Center</text>
-     <text class="sub" x="921" y="258" text-anchor="middle">six-layer lakehouse · launched Apr 2025</text>
-     <text class="sub" x="921" y="272" text-anchor="middle">AI-assisted national analytics · 12 sources</text>
+     <rect class="prod" x="900" y="404" width="200" height="66" rx="8" fill="#F1F0EC" stroke="#86857D"></rect>
+     <text class="nt" x="1000" y="432" text-anchor="middle">Dashboards / API</text>
+     <text class="ns" x="1000" y="450" text-anchor="middle">api.nhic.moh.gov.rw</text>
     </g>
 
-    <line class="arrow" x1="149" y1="286" x2="149" y2="302" marker-end="url(#ah)"></line>
-    <line class="arrow" x1="391" y1="286" x2="391" y2="302" marker-end="url(#ah)"></line>
+    <!-- Edges producers -> interop (labels each at own y, no overlap) -->
+    <path class="edge" d="M220 78 H418" marker-end="url(#a3)"></path>
+    <text class="el" x="230" y="70">UPID lookup · lab order · SHR encounter (FHIR)</text>
+    <path class="edge" d="M220 164 H418" marker-end="url(#a3)"></path>
+    <text class="el" x="230" y="156">lab result · JSON &#8594; FHIR</text>
 
-    <g>
-     <rect class="box hot" x="36" y="302" width="708" height="58" rx="9"></rect>
-     <rect class="cs cs-f" x="41" y="305" width="698" height="4" rx="2"></rect>
-     <text x="390" y="325" text-anchor="middle">F1 RHIE / RHIES + F2 OpenHIM mediator — OpenHIE exchange bus</text>
-     <text class="sub" x="390" y="342" text-anchor="middle">EMR↔VLSM FHIR lab flow live · consent =
-      record/element-level deny · Grafana/Prometheus</text>
-    </g>
+    <!-- RapidPro / RapidSMS bypass to DHIS2 via integration app -->
+    <path class="edge dash" d="M220 268 C 480 268, 620 150, 898 132" marker-end="url(#a3)"></path>
+    <text class="el" x="300" y="240">flow runs &#8594; data values (integration app)</text>
+    <path class="edge dash" d="M220 356 C 500 356, 640 150, 898 146" marker-end="url(#a3)"></path>
+    <text class="el" x="300" y="378">maternal / CH indicators (SMS gateway)</text>
 
-    <line class="arrow" x1="391" y1="360" x2="391" y2="376" marker-end="url(#ah)"></line>
-    <text class="sub" x="405" y="372">HIV CBS line list · surveillance alerts</text>
+    <!-- CRVS -> NHIC -->
+    <path class="edge dash" d="M220 452 C 520 452, 660 300, 898 296" marker-end="url(#a3)"></path>
+    <text class="el" x="300" y="470">births / deaths / cause-of-death</text>
 
-    <g>
-     <rect class="box" x="36" y="376" width="226" height="66" rx="9"></rect>
-     <rect class="cs cs-a" x="41" y="379" width="216" height="4" rx="2"></rect>
-     <text x="149" y="398" text-anchor="middle">A1 RHMIS / DHIS2</text>
-     <text class="sub" x="149" y="414" text-anchor="middle">aggregate backbone · live since Feb 2012</text>
-     <text class="sub" x="149" y="428" text-anchor="middle">hosted at National Data Centre</text>
-    </g>
-    <g>
-     <rect class="box" x="278" y="376" width="226" height="66" rx="9"></rect>
-     <rect class="cs cs-a" x="283" y="379" width="216" height="4" rx="2"></rect>
-     <text x="391" y="398" text-anchor="middle">A2 eIDSR · A3 HIV CBS</text>
-     <text class="sub" x="391" y="414" text-anchor="middle">DHIS2 Tracker · cbs2.moh.gov.rw/idsr</text>
-     <text class="sub" x="391" y="428" text-anchor="middle">197 PEPFAR sites · 30 districts</text>
-    </g>
-    <g>
-     <rect class="box" x="520" y="376" width="226" height="66" rx="9"></rect>
-     <rect class="cs cs-a" x="525" y="379" width="216" height="4" rx="2"></rect>
-     <text x="633" y="398" text-anchor="middle">A4 COVID · A5 registries</text>
-     <text class="sub" x="633" y="414" text-anchor="middle">eTB · cancer · NCD · hep · food</text>
-     <text class="sub" x="633" y="428" text-anchor="middle">Android Capture at the edge</text>
-    </g>
+    <!-- interop -> DHIS2 -->
+    <path class="edge" d="M684 120 H898" marker-end="url(#a3)"></path>
+    <text class="el" x="700" y="112">HIV CBS line list · FHIR ServiceRequest</text>
 
-    <line class="arrow" x1="910" y1="376" x2="910" y2="286" marker-end="url(#ah)"></line>
-    <text class="sub" x="922" y="334">HMIS + Tracker feeds → H1</text>
+    <!-- DHIS2 -> NHIC -->
+    <path class="edge" d="M1000 162 V246" marker-end="url(#a3)"></path>
+    <text class="el" x="1010" y="205">monthly aggregate</text>
 
-    <!-- G category: chip grid (was a single overflowing text bar) -->
-    <g>
-     <rect class="box" x="36" y="448" width="1044" height="94" rx="9"></rect>
-     <rect class="cs cs-g" x="41" y="451" width="1034" height="4" rx="2"></rect>
-     <text x="558" y="468" text-anchor="middle">G — workforce · financing · admin (11 systems)</text>
-     <rect class="box" x="48" y="473" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="129.5" y="488" text-anchor="middle">G1 CSAM</text>
-     <rect class="box" x="219" y="473" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="300.5" y="488" text-anchor="middle">G2 HWMS</text>
-     <rect class="box" x="390" y="473" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="471.5" y="488" text-anchor="middle">G3 iHRIS</text>
-     <rect class="box" x="561" y="473" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="642.5" y="488" text-anchor="middle">G4 IPPIS</text>
-     <rect class="box" x="732" y="473" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="813.5" y="488" text-anchor="middle">G5 Licensing</text>
-     <rect class="box" x="903" y="473" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="984.5" y="488" text-anchor="middle">G6 MEMMS</text>
-     <rect class="box" x="134" y="497" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="215.5" y="512" text-anchor="middle">G7 HRTT</text>
-     <rect class="box" x="305" y="497" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="386.5" y="512" text-anchor="middle">G8 eLearning</text>
-     <rect class="box" x="476" y="497" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="557.5" y="512" text-anchor="middle">G9 RHAP</text>
-     <rect class="box" x="647" y="497" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="728.5" y="512" text-anchor="middle">G10 PBF dashboard</text>
-     <rect class="box" x="818" y="497" width="163" height="22" rx="5"></rect>
-     <text class="gchip-t" x="899.5" y="512" text-anchor="middle">G11 RSSB/Mutuelle (CBHI)</text>
-     <text class="sub" x="558" y="534" text-anchor="middle">G2 HWMS + G7 HRTT are NHIC source feeds · G11
-      insurance eligibility is manual at intake (anti-edge E32)</text>
-    </g>
-    <text class="sub" x="36" y="550">strategy gap: 2024–2029 Digital Health Strategic Plan + Architecture
-     Blueprint — due 2026, unpublished</text>
-
-    <!-- tier-crossing arrows -->
-    <line class="arrow" x1="180" y1="604" x2="180" y2="554" marker-end="url(#ah)"></line>
-    <text class="sub" x="192" y="570">HIE transactions (E1–E9)</text>
-    <line class="arrow" x1="430" y1="604" x2="430" y2="554" marker-end="url(#ah)"></line>
-    <text class="sub" x="442" y="584">monthly aggregate (E10)</text>
-    <line class="arrow hot" x1="880" y1="604" x2="880" y2="554" marker-end="url(#ahHot)"></line>
-    <text class="sub" x="892" y="576">d-IDS alert → eIDSR (P5→P2 loop)</text>
-
-    <!-- ============ FACILITY TIER ============ -->
-    <rect class="container t-fac" x="20" y="604" width="620" height="342" rx="11"></rect>
-    <text class="band-label" x="32" y="626">FACILITY TIER — on-prem Ubuntu per facility · labs · supply
-     chain</text>
-
-    <g>
-     <rect class="box" x="36" y="638" width="272" height="74" rx="9"></rect>
-     <rect class="cs cs-b" x="41" y="641" width="262" height="4" rx="2"></rect>
-     <text x="172" y="660" text-anchor="middle">B1 OpenMRS / eBuzima</text>
-     <text class="sub" x="172" y="676" text-anchor="middle">on-prem Ubuntu · 42 hospitals + 450+ HCs</text>
-     <text class="sub" x="172" y="690" text-anchor="middle">IPD/OPD · lab orders · pharmacy · billing</text>
-     <text class="sub" x="172" y="704" text-anchor="middle">public code: Rwanda-EMR · PIH/IMB</text>
-    </g>
-    <g>
-     <rect class="box" x="324" y="638" width="140" height="74" rx="9"></rect>
-     <rect class="cs cs-b" x="329" y="641" width="130" height="4" rx="2"></rect>
-     <text x="394" y="660" text-anchor="middle">B3 OpenClinic</text>
-     <text class="sub" x="394" y="676" text-anchor="middle">alt hospital EMR</text>
-     <text class="sub" x="394" y="690" text-anchor="middle">not on RHIE bus</text>
-    </g>
-    <g>
-     <rect class="box inferred" x="480" y="638" width="144" height="74" rx="9"></rect>
-     <rect class="cs cs-b" x="485" y="641" width="134" height="4" rx="2"></rect>
-     <text x="552" y="660" text-anchor="middle">B4 Health Portal</text>
-     <text class="sub" x="552" y="676" text-anchor="middle">⚠ under development</text>
-     <text class="sub" x="552" y="690" text-anchor="middle">DHIA · ~US$2M</text>
-    </g>
-
-    <g>
-     <rect class="box" x="36" y="726" width="272" height="62" rx="9"></rect>
-     <rect class="cs cs-e" x="41" y="729" width="262" height="4" rx="2"></rect>
-     <text x="172" y="748" text-anchor="middle">E1 LIMS (LabWare @ NRL) · E2 VLSM</text>
-     <text class="sub" x="172" y="764" text-anchor="middle">HIV VL / CD4 / recency · BLIS satellites</text>
-     <text class="sub" x="172" y="778" text-anchor="middle">FHIR flow via OpenHIM live</text>
-    </g>
-    <g>
-     <rect class="box" x="324" y="726" width="300" height="62" rx="9"></rect>
-     <rect class="cs cs-e" x="329" y="729" width="290" height="4" rx="2"></rect>
-     <text x="474" y="748" text-anchor="middle">E3 NRL · E4 ePROGESA (blood bank)</text>
-     <text class="sub" x="474" y="764" text-anchor="middle">CNTS · central + 4 regional · Mak-System</text>
-     <text class="sub" x="474" y="778" text-anchor="middle">~$30k/yr licence</text>
-    </g>
-
-    <g>
-     <rect class="box" x="36" y="802" width="180" height="62" rx="9"></rect>
-     <rect class="cs cs-d" x="41" y="805" width="170" height="4" rx="2"></rect>
-     <text x="126" y="824" text-anchor="middle">D1 eLMIS</text>
-     <text class="sub" x="126" y="840" text-anchor="middle">commodities · all public</text>
-     <text class="sub" x="126" y="854" text-anchor="middle">facilities + district pharm.</text>
-    </g>
-    <g>
-     <rect class="box" x="228" y="802" width="120" height="62" rx="9"></rect>
-     <rect class="cs cs-d" x="233" y="805" width="110" height="4" rx="2"></rect>
-     <text x="288" y="824" text-anchor="middle">D2 RMS WMS</text>
-     <text class="sub" x="288" y="840" text-anchor="middle">automated central</text>
-     <text class="sub" x="288" y="854" text-anchor="middle">warehouse</text>
-    </g>
-    <g>
-     <rect class="box inferred" x="360" y="802" width="120" height="62" rx="9"></rect>
-     <rect class="cs cs-d" x="365" y="805" width="110" height="4" rx="2"></rect>
-     <text x="420" y="824" text-anchor="middle">D3 Reagent ERP</text>
-     <text class="sub" x="420" y="840" text-anchor="middle">⚠ vendor undisclosed</text>
-    </g>
-    <g>
-     <rect class="box" x="492" y="802" width="132" height="62" rx="9"></rect>
-     <rect class="cs cs-d" x="497" y="805" width="122" height="4" rx="2"></rect>
-     <text x="558" y="824" text-anchor="middle">D5 Zipline drones</text>
-     <text class="sub" x="558" y="840" text-anchor="middle">Muhanga·Kayonza</text>
-     <text class="sub" x="558" y="854" text-anchor="middle">·Rusizi centres</text>
-    </g>
-    <text class="sub" x="36" y="888">→ centralised EMR hosting planned; 123 cloud OpenMRS instances</text>
-    <text class="sub" x="36" y="901">= open residency question (art. 50)</text>
-    <text class="sub" x="36" y="916">Viebeg (D4) runs AI procurement/forecasting as commercial SaaS for</text>
-    <text class="sub" x="36" y="929">Rwanda Military Hospital, King Faisal, Nemba DH</text>
-
-    <!-- ============ COMMUNITY TIER ============ -->
-    <rect class="container t-com" x="660" y="604" width="440" height="342" rx="11"></rect>
-    <text class="band-label" x="672" y="626">COMMUNITY TIER — CHW mobile-first · offline-first Android</text>
-
-    <g>
-     <rect class="box" x="676" y="638" width="196" height="86" rx="9"></rect>
-     <rect class="cs cs-b" x="681" y="641" width="186" height="4" rx="2"></rect>
-     <text x="774" y="660" text-anchor="middle">B2 cEMR · C1 eCHIS</text>
-     <text class="sub" x="774" y="676" text-anchor="middle">58,567 CHWs by end-2026</text>
-     <text class="sub" x="774" y="690" text-anchor="middle">d-IDS: −24.2% referrals</text>
-     <text class="sub" x="774" y="704" text-anchor="middle">offline-first · USAID Tubeho</text>
-    </g>
-    <g>
-     <rect class="box" x="888" y="638" width="196" height="86" rx="9"></rect>
-     <rect class="cs cs-c" x="893" y="641" width="186" height="4" rx="2"></rect>
-     <text x="986" y="660" text-anchor="middle">C2 RapidSMS (legacy)</text>
-     <text class="sub" x="986" y="676" text-anchor="middle">45,000 feature phones</text>
-     <text class="sub" x="986" y="690" text-anchor="middle">pregnancy + Red Alert SMS</text>
-     <text class="sub" x="986" y="704" text-anchor="middle">→ superseded by cEMR</text>
-    </g>
-    <g>
-     <rect class="box" x="676" y="738" width="196" height="62" rx="9"></rect>
-     <rect class="cs cs-c" x="681" y="741" width="186" height="4" rx="2"></rect>
-     <text x="774" y="760" text-anchor="middle">C3 RapidPro</text>
-     <text class="sub" x="774" y="776" text-anchor="middle">SMS/IVR/USSD/WhatsApp</text>
-     <text class="sub" x="774" y="790" text-anchor="middle">↔ DHIS2 sync (E12)</text>
-    </g>
-    <g>
-     <rect class="box" x="888" y="738" width="196" height="62" rx="9"></rect>
-     <rect class="cs cs-c" x="893" y="741" width="186" height="4" rx="2"></rect>
-     <text x="986" y="760" text-anchor="middle">C4 CHIS · C5 WelTel</text>
-     <text class="sub" x="986" y="776" text-anchor="middle">health-post IS · SMS engagement</text>
-     <text class="sub" x="986" y="790" text-anchor="middle">WelTel = NHIC source</text>
-    </g>
-    <g>
-     <rect class="box" x="676" y="814" width="196" height="62" rx="9"></rect>
-     <rect class="cs cs-c" x="681" y="817" width="186" height="4" rx="2"></rect>
-     <text x="774" y="836" text-anchor="middle">C6 Viamo 3-2-1 · C7 AKIISA</text>
-     <text class="sub" x="774" y="852" text-anchor="middle">IVR voice · AI CHW training</text>
-     <text class="sub" x="774" y="866" text-anchor="middle">basic-phone population reach</text>
-    </g>
-    <g>
-     <rect class="box" x="888" y="814" width="196" height="62" rx="9"></rect>
-     <rect class="cs cs-c" x="893" y="817" width="186" height="4" rx="2"></rect>
-     <text x="986" y="836" text-anchor="middle">mUbuzima ML (Insightiv)</text>
-     <text class="sub" x="986" y="852" text-anchor="middle">offline wound-image classifier</text>
-     <text class="sub" x="986" y="866" text-anchor="middle">surgical-site infection risk</text>
-    </g>
-    <text class="sub" x="676" y="900">edge AI runs on-device; alerts + aggregates</text>
-    <text class="sub" x="676" y="913">flow up, work lists flow down</text>
-
-    <!-- SISCOM arrow community → facility -->
-    <line class="arrow" x1="668" y1="760" x2="648" y2="760" marker-end="url(#ah)"></line>
+    <!-- NHIC -> dashboards -->
+    <path class="edge" d="M1000 324 V402" marker-end="url(#a3)"></path>
+    <text class="el" x="1010" y="368">Superset guest-token · REST</text>
    </svg>
   </div>
-  <p class="map-note">Dashed boxes = planned / under development / unverified — tagged ⚠ (B4 Health Portal · D3
-   Reagent ERP vendor · I15 OpenEvidence · F4/F5/F7/F8 registries in testing); rose dashed = defunct (I12 Babyl).
-   Full per-system inventory with owners, vendors, hosting and DP notes: synthesis §1. Sources: RHIE ecosystem
-   report<sup class="cite"><a href="#src-1-1">[1.1]</a></sup> · NHIC launch + architecture<sup class="cite"><a
-     href="#src-2-3">[2.3]</a></sup><sup class="cite"><a href="#src-2-4">[2.4]</a></sup> · HIS tiers (WHO)<sup
-    class="cite"><a href="#src-2-5">[2.5]</a></sup> · Zipline partnership<sup class="cite"><a
-     href="#src-2-6">[2.6]</a></sup> · CHW program scope<sup class="cite"><a href="#src-2-7">[2.7]</a></sup>.</p>
-  <div class="catlegend" data-component="category-legend">
-   <span class="k"><span class="cw" style="background:var(--ca)"></span>A reporting &amp; surveillance</span>
-   <span class="k"><span class="cw" style="background:var(--cb)"></span>B facility/community EMR</span>
-   <span class="k"><span class="cw" style="background:var(--cc)"></span>C community mHealth</span>
-   <span class="k"><span class="cw" style="background:var(--cd)"></span>D supply chain</span>
-   <span class="k"><span class="cw" style="background:var(--ce)"></span>E laboratory</span>
-   <span class="k"><span class="cw" style="background:var(--cf)"></span>F identity/registries/interop</span>
-   <span class="k"><span class="cw" style="background:var(--cg)"></span>G workforce/financing/admin</span>
-   <span class="k"><span class="cw" style="background:var(--ch)"></span>H intelligence</span>
-   <span class="k"><span class="cw" style="background:var(--ci)"></span>I external/partner</span>
+  <div class="legend">
+   <span class="k"><span class="sw" style="border-color:#B8B5AA;background:#fff"></span> solid = documented edge (RHIE report §5.3.2)</span>
+   <span class="k"><span class="sw" style="border-color:#B8B5AA;background:repeating-linear-gradient(90deg,#B8B5AA 0 4px,#fff 4px 7px)"></span> dashed = via integration app / source feed</span>
   </div>
 
-  <!-- ============================== 3 · PERSONA JOURNEYS ============================== -->
-  <h2>3 · Persona journeys — six lanes through the stack</h2>
-  <p class="sect-sub">One lane per persona; numbered steps flow left→right (scroll the lane), chips mark the
-   systems touched at each step. Confidence: HIGH for P1–P4 · MEDIUM-HIGH for P5 · MEDIUM for P6 (the Babyl
-   shutdown leaves the citizen channel ambiguous). Lane sources: P1<sup class="cite"><a
-     href="#src-3-1">[3.1]</a></sup> · P2<sup class="cite"><a href="#src-3-2">[3.2]</a></sup> · P3<sup
-    class="cite"><a href="#src-3-3">[3.3]</a></sup> · P4<sup class="cite"><a href="#src-3-4">[3.4]</a></sup> ·
-   P5<sup class="cite"><a href="#src-3-5">[3.5]</a></sup><sup class="cite"><a href="#src-3-6">[3.6]</a></sup><sup
-    class="cite"><a href="#src-3-7">[3.7]</a></sup> · P6<sup class="cite"><a href="#src-1-10">[1.10]</a></sup><sup
-    class="cite"><a href="#src-3-8">[3.8]</a></sup>.</p>
+  <!-- =============== 6. DATA-PROTECTION POSTURE =============== -->
+  <h2><span class="sec-num">06</span>Data-protection posture vs Law No.&nbsp;058/2021</h2>
+  <p class="lede">Each obligation from Rwanda's data-protection law against what the deployed MoH stack demonstrably does today.
+   The stack protects data mainly through access control, residency and infrastructure — the open work is consent
+   capture, at-rest encryption, production audit and governance roles.<sup><a href="#src-5-3">3</a></sup></p>
 
-  <div class="lane" data-component="persona-lane">
-   <div class="lane-head">
-    <span class="pnum">P1</span>
-    <div>
-     <div class="pname">National policy / planning analyst — NHIC user</div>
-     <div class="psurf">primary: H1 NHIC portal (nhic.moh.gov.rw) · secondary: A1 · A2 · B1 (aggregates) · G2 ·
-      G7 · G10</div>
-    </div>
-   </div>
-   <ol class="psteps">
-    <li><b>Morning brief.</b> Opens NHIC executive dashboards — maternal &amp; child trends, epidemic signals.
-     <span class="chip">H1</span></li>
-    <li><b>Trace a signal.</b> District malaria-admission spike → drill into NHIC’s 12 source streams. <span
-      class="chip">H1</span></li>
-    <li><b>Cross-check lineage.</b> Corroborate against eIDSR Tracker + HIV CBS built with HISP Rwanda. <span
-      class="chip">A2</span> <span class="chip">A3</span></li>
-    <li><b>Overlay HR + supply.</b> HWMS (4×4 reform staffing) + eLMIS commodity indicators. <span
-      class="chip">G2</span> <span class="chip">D1</span></li>
-    <li><b>Draft policy brief.</b> Country-driven HIS evidence, per WHO’s Rwanda case study. <span
-      class="chip">H1</span></li>
-    <li><b>Feed planning.</b> Brief → Health Sector Strategic Plan adjustments + NHIC roadmap. <span
-      class="chip">H1</span></li>
-   </ol>
-   <div class="pdata">DATA — consumes: 12 NHIC source streams (CHW → referral hospital, surveillance, CRVS,
-    workforce, finance) · produces: ministerial dashboards, AI-assisted forecasts, briefings.</div>
-  </div>
-
-  <div class="lane" data-component="persona-lane">
-   <div class="lane-head">
-    <span class="pnum">P2</span>
-    <div>
-     <div class="pname">Epi / surveillance officer — RBC / district (IDSR)</div>
-     <div class="psurf">primary: A2 DHIS2 Tracker eIDSR (cbs2.moh.gov.rw/idsr) · secondary: A3 · H1 · alerts in
-      from C2/C3</div>
-    </div>
-   </div>
-   <ol class="psteps">
-    <li><b>Receive alert.</b> Facility clinician or CHW flags a suspected notifiable condition. <span
-      class="chip">A2</span></li>
-    <li><b>Enter case.</b> DHIS2 Tracker case record; individual follow-up, case-based surveillance. <span
-      class="chip">A2</span></li>
-    <li><b>Link lab.</b> Specimens + results linked to the case; HIV CBS functional at 166 sites (CDC). <span
-      class="chip">A3</span> <span class="chip">E2</span></li>
-    <li><b>Threshold logic.</b> DHIS2 program rules trigger outbreak alerts. <span class="chip">A2</span></li>
-    <li><b>Bulletin.</b> Weekly IDSR aggregates roll up nationally and feed NHIC. <span class="chip">A1</span>
-     <span class="chip">H1</span></li>
-    <li><b>Pandemic mode.</b> Modules adapted for case management + contact tracing (COVID pattern). <span
-      class="chip">A4</span></li>
-   </ol>
-   <div class="pdata">DATA — consumes: suspected-case notifications from facilities + CHWs · produces: case
-    line lists, weekly epi bulletins, outbreak alerts.</div>
-  </div>
-
-  <div class="lane" data-component="persona-lane">
-   <div class="lane-head">
-    <span class="pnum">P3</span>
-    <div>
-     <div class="pname">Hospital clinician — OpenMRS eBuzima</div>
-     <div class="psurf">primary: B1 OpenMRS + F6 SHR + F3 UPID lookup · secondary: A1 (monthly upload) · G11
-      (eligibility)</div>
-    </div>
-   </div>
-   <ol class="psteps">
-    <li><b>Patient arrives.</b> Search SHR via Client Registry; NIDA auto-fills ~90% of registration. <span
-      class="chip">F3</span> <span class="chip">F6</span></li>
-    <li><b>Encounter.</b> Chart on the facility’s on-prem OpenMRS server; ART/TB regimens, labs, billing.
-     <span class="chip">B1</span></li>
-    <li><b>Cross-facility lookup.</b> Pull prior diagnoses + medications from other facilities via SHR. <span
-      class="chip">F6</span></li>
-    <li><b>Lab order.</b> B1 → OpenHIM → FHIR ServiceRequest in HAPI store → VLSM; results return by FHIR
-     query. <span class="chip">B1</span> <span class="chip">F2</span> <span class="chip">E2</span></li>
-    <li><b>Monthly upload.</b> Aggregate indicators pushed to RHMIS via the Monthly Report Tool. <span
-      class="chip">A1</span></li>
-    <li><b>Research extract.</b> IeDEA de-identification (C# identifier-stripping) before any US upload. <span
-      class="chip">B1</span></li>
-   </ol>
-   <div class="pdata">DATA — produces: encounter-level clinical records, monthly HMIS aggregates,
-    de-identified research extracts · consumes: SHR priors, lab results, ART regimens.</div>
-  </div>
-
-  <div class="lane" data-component="persona-lane">
-   <div class="lane-head">
-    <span class="pnum">P4</span>
-    <div>
-     <div class="pname">District Health Officer — DHO + PBF verifier</div>
-     <div class="psurf">primary: A1 DHIS2 district dashboards + G10 PBF dashboard
-      (aggregate.moh.gov.rw/pbfrwanda) · secondary: G2 · G11 · SISCOM</div>
-    </div>
-   </div>
-   <ol class="psteps">
-    <li><b>District dashboard.</b> Monthly ANC, deliveries, immunisation, OPD indicators. <span
-      class="chip">A1</span></li>
-    <li><b>PBF verification.</b> Facility quantity + quality claims cross-checked against HMIS. <span
-      class="chip">G10</span></li>
-    <li><b>CHW performance.</b> SISCOM cooperative reports via supervising health centres. <span
-      class="chip">C1</span></li>
-    <li><b>Workforce.</b> Verify 4×4 staffing-rule deployment (4 GPs + 4 nurse anaesthetists) in HWMS. <span
-      class="chip">G2</span></li>
-    <li><b>Imihigo.</b> District performance rolls into national performance contracts. <span
-      class="chip">G10</span></li>
-    <li><b>Feed NHIC.</b> Cleaned HMIS stream consumed by national dashboards. <span class="chip">H1</span>
-    </li>
-   </ol>
-   <div class="pdata">DATA — consumes: HMIS aggregates, PBF claims, CHW cooperative reports · produces:
-    district performance reviews, PBF verification.</div>
-  </div>
-
-  <div class="lane" data-component="persona-lane">
-   <div class="lane-head">
-    <span class="pnum">P5</span>
-    <div>
-     <div class="pname">Community Health Worker — CHW</div>
-     <div class="psurf">primary: B2/C1 cEMR · eCHIS + d-IDS · (legacy C2 RapidSMS) · secondary: A2 alerts out ·
-      A1 via SISCOM</div>
-    </div>
-   </div>
-   <ol class="psteps">
-    <li><b>Work list.</b> cEMR/eCHIS app shows assigned households (&gt;45,000 active CHWs). <span
-      class="chip">B2</span> <span class="chip">C1</span></li>
-    <li><b>Household visit.</b> Offline-first Android: register pregnancies, ANC, malnutrition + NCD screens.
-     <span class="chip">B2</span></li>
-    <li><b>AI screening.</b> mUbuzima ML on incision photos predicts surgical-site infection — offline. <span
-      class="chip">C1</span> <span class="chip">I13</span></li>
-    <li><b>d-IDS guidance.</b> Case registration → symptom assessment → treat/refer (−24.2% referrals). <span
-      class="chip">B2</span></li>
-    <li><b>Treat or refer.</b> iCCM at the household, or app-prompted referral to the health centre. <span
-      class="chip">B2</span></li>
-    <li><b>SISCOM report.</b> Monthly indicators to supervising health centre → compiled into DHIS2. <span
-      class="chip">A1</span></li>
-    <li><b>Surveillance alert.</b> Notifiable suspicion pushed to eIDSR — closes the loop to P2. <span
-      class="chip">A2</span></li>
-   </ol>
-   <div class="pdata">DATA — produces: household-level records, SISCOM aggregates, d-IDS alerts · consumes:
-    work lists, app content, training (C7 AKIISA).</div>
-  </div>
-
-  <div class="lane" data-component="persona-lane">
-   <div class="lane-head">
-    <span class="pnum">P6</span>
-    <div>
-     <div class="pname">Citizen / patient</div>
-     <div class="psurf">primary: G11 RSSB Mutuelle de Santé · formerly I12 Babyl · touched by: B1 / A1 at point
-      of service</div>
-    </div>
-   </div>
-   <ol class="psteps">
-    <li><b>Enrol.</b> Mutuelle de Santé via the cell coordinator; 93% of the insured were in CBHI (2019).
-     <span class="chip">G11</span></li>
-    <li><b>Membership proof.</b> Paper card + digitised record keyed to national ID. <span class="chip">G11</span>
-     <span class="chip">F3</span></li>
-    <li><b>Visit.</b> Eligibility verified at intake; encounter in OpenMRS or HMIS aggregate. <span
-      class="chip">B1</span> <span class="chip">A1</span></li>
-    <li><b>Teleconsult.</b> Babyl served ~2.8M users until the Aug 2023 shutdown; no successor. <span
-      class="chip">I12</span></li>
-    <li><b>Billing.</b> Claim against CBHI/RSSB — manual; no automated EMR↔insurance link documented. <span
-      class="chip">G11</span></li>
-    <li><b>Upward flow.</b> Anonymised encounters → monthly DHIS2 → NHIC dashboards. <span class="chip">A1</span>
-     <span class="chip">H1</span></li>
-    <li><b>Future.</b> Health Portal will let citizens view records pulled from B1 + B2. <span
-      class="chip">B4</span></li>
-   </ol>
-   <div class="pdata">DATA — produces: enrolment records, premium payments, encounter-level utilisation ·
-    consumes: membership verification, teleconsultation advice.</div>
-  </div>
-
-  <!-- ============================== 4 · INTEGRATION & DATA FLOW ============================== -->
-  <h2>4 · Integration &amp; data-flow — the OpenHIM bus</h2>
-  <p class="sect-sub">Directed edges <code class="inline">source → destination : payload</code> across the HIE
-   layer. Solid = documented (primary source) · dashed = inferred / planned · clay = the two live feedback
-   loops · rose dotted = documented anti-edge (a gap, drawn as a gap). Edge-by-edge evidence is linked in the
-   register below.</p>
-
-  <div class="diagram-panel" data-component="data-flow">
-   <svg class="flow" viewBox="0 0 1120 740" width="1120" height="740" role="img"
-    aria-label="Integration and data-flow diagram: facility and community systems on the left exchange through the OpenHIM mediator in the centre with national registries, DHIS2 trackers, RHMIS and the NHIC on the right; a dotted rose line shows the missing insurance integration">
-    <defs>
-     <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
-      orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5E5D55"></path>
-     </marker>
-     <marker id="ah2Hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
-      orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D97757"></path>
-     </marker>
-    </defs>
-
-    <text class="band-label" x="20" y="138">FACILITY + COMMUNITY PRODUCERS</text>
-    <text class="band-label" x="870" y="18">NATIONAL (NDC)</text>
-    <text class="band-label" x="20" y="638">SECONDARY USE — cross-border, authorised</text>
-
-    <!-- E13 secondary-use edge: painted FIRST so producer boxes occlude it (runs behind, not through, boxes) -->
-    <line class="arrow" x1="80" y1="222" x2="80" y2="650" marker-end="url(#ah2)"></line>
-    <text class="tag" x="92" y="362">E13 de-identified cohort — C# strip</text>
-    <text class="tag" x="92" y="374">Rwandan gov + ethics approval</text>
-
-    <!-- left column -->
-    <g>
-     <rect class="box" x="20" y="150" width="230" height="72" rx="9"></rect>
-     <rect class="cs cs-b" x="25" y="153" width="220" height="4" rx="2"></rect>
-     <text x="135" y="172" text-anchor="middle">B1 OpenMRS / eBuzima</text>
-     <text class="sub" x="135" y="188" text-anchor="middle">on-prem per facility</text>
-     <text class="sub" x="135" y="202" text-anchor="middle">IPD/OPD · lab · pharmacy · billing</text>
-    </g>
-    <g>
-     <rect class="box" x="20" y="280" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-e" x="25" y="283" width="220" height="4" rx="2"></rect>
-     <text x="135" y="302" text-anchor="middle">E2 VLSM · LabWare</text>
-     <text class="sub" x="135" y="318" text-anchor="middle">HIV VL / CD4 / recency</text>
-    </g>
-    <g>
-     <rect class="box" x="20" y="390" width="230" height="72" rx="9"></rect>
-     <rect class="cs cs-c" x="25" y="393" width="220" height="4" rx="2"></rect>
-     <text x="135" y="412" text-anchor="middle">C2 RapidSMS · C3 RapidPro</text>
-     <text class="sub" x="135" y="428" text-anchor="middle">d-IDS in cEMR (B2)</text>
-     <text class="sub" x="135" y="442" text-anchor="middle">CHW edge · 58,567 by 2026</text>
-    </g>
-    <g>
-     <rect class="box" x="20" y="520" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-d" x="25" y="523" width="220" height="4" rx="2"></rect>
-     <text x="135" y="542" text-anchor="middle">D1 eLMIS</text>
-     <text class="sub" x="135" y="558" text-anchor="middle">commodities · consumption</text>
-    </g>
-    <g>
-     <rect class="box" x="20" y="650" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-i" x="25" y="653" width="220" height="4" rx="2"></rect>
-     <text x="135" y="672" text-anchor="middle">IeDEA research extract (US)</text>
-     <text class="sub" x="135" y="688" text-anchor="middle">de-identified · gov + ethics OK</text>
-    </g>
-
-    <!-- centre bus -->
-    <g>
-     <rect class="box hot" x="430" y="330" width="260" height="110" rx="10"></rect>
-     <rect class="cs cs-f" x="435" y="333" width="250" height="4" rx="2"></rect>
-     <text x="560" y="356" text-anchor="middle">F1 RHIE · F2 OpenHIM mediator</text>
-     <text class="sub" x="560" y="374" text-anchor="middle">Mapping Mediator → HAPI FHIR</text>
-     <text class="sub" x="560" y="388" text-anchor="middle">consent: record/element-level deny</text>
-     <text class="sub" x="560" y="402" text-anchor="middle">registries pushed back to EMR (E15)</text>
-     <text class="sub" x="560" y="416" text-anchor="middle">audit: OpenHIM log + Grafana (E16)</text>
-    </g>
-    <g>
-     <rect class="box inferred" x="430" y="500" width="260" height="56" rx="9"></rect>
-     <rect class="cs cs-f" x="435" y="503" width="250" height="4" rx="2"></rect>
-     <text x="560" y="522" text-anchor="middle">F9 CRVS · G2 · G7 · C5 feeds</text>
-     <text class="sub" x="560" y="538" text-anchor="middle">⚠ → H1 NHIC · inferred (E22–E25)</text>
-    </g>
-
-    <!-- right column -->
-    <g>
-     <rect class="box" x="870" y="30" width="230" height="64" rx="9"></rect>
-     <rect class="cs cs-f" x="875" y="33" width="220" height="4" rx="2"></rect>
-     <text x="985" y="52" text-anchor="middle">F3 Client Registry — UPID</text>
-     <text class="sub" x="985" y="68" text-anchor="middle">HAPI FHIR · ↕ NIDA</text>
-    </g>
-    <g>
-     <rect class="box" x="870" y="120" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-f" x="875" y="123" width="220" height="4" rx="2"></rect>
-     <text x="985" y="142" text-anchor="middle">F6 Shared Health Records</text>
-     <text class="sub" x="985" y="158" text-anchor="middle">OpenMRS-based FHIR store</text>
-    </g>
-    <g>
-     <rect class="box" x="870" y="210" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-a" x="875" y="213" width="220" height="4" rx="2"></rect>
-     <text x="985" y="232" text-anchor="middle">A3 DHIS2 Tracker — HIV CBS</text>
-     <text class="sub" x="985" y="248" text-anchor="middle">197 PEPFAR sites</text>
-    </g>
-    <g>
-     <rect class="box" x="870" y="300" width="230" height="64" rx="9"></rect>
-     <rect class="cs cs-a" x="875" y="303" width="220" height="4" rx="2"></rect>
-     <text x="985" y="322" text-anchor="middle">A1 RHMIS / DHIS2</text>
-     <text class="sub" x="985" y="338" text-anchor="middle">aggregate backbone · NDC since 2013</text>
-    </g>
-    <g>
-     <rect class="box" x="870" y="400" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-a" x="875" y="403" width="220" height="4" rx="2"></rect>
-     <text x="985" y="422" text-anchor="middle">A2 DHIS2 Tracker — eIDSR</text>
-     <text class="sub" x="985" y="438" text-anchor="middle">notifiable disease · outbreaks</text>
-    </g>
-    <g>
-     <rect class="box" x="870" y="500" width="230" height="76" rx="9"></rect>
-     <rect class="cs cs-h" x="875" y="503" width="220" height="4" rx="2"></rect>
-     <text x="985" y="522" text-anchor="middle">H1 NHIC</text>
-     <text class="sub" x="985" y="538" text-anchor="middle">six-layer lakehouse · AI analytics</text>
-     <text class="sub" x="985" y="552" text-anchor="middle">Superset dashboards + REST API</text>
-     <text class="sub" x="985" y="566" text-anchor="middle">launched Apr 2025</text>
-    </g>
-    <g>
-     <rect class="box" x="870" y="630" width="230" height="56" rx="9"></rect>
-     <rect class="cs cs-g" x="875" y="633" width="220" height="4" rx="2"></rect>
-     <text x="985" y="650" text-anchor="middle">G11 RSSB / Mutuelle (CBHI)</text>
-     <text class="sub" x="985" y="664" text-anchor="middle">insurance eligibility —</text>
-     <text class="sub" x="985" y="678" text-anchor="middle">manual at intake</text>
-    </g>
-
-    <!-- edges: producers → bus -->
-    <line class="arrow" x1="250" y1="186" x2="430" y2="355" marker-end="url(#ah2)"></line>
-    <text class="tag" x="258" y="252">E1 lab order · E7 UPID query</text>
-    <text class="tag" x="258" y="264">E8 encounter · E9 HIV CBS</text>
-
-    <line class="arrow" x1="250" y1="308" x2="430" y2="380" marker-end="url(#ah2)"></line>
-    <text class="tag" x="258" y="356">E4 result · E6 FHIR query</text>
-
-    <line class="arrow hot" x1="250" y1="426" x2="430" y2="405" marker-end="url(#ah2Hot)"></line>
-    <text class="tag" x="258" y="447">d-IDS/C3 alert · C2/C3 indicators</text>
-
-    <line class="arrow inferred" x1="250" y1="548" x2="430" y2="425" marker-end="url(#ah2)"></line>
-    <text class="tag" x="258" y="508">E20 commodities · planned</text>
-
-    <!-- edges: bus → consumers -->
-    <line class="arrow" x1="690" y1="335" x2="870" y2="62" marker-end="url(#ah2)"></line>
-    <text class="tag" x="712" y="192">E7 CR query · NIDA autofill ~90%</text>
-
-    <line class="arrow" x1="690" y1="350" x2="870" y2="148" marker-end="url(#ah2)"></line>
-    <text class="tag" x="726" y="248">E8 FHIR Encounter/Obs</text>
-
-    <line class="arrow" x1="690" y1="365" x2="870" y2="238" marker-end="url(#ah2)"></line>
-    <text class="tag" x="726" y="303">E9 HIV case line list</text>
-
-    <line class="arrow" x1="690" y1="380" x2="870" y2="335" marker-end="url(#ah2)"></line>
-    <text class="tag" x="700" y="372">E10 monthly agg · E11 SMS · E12 flow runs</text>
-
-    <line class="arrow hot" x1="690" y1="420" x2="870" y2="428" marker-end="url(#ah2Hot)"></line>
-    <text class="tag" x="700" y="412">→ A2 eIDSR · closes P5→P2</text>
-
-    <line class="arrow" x1="985" y1="456" x2="985" y2="500" marker-end="url(#ah2)"></line>
-    <text class="tag" x="997" y="482">A1·A2·A3 feeds</text>
-
-    <line class="arrow inferred" x1="690" y1="528" x2="870" y2="540" marker-end="url(#ah2)"></line>
-
-    <!-- anti-edge -->
-    <polyline class="arrow gap" points="690,436 710,436 710,658 870,658"></polyline>
-    <text class="tag" x="716" y="644" fill="#C97B7B" font-weight="700">✕ E32 — no automated</text>
-    <text class="tag" x="716" y="657" fill="#C97B7B" font-weight="700">EMR↔RSSB insurance link</text>
-
-    <!-- in-diagram edge legend -->
-    <line class="arrow" x1="20" y1="716" x2="56" y2="716"></line>
-    <text class="sub" x="64" y="720">documented edge</text>
-    <line class="arrow inferred" x1="196" y1="716" x2="232" y2="716"></line>
-    <text class="sub" x="240" y="720">inferred / planned</text>
-    <line class="arrow hot" x1="380" y1="716" x2="416" y2="716"></line>
-    <text class="sub" x="424" y="720">live feedback loop</text>
-    <line class="arrow gap" x1="556" y1="716" x2="592" y2="716"></line>
-    <text class="sub" x="600" y="720">anti-edge (documented gap)</text>
-   </svg>
-  </div>
-  <p class="map-note">The two clay edges are what make this a live HIS: <b>CHW d-IDS → eIDSR</b> (community →
-   surveillance) and the <b>EMR → OpenHIM → DHIS2 aggregate → NHIC</b> chain (facility → national analytics).
-   Everything crossing the bus inherits its consent model: record/element-level deny at the patient’s
-   request<sup class="cite"><a href="#src-4-2">[4.2]</a></sup>. Backbone evidence: RHIE report §5.3.2/§6.3<sup
-    class="cite"><a href="#src-4-1">[4.1]</a></sup> · OpenHIE impact story<sup class="cite"><a
-     href="#src-4-2">[4.2]</a></sup>.</p>
-
-  <details class="deep">
-   <summary>Edge register — E1–E32 condensed (click to expand)</summary>
-   <div class="deep-body">
-    <table>
-     <tr>
-      <th>Edge</th>
-      <th>From → To</th>
-      <th>Payload</th>
-      <th>Mechanism</th>
-      <th>Status</th>
-     </tr>
-     <tr>
-      <td>E1–E6</td>
-      <td>B1 OpenMRS ↔ E2 VLSM via F2</td>
-      <td>Lab order / result; JSON → FHIR ServiceRequest in HAPI FHIR</td>
-      <td>OpenHIM + Mapping Mediator + F8 Lab Registry</td>
-      <td>documented (RHIE §5.3.2)<sup class="cite"><a href="#src-4-1">[4.1]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E7</td>
-      <td>B1 → F3 Client Registry</td>
-      <td>Demographic query; NIDA autofill ~90% of fields</td>
-      <td>OpenHIM mediator · UPID format YYMMDD-Facility-Random</td>
-      <td>documented (OHIE)<sup class="cite"><a href="#src-4-2">[4.2]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E8</td>
-      <td>B1 → F6 SHR</td>
-      <td>FHIR Encounter / Observation / ServiceRequest / MedicationRequest</td>
-      <td>OpenHIM → OpenMRS-based SHR</td>
-      <td>documented (RHIE §6.3.1.4)<sup class="cite"><a href="#src-4-1">[4.1]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E9</td>
-      <td>B1 → A3 HIV CBS</td>
-      <td>HIV case line list (enrolment, follow-up, index testing, recency)</td>
-      <td>OpenHIM OpenMRS→DHIS2 e-tracker mediator</td>
-      <td>documented (RHIE §6.3.1.7)<sup class="cite"><a href="#src-4-1">[4.1]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E10</td>
-      <td>B1 → A1 RHMIS</td>
-      <td>Monthly service-delivery aggregates</td>
-      <td>DHIS2 dataset upload via Monthly Report Tool</td>
-      <td>documented (moh.gov.rw)</td>
-     </tr>
-     <tr>
-      <td>E11</td>
-      <td>C2 RapidSMS → A1</td>
-      <td>Aggregated pregnancy/newborn indicators + reminders</td>
-      <td>SMS gateway → DHIS2 Tracker</td>
-      <td>documented (OpenHealthNews)<sup class="cite"><a href="#src-4-5">[4.5]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E12</td>
-      <td>C3 RapidPro → A1</td>
-      <td>Completed flow runs → DHIS2 data value sets</td>
-      <td>dhis2-rapidpro integration (poll/webhook, offline-resilient)</td>
-      <td>documented (GitHub)<sup class="cite"><a href="#src-4-3">[4.3]</a></sup><sup class="cite"><a
-         href="#src-4-4">[4.4]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E13</td>
-      <td>B1 → IeDEA (US)</td>
-      <td>De-identified HIV cohort extracts</td>
-      <td>C# identifier-stripping; gov + ethics-board permission</td>
-      <td>documented (PMC6918068)<sup class="cite"><a href="#src-5-8">[5.8]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E14</td>
-      <td>A1 → I5 RCAS</td>
-      <td>COVID testing + vaccination mirror</td>
-      <td>REST; integrated with G9 RHAP</td>
-      <td>documented (Oxford Open DH 2024)<sup class="cite"><a href="#src-4-7">[4.7]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E15 / E27</td>
-      <td>F3/F4/F5 → B1; F4 → A1</td>
-      <td>Registry push to EMR; org-unit sync</td>
-      <td>OpenHIM ongoing push</td>
-      <td>documented (OHIE)<sup class="cite"><a href="#src-4-2">[4.2]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E16</td>
-      <td>F2 → F1 admin</td>
-      <td>Transaction audit log, traffic stats</td>
-      <td>OpenHIM dashboard + Grafana/Prometheus</td>
-      <td>documented (RHIE §6.3.1.1)<sup class="cite"><a href="#src-4-1">[4.1]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E17</td>
-      <td>A4 → A1</td>
-      <td>COVID testing/vaccination records</td>
-      <td>DHIS2 Android Capture App</td>
-      <td>documented (dhis2.org)<sup class="cite"><a href="#src-1-4">[1.4]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E18 / E31</td>
-      <td>D5 Zipline → D2 RMS / facility</td>
-      <td>Delivery confirmation; demand/inventory “pull”</td>
-      <td>Per-delivery integration with health authorities</td>
-      <td>documented / inferred<sup class="cite"><a href="#src-4-8">[4.8]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E19</td>
-      <td>F2 → C3 → CHW (mHero pattern)</td>
-      <td>Health-worker lookup → SMS</td>
-      <td>OpenHIM connects iHRIS, DHIS2, RapidPro</td>
-      <td>documented (openhim.org)<sup class="cite"><a href="#src-4-6">[4.6]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E20</td>
-      <td>D1 eLMIS → A1</td>
-      <td>Inventory + consumption aggregates</td>
-      <td>HISP DHIS2/mSupply variant; SAGE planned</td>
-      <td>inferred</td>
-     </tr>
-     <tr>
-      <td>E21</td>
-      <td>D3 Reagent ↔ E1 LIMS ↔ A1</td>
-      <td>Reagent stock + usage</td>
-      <td>MoH end-to-end interop goal</td>
-      <td>inferred</td>
-     </tr>
-     <tr>
-      <td>E22–E25</td>
-      <td>F9 CRVS · G2 HWMS · G7 HRTT · C5 WelTel → H1</td>
-      <td>Births/deaths, workforce, finance, engagement</td>
-      <td>NHIC six-layer ingestion</td>
-      <td>inferred (MoH HIC announcement)<sup class="cite"><a href="#src-2-3">[2.3]</a></sup></td>
-     </tr>
-     <tr>
-      <td>E26</td>
-      <td>B1/B2 → B4 Health Portal</td>
-      <td>Patient’s own records</td>
-      <td>DHIA-funded portal API</td>
-      <td>planned</td>
-     </tr>
-     <tr>
-      <td>E28</td>
-      <td>F5 Provider Registry ↔ B1</td>
-      <td>Licence validity → EMR access gate</td>
-      <td>Testing env; planned gate</td>
-      <td>planned</td>
-     </tr>
-     <tr>
-      <td>E30</td>
-      <td>H1 NHIC → external</td>
-      <td>Aggregate KPIs (facility registry, district performance)</td>
-      <td>Apache Superset guest token + REST API</td>
-      <td>documented (nhic.moh.gov.rw)<sup class="cite"><a href="#src-2-4">[2.4]</a></sup></td>
-     </tr>
-     <tr>
-      <td>anti E32</td>
-      <td>B1 ✕ G11 RSSB</td>
-      <td>Insurance eligibility / claims</td>
-      <td>Manual at intake — no automated integration documented</td>
-      <td>anti-edge (RHIE §7.3)<sup class="cite"><a href="#src-4-1">[4.1]</a></sup></td>
-     </tr>
-     <tr>
-      <td>anti</td>
-      <td>B3 OpenClinic ✕ F1 RHIE</td>
-      <td>—</td>
-      <td>OpenClinic hospitals are off the RHIE bus (partial coverage)</td>
-      <td>anti-edge</td>
-     </tr>
-     <tr>
-      <td>anti</td>
-      <td>F4/F5/F7/F8 ✕ production</td>
-      <td>—</td>
-      <td>Testing env only as of Jan 2025; operationalisation pending</td>
-      <td>anti-edge</td>
-     </tr>
-    </table>
-   </div>
-  </details>
-
-  <!-- ============================== 5 · DATA PROTECTION ============================== -->
-  <h2>5 · Data-protection posture vs Rwanda Law 058/2021</h2>
-  <p class="sect-sub">Law n° 058/2021 (in force 15 Oct 2021<sup class="cite"><a href="#src-5-1">[5.1]</a></sup><sup
-    class="cite"><a href="#src-5-2">[5.2]</a></sup>; NCSA/DPO Rwanda as regulator<sup class="cite"><a
-     href="#src-5-5">[5.5]</a></sup>; 48-hour breach notification<sup class="cite"><a
-     href="#src-5-6">[5.6]</a></sup>; storage-in-Rwanda default under art. 50<sup class="cite"><a
-     href="#src-5-4">[5.4]</a></sup>). Each obligation is mapped to what the MoH stack <b>demonstrably does
-    today</b> and to the benchmark pattern from Sand-class health-data platforms (Sand, Helium Health, Zipline —
-   all three converge on the GDPR processor pattern)<sup class="cite"><a href="#src-5-10">[5.10]</a></sup><sup
-    class="cite"><a href="#src-5-11">[5.11]</a></sup>.</p>
-
-  <div class="dpsum" data-component="dp-summary">
-   <div class="dpbar"><span class="dpb met" style="width:15.4%">2 met</span><span class="dpb part"
-     style="width:46.2%">6 partial</span><span class="dpb gap" style="width:38.4%">5 gaps</span></div>
-   <div class="dpcounts">
-    <span><span class="st met">●</span> 2 documented in practice</span>
-    <span><span class="st part">◐</span> 6 partial / inferred</span>
-    <span><span class="st gap">○</span> 5 gaps — no public evidence</span>
-    <span class="dptotal">13 obligations assessed</span>
-   </div>
-  </div>
-
-  <div class="matrix-wrap" data-component="dp-matrix">
-   <table class="matrix">
+  <div class="dp-wrap">
+   <table class="dp-table">
     <thead>
      <tr>
-      <th style="min-width:170px">Obligation — Law 058/2021</th>
-      <th style="min-width:330px">MoH stack today (best evidence)</th>
-      <th style="min-width:300px">Benchmark pattern — Sand · Helium · Zipline</th>
-      <th style="text-align:center">Status</th>
+      <th style="width:26%">Obligation (Law 058/2021)</th>
+      <th style="width:12%">Status</th>
+      <th>How the MoH stack addresses it today</th>
      </tr>
     </thead>
     <tbody>
-     <tr class="r-met">
-      <td><b>Health data = sensitive</b> (definition)</td>
-      <td>A/B/E/F systems carry sensitive records; NHIC states data is “anonymized and governed by Rwanda’s
-       data protection laws” at the presentation layer<sup class="cite"><a href="#src-2-4">[2.4]</a></sup></td>
-      <td>Explicit sensitive-data treatment (Helium); customer-classified sensitive data (Sand)</td>
-      <td class="c"><span class="st met">●</span><span class="sl">Met</span></td>
+     <tr>
+      <td class="ob">Access control (RBAC)<small>security TOMs</small></td>
+      <td><span class="chip doc">Documented</span></td>
+      <td>OpenMRS role/privilege model + DHIS2 user roles/sharing; F5 Provider Registry gates EMR access by licence validity; NIDA-linked identity via F3 Client Registry.</td>
      </tr>
-     <tr class="r-part">
-      <td><b>Lawful grounds</b> (art. 5)</td>
-      <td>Surveillance + notifiable disease rest on legal-obligation / public-interest grounds; the lawful
-       basis for routine-care processing is not publicly articulated</td>
-      <td>Documented legal-basis sections in privacy notices</td>
-      <td class="c"><span class="st part">◐</span><span class="sl">Partial</span></td>
+     <tr>
+      <td class="ob">Data residency<small>art. 49 / 50</small></td>
+      <td><span class="chip doc">Documented</span></td>
+      <td>DHIS2 + RHIE hosted at the National Data Centre since 2013; storage-in-Rwanda default. IeDEA US transfers occur only with government + ethics permission (lawful pathway).</td>
      </tr>
-     <tr class="r-gap">
-      <td><b>Consent capture</b> (art. 6)</td>
-      <td>HIE-level <b>record + element-level deny</b> at the patient’s request — but no public per-system
-       consent-capture workflow in OpenMRS / DHIS2 / RHIE for routine care</td>
-      <td>Controller-side consent flows; consent for non-operational processing (Zipline)</td>
-      <td class="c"><span class="st gap">○</span><span class="sl">Gap</span></td>
+     <tr>
+      <td class="ob">De-identification<small>art. 11 safeguards</small></td>
+      <td><span class="chip doc">Documented</span></td>
+      <td>Strongest documented control: IeDEA OpenMRS C# identifier-stripping before research upload<sup><a href="#src-5-8">8</a></sup>. Scope is research reuse, not routine clinical care.</td>
      </tr>
-     <tr class="r-part">
-      <td><b>De-identification</b> (art. 11 safeguards)</td>
-      <td><b>Strongest documented control:</b> IeDEA pipeline — custom C# identifier-stripping before US
-       research upload, with Rwandan government + ethics permission<sup class="cite"><a
-         href="#src-5-8">[5.8]</a></sup>. Research-grade, not routine clinical DP
-      </td>
-      <td>Tokenisation / pseudonymisation listed as permitted safeguards</td>
-      <td class="c"><span class="st part">◐</span><span class="sl">Partial</span></td>
+     <tr>
+      <td class="ob">Consent capture<small>art. 5 / 6</small></td>
+      <td><span class="chip part">Partial</span></td>
+      <td>RHIE implements a record- and element-level <b>deny</b> model at the patient's request; NHIC claims anonymization at the presentation layer. No public per-system capture workflow for routine care.</td>
      </tr>
-     <tr class="r-met">
-      <td><b>Access control / RBAC</b></td>
-      <td>OpenMRS role/privilege model (public code)<sup class="cite"><a href="#src-1-6">[1.6]</a></sup>; DHIS2
-       user roles + sharing; NIDA-keyed identity; Provider-Registry licence gating planned</td>
-      <td>RBAC + personnel scoping + background checks</td>
-      <td class="c"><span class="st met">●</span><span class="sl">Met</span></td>
+     <tr>
+      <td class="ob">Encryption<small>art. 11 · transit / rest</small></td>
+      <td><span class="chip part">Partial</span></td>
+      <td>SSL/TLS documented in transit (OpenMRS Rwanda, OpenHIE). At-rest encryption for national production servers is not publicly documented.</td>
      </tr>
-     <tr class="r-part">
-      <td><b>Encryption</b> (art. 11)</td>
-      <td>TLS/SSL in transit documented (OpenMRS, OpenHIE)<sup class="cite"><a href="#src-5-7">[5.7]</a></sup>;
-       <b>at-rest encryption for national production servers not publicly documented</b></td>
-      <td>TLS in transit + AES-256 at rest + KMS-managed keys</td>
-      <td class="c"><span class="st part">◐</span><span class="sl">Partial</span></td>
+     <tr>
+      <td class="ob">Audit logging<small>art. 47</small></td>
+      <td><span class="chip part">Partial</span></td>
+      <td>OpenHIM dashboard gives a transaction audit log (Grafana/Prometheus); DHIS2 audit API exists. No public production audit-trail spec (who-read-which-record, immutability, retention).</td>
      </tr>
-     <tr class="r-part">
-      <td><b>Residency + cross-border</b> (art. 49/50)<sup class="cite"><a href="#src-5-4">[5.4]</a></sup></td>
-      <td>NDC hosts DHIS2 + RHIE since 2013; IeDEA US transfers run with government + ethics permission; Babyl
-       was the documented PHI-out-of-Rwanda case (pre-law, defunct); planned 123 cloud OpenMRS instances would
-       each need NCSA authorisation — unresolved</td>
-      <td>Customer-selected region + SCCs (Sand: “appropriate safeguards”); country-resident ops + SCCs
-       (Zipline)</td>
-      <td class="c"><span class="st part">◐</span><span class="sl">Partial</span></td>
+     <tr>
+      <td class="ob">Breach notification<small>art. 41 · 48h to NCSA</small></td>
+      <td><span class="chip part">Partial</span></td>
+      <td>NCSA breach-notification form is ready with a Health sector tick-box; no public MoH runbook or documented 48-hour notification case.</td>
      </tr>
-     <tr class="r-part">
-      <td><b>Audit logging</b> (art. 47)</td>
-      <td>OpenHIM transaction log + Grafana/Prometheus; DHIS2 audit API; OpenHIE audit service at design
-       level<sup class="cite"><a href="#src-5-7">[5.7]</a></sup>; <b>no public who-read-which-record production
-        architecture</b></td>
-      <td>Immutable audit trails on operator actions</td>
-      <td class="c"><span class="st part">◐</span><span class="sl">Partial</span></td>
+     <tr>
+      <td class="ob">DPIA for high-risk<small>art. 39-equiv.</small></td>
+      <td><span class="chip gap">Gap</span></td>
+      <td>No public DPIA register for national systems; AI-on-health pipelines (NHIC, Horizon1000, Insightiv) have not disclosed DPIA outputs.</td>
      </tr>
-     <tr class="r-part">
-      <td><b>Breach notification — 48h</b> (art. 41)</td>
-      <td>NCSA breach form exists with a <code class="inline">Health</code> sector tick-box<sup class="cite"><a
-         href="#src-5-6">[5.6]</a></sup>; no public MoH runbook or executed 48-hour notification</td>
-      <td>“Notify the customer without undue delay” — chain designed so the controller hits the 48h window
-       (Sand DPT)</td>
-      <td class="c"><span class="st part">◐</span><span class="sl">Partial</span></td>
+     <tr>
+      <td class="ob">DPO appointment<small>art. 37-equiv.</small></td>
+      <td><span class="chip gap">Gap</span></td>
+      <td>MoH is controller of record; no public DPO appointment disclosed. Interim DPO can sit in the MoH CIO office.</td>
      </tr>
-     <tr class="r-gap">
-      <td><b>DPIA + RoPA</b> (art. 39 / art. 9)</td>
-      <td>No public DPIA register or record of processing activities for national systems; 2018 strategy
-       requires ICT security policy + backup SOPs<sup class="cite"><a href="#src-1-3">[1.3]</a></sup></td>
-      <td>RoPA enumerated in privacy notices; DPIA support via DPT</td>
-      <td class="c"><span class="st gap">○</span><span class="sl">Gap</span></td>
+     <tr>
+      <td class="ob">Automated-decisioning guard-rail<small>art. 22-equiv.</small></td>
+      <td><span class="chip gap">Gap</span></td>
+      <td>d-IDS, NHIC AI, Horizon1000, Anthropic MOU — none documented with a formal human-in-the-loop override. Flagged for the Anthropic MOU by Tech Policy Press<sup><a href="#src-5-12">12</a></sup>.</td>
      </tr>
-     <tr class="r-gap">
-      <td><b>DPO appointment</b> (art. 37)</td>
-      <td>MoH is controller of record; <b>no public DPO appointment disclosed</b> — recommended given
-       large-scale sensitive processing (interim can sit in MoH CIO office)</td>
-      <td>DPO / privacy-office contact channels listed</td>
-      <td class="c"><span class="st gap">○</span><span class="sl">Gap</span></td>
-     </tr>
-     <tr class="r-gap">
-      <td><b>Heir designation + automated-decision guard-rails</b> (art. 26 / 22-equivalent)</td>
-      <td>Not implemented in any documented system; B4 Health Portal is the natural home for heir designation;
-       d-IDS / NHIC AI / Horizon1000 / Anthropic MOU have no documented human-in-the-loop override<sup
-        class="cite"><a href="#src-5-12">[5.12]</a></sup></td>
-      <td>Account-closure + retention-exception flows; export/deletion APIs</td>
-      <td class="c"><span class="st gap">○</span><span class="sl">Gap</span></td>
-     </tr>
-     <tr class="r-gap">
-      <td><b>Certifications as “appropriate safeguards”</b> (art. 50)</td>
-      <td>None publicly claimed by MoH or its named vendors (HISP Rwanda, Jembi, QT Global, LabWare…)</td>
-      <td><b>Sand: ISO/IEC 27001:2022 + SOC 2 Type II</b><sup class="cite"><a href="#src-5-10">[5.10]</a></sup>;
-       Helium/Zipline SOC 2-style environments — directly admissible as art. 50 safeguards</td>
-      <td class="c"><span class="st gap">○</span><span class="sl">Gap</span></td>
+     <tr>
+      <td class="ob">Heir designation<small>art. 26-equiv.</small></td>
+      <td><span class="chip gap">Gap</span></td>
+      <td>Not implemented in any documented Rwanda system; the B4 Health Portal (under development) is the natural place to encode it.</td>
      </tr>
     </tbody>
    </table>
   </div>
-  <div class="acc-key">
-   <span><span class="st met">●</span> documented in practice</span>
-   <span><span class="st part">◐</span> partial / inferred / research-grade only</span>
-   <span><span class="st gap">○</span> gap — no public evidence</span>
+
+  <div class="callout">
+   <h3>The one-line read</h3>
+   <p>Rwanda runs a <b>national-first, OpenHIE-interoperable</b> stack that is genuinely strong on identity, aggregate
+    reporting, supply chain, lab integration and analytics — and its IeDEA de-identification control is world-class for
+    research reuse. The gap that matters before any <b>new</b> health-data pipeline goes live is the practice layer of
+    Law 058/2021: <b>consent capture, at-rest encryption, production audit, DPO appointment and NCSA registration</b>.</p>
   </div>
 
-  <div class="callout" data-component="verdict">
-   <h3>The close-list before the next pipeline goes live</h3>
-   <p><b>1 · Consent capture.</b> Encode a per-system, patient-facing consent workflow (the RHIE deny model
-    already proves the exchange layer can honour it) — otherwise routine-care processing leans entirely on
-    public-health grounds.</p>
-   <p><b>2 · At-rest encryption.</b> Document disk/DB-level encryption for national production servers (NDC +
-    facility OpenMRS); art. 11 names it as a sensitive-data safeguard.</p>
-   <p><b>3 · Production audit architecture.</b> Immutable, in-country, who-read-which-record logs — NCSA
-    inspections should not require cross-border evidence requests.</p>
-   <p><b>4 · DPO + NCSA registration.</b> Appoint a DPO and backfill controller/processor registration for MoH
-    and named vendors; the Oct-2023 transition window has closed but inspections and fines remain available.
-   </p>
-   <p><b>5 · Cross-border certificates.</b> Any PHI outside Rwanda (incl. the planned cloud OpenMRS instances
-    and any AI-vendor pipeline) needs an art. 49 certificate + DPIA + stated art. 5 ground; African regions
-    (AWS af-south-1, Azure SA-North) simplify the application. Encode heir designation in the B4 Health Portal
-    and a hard human-in-the-loop rule on AI-assisted triage/risk-scoring.</p>
-  </div>
+  <!-- =============== 7. SOURCES APPENDIX =============== -->
+  <h2><span class="sec-num">07</span>Sources — 45 vetted references, grouped by section</h2>
+  <p class="lede">Primary sources (MoH Rwanda, RBC, HISP/DHIS2, OpenHIE, WHO, Global Fund, NCSA/DPO, peer-reviewed) favoured
+   over secondary press. In-body superscripts link here.</p>
 
-  <details class="deep">
-   <summary>Verified gaps register — what the research could not confirm (click to expand)</summary>
-   <div class="deep-body">
-    <table>
-     <tr>
-      <th>Gap</th>
-      <th>Where it bites</th>
-      <th>Severity</th>
-     </tr>
-     <tr>
-      <td>No public per-system patient-consent capture workflow (OpenMRS / DHIS2 / RHIE)</td>
-      <td>DP row 3 — art. 6 spirit unless waived by public-health ground</td>
-      <td>High (legal)</td>
-     </tr>
-     <tr>
-      <td>At-rest encryption for national production servers not documented</td>
-      <td>DP row 6 — art. 11 sensitive-data safeguard</td>
-      <td>High (legal)</td>
-     </tr>
-     <tr>
-      <td>No production audit-trail architecture (who-read-which-record, immutability, retention)</td>
-      <td>DP row 8 — art. 47 verification duty</td>
-      <td>Medium (legal)</td>
-     </tr>
-     <tr>
-      <td>NCSA registration status of MoH systems + named vendors</td>
-      <td>DP rows 10–11 — RoPA + DPO duties</td>
-      <td>Medium (legal)</td>
-     </tr>
-     <tr>
-      <td>Residency question for the planned 123 cloud OpenMRS instances</td>
-      <td>DP row 7 — each needs art. 50 authorisation</td>
-      <td>Medium (legal)</td>
-     </tr>
-     <tr>
-      <td>NHIC application hosting provider / region / lakehouse stack undisclosed</td>
-      <td>§2 map H1 — only architecture-level statements public</td>
-      <td>Medium (architecture)</td>
-     </tr>
-     <tr>
-      <td>D3 Reagent Management System vendor/owner undisclosed</td>
-      <td>§2 map D3 — supply-chain end-to-end interop</td>
-      <td>Medium</td>
-     </tr>
-     <tr>
-      <td>2024–2029 Digital Health Strategic Plan + Architecture Blueprint unpublished (due 2026)</td>
-      <td>Strategy-layer input to architecture</td>
-      <td>Medium (timeliness)</td>
-     </tr>
-     <tr>
-      <td>B4 Health Portal not yet GA — citizen-facing rights (portability, heir) unencoded</td>
-      <td>§3 P6 · DP row 12</td>
-      <td>Medium (citizen channel)</td>
-     </tr>
-     <tr>
-      <td>Current (2023–26) production hosting endpoint for DHIS2/eLMIS unconfirmed</td>
-      <td>§2 map A1/D1 — residency + operations</td>
-      <td>Low-Medium</td>
-     </tr>
-     <tr>
-      <td>OpenEvidence × RBC × Resolve partnership — single social post, not independently verifiable</td>
-      <td>§2 map I15 (drawn dashed)</td>
-      <td>Low</td>
-     </tr>
-     <tr>
-      <td>Babyl successor — none documented; citizen teleconsultation channel dark since Aug 2023</td>
-      <td>§3 P6 step 4</td>
-      <td>Low (channel)</td>
-     </tr>
-    </table>
+  <div class="src-grid">
+   <div class="src-group">
+    <h4>1 · Executive summary / systems inventory</h4>
+    <ol class="src">
+     <li id="src-1-1"><a href="https://ciichin.org/wp-content/uploads/2025/01/Rwanda-Health-Information-System-Ecosystem-RHIE-Achievement-over-last-Three-years-Full-Report.pdf"><span class="st">CII-CHIN</span> — RHIE Achievement Report, Jan 2025</a></li>
+     <li id="src-1-2"><a href="https://www.theglobalfund.org/media/spalexqj/publication_rwanda-digital-health_casestudy_en.pdf"><span class="st">Global Fund</span> — Rwanda Digital Health Case Study (Jan 2026)</a></li>
+     <li id="src-1-3"><a href="https://extranet.who.int/countryplanningcycles/sites/default/files/public_file_rep/RWA_Rwanda_Digital-Health-Strategy_2018-2023.Pdf"><span class="st">WHO CPCD</span> — Rwanda Digital Health Strategy 2018–2023</a></li>
+     <li id="src-1-4"><a href="https://docs.dhis2.org/en/topics/user-stories/rwanda-hmis-powered-by-dhis2.html"><span class="st">DHIS2</span> — Rwanda HMIS powered by DHIS2 (user story)</a></li>
+     <li id="src-1-5"><a href="https://hisprwanda.org/dhis2/"><span class="st">HISP Rwanda</span> — national DHIS2 anchor implementation</a></li>
+     <li id="src-1-6"><a href="https://github.com/Rwanda-EMR"><span class="st">GitHub</span> — Rwanda-EMR open facility-EMR codebase</a></li>
+     <li id="src-1-7"><a href="https://github.com/PIH/openmrs-module-imbemr"><span class="st">GitHub</span> — PIH openmrs-module-imbemr (IMB EMR)</a></li>
+     <li id="src-1-8"><a href="https://www.unicef.org/rwanda/stories/piles-registers-digital-care-community-health-workers-rwanda-adopt-digital-health-rec"><span class="st">UNICEF Rwanda</span> — cEMR: registers to digital CHW care</a></li>
+     <li id="src-1-9"><a href="https://www.theglobalfund.org/en/updates/2024/2024-07-03-rwanda-global-fund-new-grants-aids-tb-malaria-strengthen-health-systems/"><span class="st">Global Fund</span> — 2024–2027 grants &amp; DHIA</a></li>
+     <li id="src-1-10"><a href="https://www.rssb.rw/rssb-products/mutuelle-de-sante-cbhi/"><span class="st">RSSB</span> — Mutuelle de Santé / CBHI</a></li>
+    </ol>
    </div>
-  </details>
 
-  <!-- ============================== 6 · SOURCES ============================== -->
-  <h2 id="sources">6 · Sources &amp; further reading</h2>
-  <p class="sect-sub">Curated, de-duplicated reference set distilled from the research synthesis (166 raw
-   citations reduced to the 45 most load-bearing; primary sources favoured). Grouped by the five themes of this
-   briefing — in-text markers use the <b>[group.source]</b> convention (e.g. <sup class="cite"><a
-     href="#src-1-1">[1.1]</a></sup> = group 1, entry 1) and jump to the matching numbered entry below.
-   Numbering restarts per group.</p>
+   <div class="src-group">
+    <h4>2 · Systems map</h4>
+    <ol class="src">
+     <li id="src-2-1"><a href="https://ohie.org/impact-stories/creating-a-health-information-exchange-system-in-rwanda"><span class="st">OpenHIE</span> — Impact story: creating a HIE in Rwanda</a></li>
+     <li id="src-2-2"><a href="https://ohie.org/rwanda-hie-impact/"><span class="st">OpenHIE</span> — Rwanda HIE impact</a></li>
+     <li id="src-2-3"><a href="https://www.moh.gov.rw/news-detail/new-health-intelligence-center-to-drive-real-time-evidence-based-decisions"><span class="st">MoH Rwanda</span> — NHIC launch announcement</a></li>
+     <li id="src-2-4"><a href="https://nhic.moh.gov.rw/about"><span class="st">NHIC</span> — About / six-layer data-lakehouse architecture</a></li>
+     <li id="src-2-5"><a href="https://extranet.who.int/countryplanningcycles/sites/default/files/country_docs/Rwanda/data-driven-development-rwanda-pioneering-his.pdf"><span class="st">WHO CPCD</span> — Data-driven development: Rwanda's HIS</a></li>
+     <li id="src-2-6"><a href="https://www.globenewswire.com/news-release/2022/12/15/2574639/0/en/zipline-and-the-government-of-rwanda-announce-a-new-partnership-to-serve-the-entire-country-with-instant-logistics.html"><span class="st">Zipline</span> — nationwide instant-logistics partnership</a></li>
+     <li id="src-2-7"><a href="https://chwcentral.org/wp-content/uploads/2015/02/Rwanda-CHW-Program-Summary.pdf"><span class="st">CHW Central</span> — Rwanda CHW Program summary</a></li>
+    </ol>
+   </div>
 
-  <div class="src-grid" data-component="sources">
    <div class="src-group">
-    <h3>1 · Executive summary / systems inventory</h3>
-    <ol class="src-list">
-     <li id="src-1-1"><a href="https://ciichin.org/wp-content/uploads/2025/01/Rwanda-Health-Information-System-Ecosystem-RHIE-Achievement-over-last-Three-years-Full-Report.pdf">Rwanda Health Information System Ecosystem (RHIE) Achievement Report</a><span class="sm">CII-CHIN · Jan 2025 · ciichin.org</span></li>
-     <li id="src-1-2"><a href="https://www.theglobalfund.org/media/spalexqj/publication_rwanda-digital-health_casestudy_en.pdf">Rwanda Digital Health Case Study</a><span class="sm">The Global Fund · Jan 2026 · theglobalfund.org</span></li>
-     <li id="src-1-3"><a href="https://extranet.who.int/countryplanningcycles/sites/default/files/public_file_rep/RWA_Rwanda_Digital-Health-Strategy_2018-2023.Pdf">Rwanda Digital Health Strategy 2018–2023</a><span class="sm">WHO CPCD · extranet.who.int</span></li>
-     <li id="src-1-4"><a href="https://docs.dhis2.org/en/topics/user-stories/rwanda-hmis-powered-by-dhis2.html">Rwanda HMIS, powered by DHIS2 (user story)</a><span class="sm">DHIS2 · docs.dhis2.org</span></li>
-     <li id="src-1-5"><a href="https://hisprwanda.org/dhis2/">National DHIS2 anchor implementation</a><span class="sm">HISP Rwanda · hisprwanda.org</span></li>
-     <li id="src-1-6"><a href="https://github.com/Rwanda-EMR">Rwanda-EMR open facility-EMR codebase</a><span class="sm">GitHub · github.com</span></li>
-     <li id="src-1-7"><a href="https://github.com/PIH/openmrs-module-imbemr">PIH openmrs-module-imbemr (IMB EMR)</a><span class="sm">GitHub · github.com</span></li>
-     <li id="src-1-8"><a href="https://www.unicef.org/rwanda/stories/piles-registers-digital-care-community-health-workers-rwanda-adopt-digital-health-rec">cEMR: piles of registers to digital CHW care</a><span class="sm">UNICEF Rwanda · unicef.org</span></li>
-     <li id="src-1-9"><a href="https://www.theglobalfund.org/en/updates/2024/2024-07-03-rwanda-global-fund-new-grants-aids-tb-malaria-strengthen-health-systems/">2024–2027 Rwanda grants &amp; Digital Health Impact Accelerator</a><span class="sm">The Global Fund · 2024 · theglobalfund.org</span></li>
-     <li id="src-1-10"><a href="https://www.rssb.rw/rssb-products/mutuelle-de-sante-cbhi/">Mutuelle de Santé / Community-Based Health Insurance</a><span class="sm">RSSB · rssb.rw</span></li>
+    <h4>3 · Persona journeys</h4>
+    <ol class="src">
+     <li id="src-3-1"><a href="https://extranet.who.int/countryplanningcycles/sites/default/files/country_docs/Rwanda/data-driven-development-rwanda-pioneering-his.pdf"><span class="st">WHO CPCD</span> — Rwanda's HIS (analyst + epi journeys)</a></li>
+     <li id="src-3-2"><a href="https://www.sciforce.com/wp-content/uploads/2021/04/Digital-health-systems-to-support-pandemic-response-in-Rwanda.pdf"><span class="st">SciForce</span> — Digital health systems for pandemic response</a></li>
+     <li id="src-3-3"><a href="https://ohie.org/rwanda-hie-impact/"><span class="st">OpenHIE</span> — Rwanda HIE impact (clinician journey)</a></li>
+     <li id="src-3-4"><a href="https://www.moh.gov.rw/rwanda-pioneers-the-4x4-reform-to-strengthen-its-health-workforce"><span class="st">MoH Rwanda</span> — 4×4 health-workforce reform (DHO)</a></li>
+     <li id="src-3-5"><a href="https://www.newtimes.co.rw/article/248405/News/rwanda-launches-next-generation-of-digital-tools-for-community-health"><span class="st">New Times</span> — next-generation digital tools for CHWs</a></li>
+     <li id="src-3-6"><a href="https://pubmed.ncbi.nlm.nih.gov/41687454/"><span class="st">PubMed</span> — d-IDS decision support (CHW, peer-reviewed)</a></li>
+     <li id="src-3-7"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12838494/"><span class="st">PMC</span> — Insightiv AI tools in community health (mUbuzima)</a></li>
+     <li id="src-3-8"><a href="https://www.forbes.com/sites/joshuadaviscampbell/2023/08/24/babyl-rwanda-shuts-down-operations/"><span class="st">Forbes</span> — Babyl Rwanda shuts down operations</a></li>
     </ol>
    </div>
+
    <div class="src-group">
-    <h3>2 · Systems map</h3>
-    <ol class="src-list">
-     <li id="src-2-1"><a href="https://ohie.org/impact-stories/creating-a-health-information-exchange-system-in-rwanda">Impact story: creating a health-information-exchange system in Rwanda (RHIE node + registries)</a><span class="sm">OpenHIE · ohie.org</span></li>
-     <li id="src-2-2"><a href="https://ohie.org/rwanda-hie-impact/">Rwanda HIE impact</a><span class="sm">OpenHIE · ohie.org</span></li>
-     <li id="src-2-3"><a href="https://www.moh.gov.rw/news-detail/new-health-intelligence-center-to-drive-real-time-evidence-based-decisions">National Health Intelligence Center launch announcement (H1 + source-feeder systems)</a><span class="sm">MoH Rwanda · moh.gov.rw</span></li>
-     <li id="src-2-4"><a href="https://nhic.moh.gov.rw/about">NHIC About — six-layer data-lakehouse architecture</a><span class="sm">NHIC · nhic.moh.gov.rw</span></li>
-     <li id="src-2-5"><a href="https://extranet.who.int/countryplanningcycles/sites/default/files/country_docs/Rwanda/data-driven-development-rwanda-pioneering-his.pdf">Data-driven development: Rwanda pioneering its HIS (architecture &amp; tiers)</a><span class="sm">WHO CPCD · extranet.who.int</span></li>
-     <li id="src-2-6"><a href="https://www.globenewswire.com/news-release/2022/12/15/2574639/0/en/zipline-and-the-government-of-rwanda-announce-a-new-partnership-to-serve-the-entire-country-with-instant-logistics.html">Nationwide instant-logistics partnership (distribution-centre nodes)</a><span class="sm">Zipline · 2022 · globenewswire.com</span></li>
-     <li id="src-2-7"><a href="https://chwcentral.org/wp-content/uploads/2015/02/Rwanda-CHW-Program-Summary.pdf">Rwanda CHW Program summary (community tier scope)</a><span class="sm">CHW Central · chwcentral.org</span></li>
+    <h4>4 · Integration &amp; data-flow</h4>
+    <ol class="src">
+     <li id="src-4-1"><a href="https://ciichin.org/wp-content/uploads/2025/01/Rwanda-Health-Information-System-Ecosystem-RHIE-Achievement-over-last-Three-years-Full-Report.pdf"><span class="st">CII-CHIN RHIE</span> — §5.3.2 EMR↔VLSM FHIR + registry edges</a></li>
+     <li id="src-4-2"><a href="https://ohie.org/impact-stories/creating-a-health-information-exchange-system-in-rwanda"><span class="st">OpenHIE</span> — registry push + deny model (E7/E15/E27)</a></li>
+     <li id="src-4-3"><a href="https://github.com/dhis2/integration-dhis-rapidpro"><span class="st">GitHub</span> — dhis2/integration-dhis-rapidpro (E12)</a></li>
+     <li id="src-4-4"><a href="https://developers.dhis2.org/blog/2022/12/dhis-to-rapidpro-in-the-field"><span class="st">DHIS2 developers</span> — DHIS2 to RapidPro in the field (E12)</a></li>
+     <li id="src-4-5"><a href="https://www.openhealthnews.com/articles/2017/dhis2-transforming-health-it-standards-developing-world-part-2"><span class="st">OpenHealthNews</span> — DHIS2 &amp; RapidSMS → DHIS2 (E11)</a></li>
+     <li id="src-4-6"><a href="https://openhim.org/resources/openhim-v4.0.5.pdf"><span class="st">OpenHIM</span> — v4.0.5 docs (iHRIS↔RapidPro mHero, E19)</a></li>
+     <li id="src-4-7"><a href="https://academic.oup.com/oodh/article/doi/10.1093/oodh/oqae034/7743133"><span class="st">Oxford Open Digital Health</span> — RCAS COVID mirror (E14)</a></li>
+     <li id="src-4-8"><a href="https://www.zipline.com/newsroom/zipline-and-the-government-of-rwanda-announce-a-new-partnership-to-serve-the-entire-country-with-instant-logistics"><span class="st">Zipline newsroom</span> — delivery confirmation / pull (E18/E31)</a></li>
     </ol>
    </div>
+
    <div class="src-group">
-    <h3>3 · Persona journeys</h3>
-    <ol class="src-list">
-     <li id="src-3-1"><a href="https://extranet.who.int/countryplanningcycles/sites/default/files/country_docs/Rwanda/data-driven-development-rwanda-pioneering-his.pdf">Data-driven development: Rwanda pioneering its HIS (policy analyst + epi journeys)</a><span class="sm">WHO CPCD · extranet.who.int</span></li>
-     <li id="src-3-2"><a href="https://www.sciforce.com/wp-content/uploads/2021/04/Digital-health-systems-to-support-pandemic-response-in-Rwanda.pdf">Digital health systems to support pandemic response in Rwanda (epi / eIDSR)</a><span class="sm">SciForce · sciforce.com</span></li>
-     <li id="src-3-3"><a href="https://ohie.org/rwanda-hie-impact/">Rwanda HIE impact (hospital clinician journey)</a><span class="sm">OpenHIE · ohie.org</span></li>
-     <li id="src-3-4"><a href="https://www.moh.gov.rw/rwanda-pioneers-the-4x4-reform-to-strengthen-its-health-workforce">4×4 health-workforce reform (district health officer journey)</a><span class="sm">MoH Rwanda · moh.gov.rw</span></li>
-     <li id="src-3-5"><a href="https://www.newtimes.co.rw/article/248405/News/rwanda-launches-next-generation-of-digital-tools-for-community-health">Rwanda launches next-generation digital tools for community health (CHW)</a><span class="sm">New Times · newtimes.co.rw</span></li>
-     <li id="src-3-6"><a href="https://pubmed.ncbi.nlm.nih.gov/41687454/">d-IDS decision support in community digital health (CHW, peer-reviewed)</a><span class="sm">PubMed · pubmed.ncbi.nlm.nih.gov</span></li>
-     <li id="src-3-7"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12838494/">Insightiv AI-assisted tools in community health (mUbuzima, CHW)</a><span class="sm">PMC · pmc.ncbi.nlm.nih.gov</span></li>
-     <li id="src-3-8"><a href="https://www.forbes.com/sites/joshuadaviscampbell/2023/08/24/babyl-rwanda-shuts-down-operations/">Babyl Rwanda shuts down operations (citizen / legacy telemedicine)</a><span class="sm">Forbes · 2023 · forbes.com</span></li>
-    </ol>
-   </div>
-   <div class="src-group">
-    <h3>4 · Integration &amp; data-flow</h3>
-    <ol class="src-list">
-     <li id="src-4-1"><a href="https://ciichin.org/wp-content/uploads/2025/01/Rwanda-Health-Information-System-Ecosystem-RHIE-Achievement-over-last-Three-years-Full-Report.pdf">RHIE report — §5.3.2 documented EMR↔VLSM FHIR + §6.3 registry edges</a><span class="sm">CII-CHIN · Jan 2025 · ciichin.org</span></li>
-     <li id="src-4-2"><a href="https://ohie.org/impact-stories/creating-a-health-information-exchange-system-in-rwanda">Impact story: client/facility registry push + deny model (E7/E15/E27)</a><span class="sm">OpenHIE · ohie.org</span></li>
-     <li id="src-4-3"><a href="https://github.com/dhis2/integration-dhis-rapidpro">dhis2/integration-dhis-rapidpro (RapidPro → DHIS2 runner, E12)</a><span class="sm">GitHub · github.com</span></li>
-     <li id="src-4-4"><a href="https://developers.dhis2.org/blog/2022/12/dhis-to-rapidpro-in-the-field">DHIS2 to RapidPro in the field (E12)</a><span class="sm">DHIS2 developers · 2022 · developers.dhis2.org</span></li>
-     <li id="src-4-5"><a href="https://www.openhealthnews.com/articles/2017/dhis2-transforming-health-it-standards-developing-world-part-2">DHIS2 transforming health IT standards in the developing world (RapidSMS → DHIS2, E11)</a><span class="sm">OpenHealthNews · openhealthnews.com</span></li>
-     <li id="src-4-6"><a href="https://openhim.org/resources/openhim-v4.0.5.pdf">OpenHIM v4.0.5 documentation (iHRIS↔RapidPro mHero flow, E19)</a><span class="sm">OpenHIM · openhim.org</span></li>
-     <li id="src-4-7"><a href="https://academic.oup.com/oodh/article/doi/10.1093/oodh/oqae034/7743133">RCAS COVID analytics mirror &amp; RHAP integration (E14, peer-reviewed)</a><span class="sm">Oxford Open Digital Health · 2024 · academic.oup.com</span></li>
-     <li id="src-4-8"><a href="https://www.zipline.com/newsroom/zipline-and-the-government-of-rwanda-announce-a-new-partnership-to-serve-the-entire-country-with-instant-logistics">Government partnership delivery confirmation &amp; facility “pull” (E18/E31)</a><span class="sm">Zipline newsroom · zipline.com</span></li>
-    </ol>
-   </div>
-   <div class="src-group">
-    <h3>5 · Data-protection &amp; Law 058/2021</h3>
-    <ol class="src-list">
-     <li id="src-5-1"><a href="https://www.hoganlovells.com/en/publications/key-features-of-the-new-rwandan-data-protection-law">Key features of the new Rwanda data protection law</a><span class="sm">Hogan Lovells · hoganlovells.com</span></li>
-     <li id="src-5-2"><a href="https://www.dlapiperdataprotection.com/index.html?t=law&amp;c=RW">Data Protection Laws of the World: Rwanda</a><span class="sm">DLA Piper · dlapiperdataprotection.com</span></li>
-     <li id="src-5-3"><a href="https://securiti.ai/rwanda-data-protection-law/">Rwanda data protection law overview</a><span class="sm">Securiti.ai · securiti.ai</span></li>
-     <li id="src-5-4"><a href="https://digitalpolicyalert.org/change/12074">Law n° 058/2021 change record</a><span class="sm">Digital Policy Alert · digitalpolicyalert.org</span></li>
-     <li id="src-5-5"><a href="https://dpo.gov.rw/">National data-protection authority</a><span class="sm">DPO Rwanda · dpo.gov.rw</span></li>
-     <li id="src-5-6"><a href="https://dpo.gov.rw/fileadmin/DPO/ComplianceTools/Personal%20Data%20Breach%20Notification%20Form.pdf">NCSA Personal Data Breach Notification Form (incl. Health sector)</a><span class="sm">DPO Rwanda · dpo.gov.rw</span></li>
-     <li id="src-5-7"><a href="https://ohie.org/wp-content/uploads/2020/12/OpenHIE-Specification-Release-3.0.pdf">OpenHIE Specification Release 3.0 (security services, audit)</a><span class="sm">OpenHIE · 2020 · ohie.org</span></li>
-     <li id="src-5-8"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6918068/">IeDEA de-identification pipeline in Rwanda OpenMRS (peer-reviewed)</a><span class="sm">PMC · pmc.ncbi.nlm.nih.gov</span></li>
-     <li id="src-5-9"><a href="https://docs.dhis2.org/en/implement/implementing-dhis2/security-considerations.html">DHIS2 Security considerations (platform TOMs)</a><span class="sm">DHIS2 · docs.dhis2.org</span></li>
-     <li id="src-5-10"><a href="https://www.sandtech.com/legal-disclaimers">Data Protection Terms / legal disclaimers (processor pattern, ISO 27001 + SOC 2)</a><span class="sm">Sand · sandtech.com</span></li>
-     <li id="src-5-11"><a href="https://www.flyzipline.com/privacy-policy">Zipline Privacy Policy (TLS, AES-256, RBAC, SCCs)</a><span class="sm">Zipline · flyzipline.com</span></li>
-     <li id="src-5-12"><a href="https://www.techpolicy.press/anthropic-is-becoming-the-backbone-of-rwandas-government-but-who-is-accountable/">Anthropic and accountability in Rwandan government (automated-decisioning gap)</a><span class="sm">Tech Policy Press · techpolicy.press</span></li>
+    <h4>5 · Data-protection &amp; Law 058/2021</h4>
+    <ol class="src">
+     <li id="src-5-1"><a href="https://www.hoganlovells.com/en/publications/key-features-of-the-new-rwandan-data-protection-law"><span class="st">Hogan Lovells</span> — Key features of the Rwanda DP law</a></li>
+     <li id="src-5-2"><a href="https://www.dlapiperdataprotection.com/index.html?t=law&amp;c=RW"><span class="st">DLA Piper</span> — Data Protection Laws of the World: Rwanda</a></li>
+     <li id="src-5-3"><a href="https://securiti.ai/rwanda-data-protection-law/"><span class="st">Securiti.ai</span> — Rwanda data protection law overview</a></li>
+     <li id="src-5-4"><a href="https://digitalpolicyalert.org/change/12074"><span class="st">Digital Policy Alert</span> — Law n° 058/2021 change record</a></li>
+     <li id="src-5-5"><a href="https://dpo.gov.rw/"><span class="st">DPO Rwanda</span> — national data-protection authority</a></li>
+     <li id="src-5-6"><a href="https://dpo.gov.rw/fileadmin/DPO/ComplianceTools/Personal%20Data%20Breach%20Notification%20Form.pdf"><span class="st">DPO Rwanda</span> — NCSA breach notification form (Health)</a></li>
+     <li id="src-5-7"><a href="https://ohie.org/wp-content/uploads/2020/12/OpenHIE-Specification-Release-3.0.pdf"><span class="st">OpenHIE</span> — Specification Release 3.0 (security, audit)</a></li>
+     <li id="src-5-8"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6918068/"><span class="st">PMC</span> — IeDEA de-identification pipeline in OpenMRS</a></li>
+     <li id="src-5-9"><a href="https://docs.dhis2.org/en/implement/implementing-dhis2/security-considerations.html"><span class="st">DHIS2</span> — Security considerations (platform TOMs)</a></li>
+     <li id="src-5-10"><a href="https://www.sandtech.com/legal-disclaimers"><span class="st">Sand</span> — Data Protection Terms (ISO 27001 + SOC 2)</a></li>
+     <li id="src-5-11"><a href="https://www.flyzipline.com/privacy-policy"><span class="st">Zipline</span> — Privacy Policy (TLS, AES-256, RBAC, SCCs)</a></li>
+     <li id="src-5-12"><a href="https://www.techpolicy.press/anthropic-is-becoming-the-backbone-of-rwandas-government-but-who-is-accountable/"><span class="st">Tech Policy Press</span> — Anthropic &amp; accountability in GoR</a></li>
     </ol>
    </div>
   </div>
 
-  <p class="render-note">Rendered from out/08-synthesis.md (166 raw citations distilled to the 45 above);
-   engine-degradation notes in §9.3 there. Benchmark vendor policies reviewed also include Helium Health
-   Privacy + InfoSec (vendor site, not separately listed). Research date 2026-08-09.</p>
-
+  <p class="footnote">Single source of truth: out/08-synthesis.md (systems inventory §1, per-persona journeys §3, systems
+   map §4, integration edges §5, DP posture §6–§8). All factual claims and the 45 external references carry across from
+   the validated research set. Confidence is HIGH on the core national stack (RHIE, DHIS2, OpenMRS, OpenHIM, NHIC) and
+   the Law 058/2021 mapping; LOWER on unreleased 2024–2029 strategy and unverified AI vendors — flagged in-text where it
+   bites.</p>
  </div>
 </body>
 
