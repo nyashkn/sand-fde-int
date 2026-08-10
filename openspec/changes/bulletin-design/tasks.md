@@ -6,6 +6,15 @@
 - [ ] 1.4 Write `PRODUCT.md` at the repo root: readers, their questions, tone, anti-references, and the `register` field
 - [ ] 1.5 Replace the bulletin's invented palette with the token set, changing no numbers
 
+## 1b. Move rendering to Astro (ADR 0010)
+
+- [ ] 1b.1 Scaffold `web/` with Astro, zero-JS default, static output
+- [ ] 1b.2 Read gold Parquet at build time with `@duckdb/node-api`
+- [ ] 1b.3 Port the eight bulletin sections to Astro components
+- [ ] 1b.4 Verify the static build emits zero script tags and zero external asset references
+- [ ] 1b.5 Add the inline-CSS step required for the email surface
+- [ ] 1b.6 Delete `pipeline/render.py` once parity is confirmed against the committed output
+
 ## 2. Reading order
 
 - [ ] 2.1 Resolve the open question in `design.md`: is the Director's first question "is mortality getting worse" or "can I trust this"
@@ -17,7 +26,7 @@
 ## 3. Chart registry
 
 - [ ] 3.1 Define the registry: figure kind to chart type, with the visual channels each uses
-- [ ] 3.2 Add `vl-convert-python`; build the Vega-Lite theme from the token set
+- [ ] 3.2 Scaffold `web/` as an Astro project; read gold Parquet at build via `@duckdb/node-api`; build the Observable Plot theme from the token set
 - [ ] 3.3 Implement `ranking` as a horizontal bar, for top facilities by volume
 - [ ] 3.4 Implement `distribution across units` as a sorted bar with a reference line, for district mortality
 - [ ] 3.5 Implement `composition` as a stacked bar, for cause-of-death breakdown

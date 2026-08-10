@@ -35,6 +35,7 @@ usually wasn't a decision.
 | [0007](0007-cross-provider-redteam-amendments.md) | Red-team D1 across three model families, and amend *(cross-provider)* | Accepted |
 | [0008](0008-technical-stack.md) | Hamilton + DuckDB/Parquet batch, browser-first surfaces | Accepted |
 | [0009](0009-bind-vocabulary-to-dhis2.md) | Bind vocabulary to DHIS2; invent only where no standard exists | Accepted |
+| [0010](0010-astro-renders-all-surfaces.md) | Astro renders every surface; Python stops at Parquet | Accepted |
 
 ---
 

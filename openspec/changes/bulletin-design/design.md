@@ -40,15 +40,22 @@ designing a bulletin-specific palette. Rejected — the engagement already has a
 the reflex answer for this domain (white and teal "healthcare") is the first-order category
 cliché the design laws call out by name.
 
-**Vega-Lite specs generated in Python, rendered by `vl-convert` to inline SVG.**
-`vl-convert` is pure Rust with no browser, so it fits the existing pipeline and produces
-markup that satisfies the no-script constraint. *Alternative considered:* `microsoft/flint-chart`.
-Genuinely attractive for its themes, semantic types, and agent-authorable specs, but it is
-npm-only with no PyPI package, so adopting it means Node plus a TypeScript build step inside
-a Python pipeline four days from submission. Its themes are the main draw and the engagement's
-own tokens serve that better. Recorded as the Deliverable 3 productionization path.
-*Alternative considered:* hand-written SVG. Rejected — axis scaling and label placement by
-hand is where the time would go, and it is the least interesting part.
+**Rendering moves to Astro; Python stops at Parquet.** Recorded as ADR 0010. Templating
+markup inside a data language is what produced the inert output this change exists to fix,
+and it would have forced a second implementation of every table and figure for the explore
+surface. Astro is selected by the constraint rather than despite it: zero JavaScript by
+default, so its static output is email-safe; islands, so only the explore surface hydrates;
+build-time data loading, so Parquet is read once at build rather than fetched by a client
+that may have no network.
+
+**Charts share one grammar across static and interactive.** Observable Plot renders SVG in
+Node at build time; Mosaic's vgplot is built on Observable Plot and drives the interactive
+surface. One chart registry can therefore serve both. *Alternative considered:* `vl-convert`
+in Python, which was this document's earlier decision. Rejected by ADR 0010 — it works, and
+it keeps rendering in the wrong layer. *Alternative considered:* `microsoft/flint-chart`,
+whose npm-only packaging was the original objection. That objection disappears now the
+frontend is TypeScript, so it returns to the table for the chart layer; not adopted now on
+schedule grounds alone.
 
 **A chart registry keyed by figure kind, not by panel.**
 `ranking` gets a horizontal bar; `distribution across units` gets a sorted bar with a
@@ -83,8 +90,9 @@ The `impeccable` gate requires it, and deriving it from what already ships keeps
   in the linked artifact.
 - **Hatched fills render inconsistently across email clients** → the hatch is an SVG pattern
   inside the chart, and the table-level channel is a border-style change rather than a fill.
-- **`vl-convert` adds a binary wheel dependency** → pure Rust, no browser, no system libs;
-  passes the dependency test. Falls back to omitting charts rather than failing the render.
+- **Astro is new to this repo** → the risk is schedule, not capability; three Astro projects
+  already exist on this machine. The committed static bulletins remain as output until the
+  Astro build replaces them, so there is no window with no deliverable.
 - **Designing for three readers in one document risks serving none** → the reading order is
   declared and testable: the primary question is answered in the first screen, and the other
   two sections are reachable without reading it.
@@ -93,8 +101,9 @@ The `impeccable` gate requires it, and deriving it from what already ships keeps
 
 ## Migration Plan
 
-`render.py` keeps its structure; the stylesheet and the section order change, and a chart
-module is added. No pipeline or mart changes: this consumes existing gold marts.
+`render.py` is deleted. `web/` is added as an Astro project reading the gold Parquet files.
+No pipeline or mart changes below Parquet: bronze, silver, gold, guards and the crosswalk are
+unaffected.
 
 ## Open Questions
 
