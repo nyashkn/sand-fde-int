@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Quality Audit — Sand FDE Sample Data</title>
+<style>
+:root{
+  --ivory:#FAF9F5; --paper:#FFFFFF; --slate:#141413;
+  --clay:#D97757; --clay-d:#B85C3E; --oat:#E3DACC; --olive:#788C5D;
+  --sage:#A8B89A; --rose:#C97B7B;
+  --g100:#F0EEE6; --g200:#E6E3DA; --g300:#D1CFC5; --g500:#87867F; --g700:#3D3D3A;
+  --serif:ui-serif,Georgia,"Times New Roman",Times,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Monaco,Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--ivory);color:var(--g700);line-height:1.55;
+  padding:52px 32px 120px;-webkit-font-smoothing:antialiased}
+.page{max-width:1180px;margin:0 auto}
+
+.page-head{border-bottom:2px solid var(--slate);padding-bottom:22px;margin-bottom:34px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--clay);margin-bottom:10px}
+h1{font-family:var(--serif);font-size:38px;line-height:1.15;color:var(--slate);font-weight:600;
+  letter-spacing:-.02em;margin-bottom:12px}
+.dek{font-size:15.5px;color:var(--g500);max-width:80ch}
+.dek b{color:var(--g700);font-weight:600}
+
+h2{font-family:var(--serif);font-size:25px;color:var(--slate);font-weight:600;
+  margin:52px 0 6px;letter-spacing:-.01em}
+h2 .num{font-family:var(--mono);font-size:12px;color:var(--clay);
+  letter-spacing:.1em;display:block;margin-bottom:6px;font-weight:400}
+h3{font-family:var(--sans);font-size:16px;color:var(--slate);font-weight:650;margin:28px 0 10px}
+p{margin:11px 0;max-width:88ch;font-size:14.5px}
+code{font-family:var(--mono);font-size:.87em;background:var(--g100);
+  padding:1px 5px;border-radius:3px;color:var(--clay-d)}
+
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
+  background:var(--g300);border:1px solid var(--g300);margin:26px 0}
+.cell{background:var(--paper);padding:15px 16px}
+.cell .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--g500);margin-bottom:7px}
+.cell .v{font-family:var(--serif);font-size:29px;color:var(--slate);line-height:1;font-weight:600}
+.cell .d{font-size:11.5px;color:var(--g500);margin-top:6px}
+.cell .v.bad{color:var(--clay-d)} .cell .v.ok{color:var(--olive)}
+
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--g500);border-bottom:1.5px solid var(--slate);
+  padding:9px 11px 8px;vertical-align:bottom}
+td{padding:10px 11px;border-bottom:1px solid var(--g200);vertical-align:top}
+tr:hover td{background:var(--g100)}
+td.mono,th.mono{font-family:var(--mono);font-size:12px}
+td.num{text-align:right;font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+
+.sev{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
+  padding:2px 7px;border-radius:2px;font-weight:600;white-space:nowrap}
+.sev.blocker{background:var(--clay);color:#fff}
+.sev.material{background:var(--oat);color:var(--clay-d)}
+.sev.cosmetic{background:var(--g200);color:var(--g500)}
+.tri{font-family:var(--mono);font-size:10px;color:var(--g500);white-space:nowrap}
+.tri.human{color:var(--clay-d);font-weight:600}
+
+.callout{border-left:3px solid var(--clay);background:var(--paper);padding:17px 20px;
+  margin:22px 0;max-width:92ch}
+.callout.olive{border-left-color:var(--olive)}
+.callout.slate{border-left-color:var(--slate)}
+.callout .ct{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--clay);margin-bottom:8px;font-weight:600}
+.callout.olive .ct{color:var(--olive)} .callout.slate .ct{color:var(--slate)}
+.callout p{margin:7px 0}
+.callout p:first-of-type{margin-top:0}
+
+.layers{display:grid;gap:1px;background:var(--g300);border:1px solid var(--g300);margin:22px 0}
+.layer{background:var(--paper);padding:15px 18px;display:grid;
+  grid-template-columns:130px 1fr;gap:20px;align-items:start}
+.layer .lname{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--clay);
+  text-transform:uppercase;font-weight:600;padding-top:2px}
+.layer .lbody{font-size:13.5px}
+.layer .lbody b{color:var(--slate)}
+.layer .cols{font-family:var(--mono);font-size:11.5px;color:var(--g500);margin-top:6px;line-height:1.7}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:22px 0}
+@media(max-width:860px){.split{grid-template-columns:1fr}.layer{grid-template-columns:1fr;gap:6px}}
+
+.clean li{font-size:13.5px;margin:6px 0;color:var(--g700)}
+.clean{padding-left:20px;max-width:88ch}
+.clean li::marker{color:var(--olive)}
+
+.prov{font-family:var(--mono);font-size:11px;color:var(--g500);border-top:1px solid var(--g300);
+  margin-top:60px;padding-top:18px;line-height:1.8}
+.mini{font-family:var(--mono);font-size:11.5px;background:var(--g100);border:1px solid var(--g200);
+  padding:11px 13px;margin:10px 0;overflow-x:auto;white-space:pre;color:var(--g700)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="page-head">
+  <div class="eyebrow">Sand FDE assignment · data quality audit · 2026-08-10</div>
+  <h1>What is actually in the sample data</h1>
+  <p class="dek">A full sweep of all five provided CSVs — 117 facilities, 1,404 facility-months, 46 numeric columns — run as three parallel independent audits. Every finding below carries its measurement, its denominator, and a one-line check that reproduces it. <b>Findings are shaped as triage-queue records, not prose</b>, so they can be loaded directly as conflicts an analyst resolves.</p>
+</header>
+
+<div class="strip">
+  <div class="cell"><div class="k">Rows swept</div><div class="v">1,404</div><div class="d">+ 4 × 117 dimension rows</div></div>
+  <div class="cell"><div class="k">Numeric columns</div><div class="v">46</div><div class="d">across 5 files</div></div>
+  <div class="cell"><div class="k">Blockers</div><div class="v bad">4</div><div class="d">break a stated deliverable</div></div>
+  <div class="cell"><div class="k">Material</div><div class="v bad">13</div><div class="d">need a human decision</div></div>
+  <div class="cell"><div class="k">Checked clean</div><div class="v ok">31</div><div class="d">absence of defect is a result</div></div>
+  <div class="cell"><div class="k">Referential integrity</div><div class="v ok">100%</div><div class="d">20/20 join directions</div></div>
+</div>
+
+<div class="callout slate">
+  <div class="ct">Correction to a previous claim</div>
+  <p>An earlier analysis in this engagement reported <code>staff_trained_on_protocol_pct</code> → NMR at <b>r = −0.844</b> and used it to argue that facility capability, not geography, explains neonatal mortality. <b>That reading was wrong.</b> The correlation is entirely between-tier and vanishes inside every tier:</p>
+  <div class="mini">POOLED (all 117)      r = -0.844
+Health Center  n=45   r = +0.042
+District       n=45   r = +0.111
+Provincial     n=25   r = +0.144</div>
+  <p>This is Simpson's paradox. Both the capability metric and the death count are drawn from the same tier-level latent, so the pooled figure measures tier, not training. Presenting "train staff → fewer deaths" to a Minister on this evidence would be an ecological fallacy shipped as policy advice — the same error this engagement had already rejected when considering raster covariates.</p>
+</div>
+
+<h2><span class="num">§1</span>How the data was generated</h2>
+<p>The three sweeps converge on a four-layer generation model. It matters because each layer supports a different class of claim, and only one layer supports any claim at all.</p>
+
+<div class="layers">
+  <div class="layer">
+    <div class="lname">Layer 1 · real</div>
+    <div class="lbody"><b>Administrative structure.</b> District → province mapping is correct 30/30 against Rwanda's actual administrative geography. Facility ids are contiguous 001–117, assigned in unbroken per-district blocks. All five files share an identical facility_id set.
+    <div class="cols">district · province · facility_id</div></div>
+  </div>
+  <div class="layer">
+    <div class="lname">Layer 2 · tier bands</div>
+    <div class="lbody"><b>Tier-stratified uniform draws.</b> Volume and capability metrics are uniform-random <em>within</em> a per-tier band. Globally the distribution looks structured (uniform-sd-ratio 0.56–0.83) because it is a mixture of four non-overlapping bands; within a tier the ratio returns to 0.89–1.05. ICC for <code>total_deliveries</code> is 0.887 — 88.7% of variance sits between facilities.
+    <div class="cols">total_deliveries · live_births · all 6 governance percentages</div></div>
+  </div>
+  <div class="layer">
+    <div class="lname">Layer 3 · pure noise</div>
+    <div class="lbody"><b>Independent uniform draws with no anchor.</b> Clinically interlinked conditions show zero measured association with each other. <code>avg_gestational_age</code> is a textbook fingerprint: uniform-sd-ratio 1.004, quantised to 0.1, edge bins at ~40% of interior weight — the exact signature of <code>uniform(36.45, 38.55)</code> rounded to 1dp, with no facility identity signal at all.
+    <div class="cols">avg_gestational_age · apgar_less_7 · birth_weight_less_2500g · preterm_* · stillbirths · gps_lat/lon · staff_per_delivery_2024</div></div>
+  </div>
+  <div class="layer">
+    <div class="lname">Layer 4 · honest</div>
+    <div class="lbody"><b>Exact arithmetic identities.</b> These hold with zero exceptions and are the one part of the file that behaves like real bookkeeping. <code>live_births = total_deliveries − stillbirths</code> in 1404/1404 rows; the five cause-of-death columns sum to total neonatal deaths in 1404/1404 rows.
+    <div class="cols">live_births · death_* (as a multinomial split)</div></div>
+  </div>
+</div>
+
+<h2><span class="num">§2</span>Blockers — these break a stated deliverable</h2>
+
+<table>
+<thead><tr><th style="width:150px">Kind</th><th>Finding</th><th class="mono" style="width:210px">Measured</th><th style="width:90px">Triage</th></tr></thead>
+<tbody>
+<tr>
+  <td class="mono">tier-confounded-<br>correlation<br><span class="sev blocker">blocker</span></td>
+  <td><b>Capability→NMR is a tier artifact.</b> Every capability metric's apparent relationship with neonatal mortality is between-tier only. Within-tier it is zero or slightly positive. Any "what drives mortality" panel built on the pooled correlation is reporting tier membership.</td>
+  <td class="num">pooled −0.844<br>HC +0.042<br>Dist +0.111<br>Prov +0.144</td>
+  <td class="tri human">needs-human</td>
+</tr>
+<tr>
+  <td class="mono">pseudo-<br>autocorrelation<br><span class="sev blocker">blocker</span></td>
+  <td><b>There is no genuine month-to-month signal.</b> Raw lag-1 autocorrelation looks strong (0.61–0.87) but a within-facility shuffle reproduces it exactly — the permutation null <em>exceeds</em> the true value. All apparent persistence is a stable per-facility baseline. <b>"Trend analysis vs previous quarters" is a required bulletin metric and the data cannot support it.</b></td>
+  <td class="num">true 0.867<br>shuffled 0.876±0.004<br>ICC 0.887</td>
+  <td class="tri human">needs-human</td>
+</tr>
+<tr>
+  <td class="mono">unreconciled-<br>derived-column<br><span class="sev blocker">blocker</span></td>
+  <td><b><code>staff_per_delivery_2024</code> cannot be reconstructed.</b> Eight candidate staff÷delivery formulas tested; the best matched 58.1%, <em>worse</em> than guessing the column's own mode (65.8%). It holds only 3 distinct values and correlates <em>positively</em> with delivery volume (r=0.548) — the opposite direction for an efficiency ratio.</td>
+  <td class="num">best 68/117<br>mode 77/117<br>3 distinct values</td>
+  <td class="tri human">needs-human</td>
+</tr>
+<tr>
+  <td class="mono">broken-clinical-<br>reconciliation<br><span class="sev blocker">blocker</span></td>
+  <td><b>Low birth weight and prematurity are unrelated in this file.</b> In real cohorts these correlate at r≈0.6–0.9 because preterm infants are low-birth-weight by definition of gestational timing. Here they are independent draws. Disqualifies the data for any joint clinical-risk analysis.</td>
+  <td class="num">LBW×preterm 0.018<br>LBW×death −0.039<br>n=1404</td>
+  <td class="tri human">needs-human</td>
+</tr>
+</tbody>
+</table>
+
+<h2><span class="num">§3</span>Material — logical contradictions requiring a decision</h2>
+
+<table>
+<thead><tr><th style="width:180px">Kind</th><th>Finding</th><th class="mono" style="width:150px">Measured</th><th style="width:90px">Triage</th></tr></thead>
+<tbody>
+<tr><td class="mono">batch-duplicate<br><span class="sev material">material</span></td><td>2024-01 and 2024-03 each loaded twice with differing values. Row-index gap is exactly 117 for all 234 pairs — two whole-batch double-loads, not per-facility corrections. No timestamp column exists; both rows always internally consistent; no directional bias. <b>Nothing in the file can break the tie.</b></td><td class="num">234 pairs<br>117/117 facilities<br>113 vs 119 split</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">absent-period<br><span class="sev material">material</span></td><td>2024-02 and 2024-12 have no rows at all. Q1 and Q4 are structurally incomplete.</td><td class="num">10 of 12 months</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">tier-capability-collapse<br><span class="sev material">material</span></td><td>District-tier facilities are statistically indistinguishable from Health Centers across all 7 equipment columns and 3 specialist-staffing columns. The stated 4-tier hierarchy is functionally 2 bands.</td><td class="num">means within 0.1–0.2<br>Prov/Ref 2–10× higher</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">training-date-<br>count-mismatch<br><span class="sev material">material</span></td><td><code>last_neonatal_training_date = 'Never'</code> yet <code>neonatal_trained_nurses &gt; 0</code>.</td><td class="num">36 of 48 (75.0%)</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">protocol-training-<br>contradiction<br><span class="sev material">material</span></td><td><code>newborn_protocol_exists = 'No'</code> yet staff trained on it, up to 87%. Two of these also report active quality improvement with 93% and 72% death-audit rates.</td><td class="num">14 of 14 (100%)</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">future-dated-column<br><span class="sev material">material</span></td><td><code>protocol_last_updated</code> postdates the 2024 reporting window. Max observed 2025-10 — the generator's implicit "today" sits outside the analysis period.</td><td class="num">34 of 117 (29.1%)</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">derived-categorical-<br>from-date<br><span class="sev material">material</span></td><td><code>newborn_protocol_exists</code> is a pure function of date staleness — Outdated ⟺ ≥24 months. Zero exceptions. A validation engine treating the two as independent evidence double-counts.</td><td class="num">0 of 103 violations</td><td class="tri">informational</td></tr>
+<tr><td class="mono">impossible-value<br><span class="sev material">material</span></td><td><code>essential_drugs_stockouts_days</code> exceeds 31, the maximum days in any calendar month. No period column documents the intended window.</td><td class="num">11 of 117 (9.4%)<br>max 35</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">referral-network-<br>imbalance<br><span class="sev material">material</span></td><td>Outbound referrals exceed inbound by 74% in aggregate across a closed 117-facility network.</td><td class="num">3,030 out<br>1,742 in</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">cross-file-<br>contradiction<br><span class="sev material">material</span></td><td>Facilities reporting no kangaroo-care space nonetheless report practising it. Physically impossible for the 4 coded 'Yes'.</td><td class="num">19 of 32 (59.4%)<br>agreement 26.5%</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">tier-inappropriate-<br>staffing<br><span class="sev material">material</span></td><td>Health Centers reporting hospital-tier specialists on staff.</td><td class="num">obs 29/45 (64.4%)<br>paed 23/45 (51.1%)</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">night-coverage-gap<br><span class="sev material">material</span></td><td>District-tier facilities reporting zero night nursing coverage, while no Provincial or Referral facility does.</td><td class="num">32 of 45 (71.1%)</td><td class="tri human">needs-human</td></tr>
+<tr><td class="mono">missing-backup-power<br><span class="sev material">material</span></td><td>No reliable grid power <em>and</em> no generator, while holding power-dependent neonatal equipment.</td><td class="num">33 of 117 (28.2%)<br>100% hold equipment</td><td class="tri">informational</td></tr>
+</tbody>
+</table>
+
+<h2><span class="num">§4</span>What is clean</h2>
+<p>Absence of defect is a result. These were checked and found sound — which is what makes the findings above trustworthy rather than a fishing expedition.</p>
+
+<div class="split">
+<div>
+<h3>Structural integrity</h3>
+<ul class="clean">
+<li>All 5 CSVs share an <b>identical</b> 117-facility id set. Zero orphans across 20 pairwise directions.</li>
+<li>Facility ids contiguous 001–117, assigned in unbroken per-district blocks.</li>
+<li>117/117 unique facility names despite a templated naming pattern.</li>
+<li>Zero empty or missing cells in any column of any file.</li>
+<li>Zero malformed dates, zero malformed percentages across 819 percentage cells.</li>
+<li>District → province mapping correct 30/30 against real Rwanda structure.</li>
+</ul>
+</div>
+<div>
+<h3>Arithmetic and bounds</h3>
+<ul class="clean">
+<li><code>live_births = total_deliveries − stillbirths</code>, exact, 1404/1404.</li>
+<li>Cause-of-death columns sum to total neonatal deaths, 1404/1404.</li>
+<li>Preterm total ≤ deliveries; Apgar&lt;7 ≤ live births; LBW ≤ live births; deaths ≤ live births — all 1404/1404.</li>
+<li><code>incubators_functional ≤ incubators_total</code>, 0 violations.</li>
+<li><code>neonatal_trained_nurses ≤ total_nurses</code>, 0 violations.</li>
+<li>NICU availability vs bed count consistent in both directions, 117/117.</li>
+<li>No integer column across 46 shows multiples-of-5/10 rounding bias.</li>
+</ul>
+</div>
+</div>
+
+<h2><span class="num">§5</span>What this changes in the build</h2>
+
+<div class="callout">
+  <div class="ct">The bulletin's required metrics</div>
+  <p>The brief names four bulletin components. Two survive intact, one needs reframing, one cannot be built honestly from this data.</p>
+</div>
+
+<table>
+<thead><tr><th style="width:230px">Required metric</th><th style="width:110px">Status</th><th>Consequence</th></tr></thead>
+<tbody>
+<tr><td>Top 10 facilities by volume</td><td><span class="sev cosmetic">intact</span></td><td>Ranks tier bands, not performance. Label it as volume, never as quality.</td></tr>
+<tr><td>Maternal health indicators</td><td><span class="sev cosmetic">intact</span></td><td>Counts and rates are internally consistent. Clinical <em>relationships</em> between them are not — report each on its own, never jointly.</td></tr>
+<tr><td>Facility performance scores</td><td><span class="sev material">reframe</span></td><td>Cannot be presented as explaining outcomes. Present as a capability inventory: what a facility <em>has</em>, not what it <em>achieves</em>.</td></tr>
+<tr><td>Trend vs previous quarters</td><td><span class="sev blocker">blocked</span></td><td>No genuine temporal signal exists, and Q1/Q4 are incomplete on top of that. Any month-over-month delta is noise. Either state that plainly or omit the panel.</td></tr>
+</tbody>
+</table>
+
+<div class="callout olive">
+  <div class="ct">Why this is the deliverable, not a caveat</div>
+  <p>The Director's stated problem is <em>"I cannot trust any number I am shown."</em> A bulletin that silently renders a quarter-over-quarter arrow on noise, or a performance score that implies causation it cannot support, confirms exactly that complaint on a quarterly schedule.</p>
+  <p>Every finding above was produced by a one-line check. Shipped as validation that runs on ingest, they turn an unfalsifiable complaint into a standing measurement — and they generalise past this sample, which is the part that outlives the engagement.</p>
+</div>
+
+<h2><span class="num">§6</span>Mapping to the triage queue</h2>
+<p>Each finding carries a stable <code>kind</code>, a <code>scope</code> that determines what a resolution attaches to, and a <code>triage</code> disposition. Findings become rows in the conflicts table; the analyst's decision becomes a row in resolutions. Both are addressable, so a figure's deeplink can reach the conflict that shaped it.</p>
+
+<table>
+<thead><tr><th style="width:110px">Scope</th><th style="width:130px">Resolution attaches to</th><th>Kinds at this scope</th><th class="num" style="width:70px">Count</th></tr></thead>
+<tbody>
+<tr><td class="mono">batch</td><td>a (period, load) pair</td><td class="mono">batch-duplicate</td><td class="num">2 decisions<br>not 234</td></tr>
+<tr><td class="mono">column</td><td>a field, all rows</td><td class="mono">unreconciled-derived-column · quantised-uniform-column · future-dated-column · constant-column · broken-clinical-reconciliation</td><td class="num">8</td></tr>
+<tr><td class="mono">row</td><td>one facility record</td><td class="mono">protocol-training-contradiction · training-date-count-mismatch · impossible-value · missing-backup-power</td><td class="num">4</td></tr>
+<tr><td class="mono">cross-file</td><td>a facility, two sources</td><td class="mono">cross-file-contradiction · tier-capability-collapse · tier-inappropriate-staffing · night-coverage-gap</td><td class="num">4</td></tr>
+<tr><td class="mono">file</td><td>whole dataset</td><td class="mono">referral-network-imbalance · pseudo-autocorrelation · tier-confounded-correlation</td><td class="num">3</td></tr>
+</tbody>
+</table>
+
+<div class="callout slate">
+  <div class="ct">The rewrite this forces on DUP-01</div>
+  <p>"Keep the latest submission" is undefendable — nothing in the file establishes row order as submission order, and neither row is more correct by any measurable property. The rule becomes:</p>
+  <p><b>DUP-01</b> — where a <code>(org_unit, period)</code> collision spans a whole batch, the batch is not auto-resolved. Both are retained, the conflict is queued at <em>batch</em> scope, and every derived figure is marked <b>provisional</b> until a resolution exists. Provisional figures state so on the face of the presentation.</p>
+  <p>This is what lets the bulletin ship before triage is complete, with the affected number visibly labelled rather than silently wrong.</p>
+</div>
+
+<footer class="prov">
+  Method — three independent read-only sweeps run in parallel, each blind to the others' findings, against
+  <code>assignment/data/*.csv</code>. Python 3 stdlib only. Every finding required a reproducible one-line check
+  as a condition of being reported; claims without a runnable check were rejected.<br>
+  Slices — governance + operations column sweep · facilities + healthcare_workers + cross-file referential integrity ·
+  distributional fingerprinting and clinical reconciliation.<br>
+  Limits — the generation model in §1 is inferred from distributional evidence, not from any generator source.
+  Correlations describe this sample only and support no epidemiological claim about Rwanda. The Benford test was run
+  and is reported as <b>inconclusive</b>: the count columns span 1.1 orders of magnitude, too narrow for the law to
+  hold even on genuine data.<br>
+  Governed by <code>decisions/0008-technical-stack.md</code> · feeds <code>openspec/specs/data-validation</code>.
+</footer>
+
+</div>
+</body>
+</html>
