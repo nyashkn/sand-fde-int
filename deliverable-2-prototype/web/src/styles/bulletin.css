@@ -15,8 +15,11 @@ body {
 /* ---- masthead ---- */
 .masthead { border-bottom: 2px solid var(--ink); padding-bottom: var(--s-5); }
 .kicker {
+  /* --clay-d, not --clay: --clay on --cream measured 3.64:1, below WCAG AA 4.5 for
+     11px text. This line states the report's scope and date, so it is read, not
+     decorative, and has to clear the same bar as body text. */
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--clay); margin-bottom: var(--s-2);
+  text-transform: uppercase; color: var(--clay-d); margin-bottom: var(--s-2);
 }
 h1 {
   font-family: var(--serif); font-size: 34px; line-height: 1.12; color: var(--ink);
@@ -63,7 +66,9 @@ h2 {
   letter-spacing: -0.01em; border-bottom: 1.5px solid var(--ink); padding-bottom: var(--s-2);
 }
 h2 .n {
-  display: block; font-family: var(--mono); font-size: 11px; color: var(--clay);
+  /* --clay-d, not --clay: same 3.64:1 failure as the kicker, same fix. It is a
+     navigation label ("§4"), read on the page and by the section-index links. */
+  display: block; font-family: var(--mono); font-size: 11px; color: var(--clay-d);
   letter-spacing: 0.1em; font-weight: 400; margin-bottom: var(--s-1);
 }
 h3 { font-size: 15px; color: var(--ink); font-weight: 650; margin: var(--s-5) 0 var(--s-2); }
@@ -91,8 +96,11 @@ tr.provisional td { border-bottom: 1px dotted var(--clay); }
   padding: 2px 6px; font-weight: 600; white-space: nowrap; border: 1px solid transparent;
 }
 .tag.provisional { background: var(--oat); color: var(--clay-d); border-style: dotted; border-color: var(--clay); }
-.tag.settled { background: transparent; color: var(--olive); }
-.tag.withheld { background: var(--clay); color: var(--paper); }
+/* olive text on transparent (cream) measured 3.85:1; --olive-d clears 4.5. */
+.tag.settled { background: transparent; color: var(--olive-d); }
+/* white on --clay measured 3.84:1; --clay-d is the darker step that clears 4.5,
+   and --clay stays the accent used for the dotted provisional border and chart fills. */
+.tag.withheld { background: var(--clay-d); color: var(--paper); }
 .tag.unmeasured { background: var(--oat); color: var(--muted); font-style: italic; }
 
 /* ---- blocks: tinted background + rule above, never a side stripe ---- */
@@ -120,7 +128,7 @@ tr.provisional td { border-bottom: 1px dotted var(--clay); }
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--clay-d); font-weight: 600; margin-bottom: var(--s-3);
 }
-.withheld-panel .lead { font-size: 15px; color: var(--ink); max-width: 76ch; font-weight: 500; }
+.withheld-panel .lead { font-size: 15px; color: var(--ink); max-width: 72ch; font-weight: 500; }
 .withheld-panel table { background: var(--paper); }
 
 /* ---- charts ---- */
@@ -134,14 +142,6 @@ a.lineage {
   border-bottom: 1px dotted var(--rule); margin-left: var(--s-2);
 }
 a.lineage:hover { color: var(--clay); border-bottom-color: var(--clay); }
-.lineage-card { background: var(--paper); border-top: 1px solid var(--rule); padding: var(--s-4); margin: var(--s-3) 0; }
-.lineage-card h4 {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink);
-  text-transform: uppercase; margin-bottom: var(--s-3); font-weight: 600;
-}
-.lineage-card dl { display: grid; grid-template-columns: 190px 1fr; gap: var(--s-1) var(--s-4); margin: 0; }
-.lineage-card dt { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
-.lineage-card dd { margin: 0; font-size: 12.5px; }
 
 footer.colophon {
   font-family: var(--mono); font-size: 11px; color: var(--muted);
@@ -150,14 +150,19 @@ footer.colophon {
 
 @media (max-width: 760px) {
   /* Two columns, not a stack. All four receipts are the first-screen answer, and
-     stacked they push the fourth below the fold on a 390px phone. */
-  .receipts { grid-template-columns: 1fr 1fr; gap: 0; }
+     stacked they push the fourth below the fold on a 390px phone.
+
+     display: grid is required here, not just grid-template-columns: the base rule is
+     display: table with .receipt as table-cell, and grid-template-columns is a no-op
+     on a table. Measured this at 390px and found all four cells still on one row,
+     86px each, before adding the display override, despite an earlier pass believing
+     this was already fixed. */
+  .receipts { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
   .receipt, .receipt + .receipt {
-    border-left: 0; padding: 10px 12px 10px 0;
+    display: block; border-left: 0; padding: 10px 12px 10px 0;
     border-top: 1px solid var(--rule-2);
   }
   .answer-figure { font-size: 52px; }
-  .lineage-card dl { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 700px) {

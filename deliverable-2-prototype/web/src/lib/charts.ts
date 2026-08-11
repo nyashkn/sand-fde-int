@@ -17,7 +17,7 @@ const TOKENS = {
   muted: '#5a5248',
   rule: '#ded9cc',
   clay: '#c36a47',
-  clayD: '#a9532f',
+  clayD: '#a14f2d',
   olive: '#6f855a',
   oat: '#efebe0',
   paper: '#ffffff',

@@ -57,7 +57,7 @@
 - [x] 6.3 Confirm zero script tags and zero external asset references
 - [x] 6.4 Confirm every chart renders with no network
 - [x] 6.5 Confirm chart text is legible at published dimensions
-- [ ] 6.6 Run `$impeccable critique` against the rendered output and record the findings
+- [x] 6.6 Run `$impeccable critique` against the rendered output and record the findings
 
 ## 7. Record and hand off
 
