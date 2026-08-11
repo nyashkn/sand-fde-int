@@ -20,11 +20,11 @@ The four deliverables map 1:1 to the folders below.
 | `deliverable-1-scoping/` | **D1**, discovery process and problem selection. |
 | `deliverable-2-prototype/` | **D2**, solution design + working bulletin prototype. |
 | `deliverable-3-hardening/` | **D3**, top 5 production-readiness gaps. |
-| `deliverable-4-handover/` | **D4**, runbook, data contract, decision register, exit criteria. |
+| `deliverable-4-handover/` | **D4**, documentation, training, exit criteria. |
 
 **Start here if you're reviewing:** `deliverable-1-scoping/` for the reasoning,
-`deliverable-2-prototype/` for the code, `deliverable-4-handover/` for whether this
-survives without me, `decisions/` if you want to know why something is the way it is.
+`deliverable-2-prototype/` for the code, `decisions/` if you want to know why something
+is the way it is.
 
 ---
 
@@ -73,9 +73,7 @@ documented in `research/sand-product-research.md` §7.4.
 
 ### Prototype
 
-`deliverable-4-handover/runbook.md` is the authoritative sequence, kept accurate because
-it is run, not just read: `uv sync`, `run.py`, `bun install`, `bun run publish`,
-`bun run verify`. `deliverable-2-prototype/README.md` covers what got built and why.
+See `deliverable-2-prototype/README.md`.
 
 ---
 
