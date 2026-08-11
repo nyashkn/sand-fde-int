@@ -8,12 +8,12 @@ leaves trust lower than before.
 
 ## Contents
 
-- `runbook.md` — the four-command quarterly cycle, what each check failing means, how to
+- `runbook.md`: the four-command quarterly cycle, what each check failing means, how to
   recover from a failed run.
-- `data-contract.md` — the required input shape, the crosswalk, and precisely what
+- `data-contract.md`: the required input shape, the crosswalk, and precisely what
   happens when a source column is renamed, absent, or new (verified by running each
   case, not inferred).
-- `decision-register.md` — what happens to a batch conflict today (`DEFAULT-BATCH-01`,
+- `decision-register.md`: what happens to a batch conflict today (`DEFAULT-BATCH-01`,
   unconditional, provisional), and what is specified but not built (the triage queue).
 
 ## Exit criterion

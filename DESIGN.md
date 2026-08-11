@@ -19,8 +19,9 @@ Warm neutrals with an earth accent. Deliberately not the category reflex for thi
 | `--rule` | `#DED9CC` | Structural rules |
 | `--rule-2` | `#ECE8DD` | Hairlines inside tables |
 | `--clay` | `#C36A47` | Primary accent, section numbers |
-| `--clay-d` | `#A9532F` | Accent text on light backgrounds |
-| `--olive` | `#6F855A` | Settled, complete, positive |
+| `--clay-d` | `#A14F2D` | Accent text on light backgrounds |
+| `--olive` | `#6F855A` | Settled, complete, positive; fills |
+| `--olive-d` | `#627650` | Settled/complete text, where `--olive` reads under 4.5:1 |
 | `--sage` | `#A8B89A` | Olive at low emphasis |
 
 **Strategy: restrained.** Tinted neutrals plus one accent under 10% of surface. Data

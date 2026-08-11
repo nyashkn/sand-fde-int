@@ -32,12 +32,12 @@ subset of the columns above.
 row is `(source_system, source_field, canonical_element, role, code_system, code, note)`.
 `role` is one of:
 
-- **`identity`** (2 rows) — resolves to an `org_unit` through `mart/org_unit_map.csv`.
-- **`dimension`** (5 rows) — `district`, `province`, `tier_level`, and the two grain
+- **`identity`** (2 rows): resolves to an `org_unit` through `mart/org_unit_map.csv`.
+- **`dimension`** (5 rows): `district`, `province`, `tier_level`, and the two grain
   columns; describes an org_unit rather than measuring it.
-- **`observation`** (55 rows) — becomes a row in the silver table, one per
+- **`observation`** (55 rows): becomes a row in the silver table, one per
   `(org_unit, period, data_element)`.
-- **`unmapped`** (9 rows) — present in the source, deliberately not carried forward, with
+- **`unmapped`** (9 rows): present in the source, deliberately not carried forward, with
   the reason recorded in `note`. This is `gps_lat`/`gps_lon` (uniform random, see
   `artifacts/04-data-quality-audit.html`), `facility_name` (contradicts `tier_level` in 62
   of 117 rows), `staff_per_delivery_2024` (unreconstructable from any formula tested), and
