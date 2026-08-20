@@ -17,7 +17,7 @@ open ../output/bulletin-2024-Q1.html
 Two commands, no server, no API key, no cloud account. Output is one self-contained HTML
 file with no external assets and no JavaScript.
 
-## Solution design (D2 §1)
+## Solution design (D2 1)
 
 `../artifacts/06-bulletin-architecture-data-flow.html`. Two diagrams: the data-flow
 pipeline (sources through Bronze/Silver/Gold to the published surfaces), which Sand
@@ -126,7 +126,7 @@ section it qualifies.
 
 Further shortcuts (the second source is synthetic, no scheduler, no auth, GPS excluded as
 fabricated, single-machine DuckDB), the Week 3 plan, and what building this surfaced about
-the capability-mortality correlation, are in `SOLUTION-DESIGN.md` §3.
+the capability-mortality correlation, are in `SOLUTION-DESIGN.md` 3.
 
 ## Specification
 

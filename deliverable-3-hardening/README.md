@@ -141,7 +141,7 @@ Not a to-do list, but the reviewer should know where the line is.
 
 | Concern | State |
 |---|---|
-| Analyses the data cannot support | Disclosed with a caveat by two structural checks (`temporal_signal_check`, `stratification_check`), not by reviewer discretion. The statistical bar is unchanged (permutation test, stratified-correlation test, fixed seed); ADR 0012 removed the withhold gate that used to render nothing when a claim failed it, and replaced it with a caveat sentence that always renders. Disclosure, not silence, is now the failure mode. |
+| Analyses the data cannot support | Two structural checks (`temporal_signal_check`, `stratification_check`), not reviewer discretion. ADR 0012 replaced the withhold gate with a caveat that always renders, so the failure mode is disclosure rather than silence. |
 | Figures disagreeing across surfaces | `check-agreement.mjs`, seven shared figures compared in rendered output |
 | A file whose name and contents disagree | `publish.mjs` refuses; the check exists because it happened |
 | Email clipping and unsupported SVG | `check-email.mjs`, measured at 6% of the ceiling |
