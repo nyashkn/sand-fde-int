@@ -3,13 +3,6 @@
 **Role:** Forward Deployed Engineer · **Country:** Rwanda · **Sprint:** 6 weeks, 2 FDEs
 **Sponsor:** MoH Director · **Internal:** Solutions Manager, Country Director, Operations Specialist
 
-> **Revision note.** This is v2. The problem selection survived an adversarial review by three
-> independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5), all three independently
-> chose Problem A. The *justification* did not survive: they found four errors unanimously and
-> around a dozen more between them. Every one is corrected below, and the corrections are logged
-> in [`../decisions/0007-cross-provider-redteam-amendments.md`](../decisions/0007-cross-provider-redteam-amendments.md).
-> Raw reviews: [`../decisions/redteam-d1-cross-provider/`](../decisions/redteam-d1-cross-provider/).
-
 ---
 
 ## How to read this
@@ -420,42 +413,3 @@ approval.
 
 The floor is chosen deliberately: even at worst, the mart exists and the next engagement starts
 from a warehouse rather than from zero.
-
----
-
-## Appendix, how this scoping was produced, and where it was wrong
-
-The problem selection was reviewed twice. First by a six-persona adversarial council, which was
-**single-provider**, and therefore could not distinguish "A is correct" from "one model's priors
-sampled six ways." That limitation was recorded rather than hidden, and it is why the second review
-happened.
-
-Second, by **three independent model families** (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5), prompted
-hostilely against this document.
-
-**Result: all three independently chose Problem A.** The convergence is therefore probably not a
-single-family artifact, A is the unique option that is clinically non-catastrophic, partially
-instrumented, and finishable.
-
-**But all three rejected the justification**, and four errors were unanimous:
-
-1. The 5-day-from-quarter-close target was impossible given a 2–3 week upstream lag
-2. "A's mart is most of B's data layer" was false
-3. "40 hrs/month" vs "40 hrs/cycle" inflated the ROI ~3×
-4. "Nothing greenfield" converted job-posting copy into an existence proof
-
-Plus, from single reviewers but equally real: paper-only ≠ non-reporting (the domain error in
-§1.3); the root outcome statement selected for B while I chose A; hypotheses were presented as
-stakeholder quotations; hosting and InfoSec were omitted entirely; "aggregate-only therefore no
-PHI" was too categorical; success criteria depended on a quarter boundary falling inside the sprint
-by luck; and "if I cannot reproduce it, nobody can" was invalid reasoning.
-
-All are corrected above. The lesson worth carrying into the engagement is Grok's: *the blind spot
-was justification quality, not the letter A.* A confident, thorough, internally-consistent document
-can still be wrong in ways only an outside reader sees, which is the same reason §2.5a exists as a
-gate rather than a formality.
-
-- Cross-provider reviews: [`../decisions/redteam-d1-cross-provider/`](../decisions/redteam-d1-cross-provider/)
-- Amendment log: [`../decisions/0007-cross-provider-redteam-amendments.md`](../decisions/0007-cross-provider-redteam-amendments.md)
-- Council record: [`../decisions/council-d1-problem-selection/`](../decisions/council-d1-problem-selection/) · [`0006`](../decisions/0006-problem-a-plus-handover-act.md)
-- Visual artifact: [`../artifacts/03-opportunity-map-council-verdict.html`](../artifacts/03-opportunity-map-council-verdict.html)

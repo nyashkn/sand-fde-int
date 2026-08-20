@@ -1,10 +1,9 @@
 # Deliverable 4, Handover
 
 Reversing ADR 0006: the deliverable is not the artifact, it is a named Digital Health
-Officer personally restarting the pipeline once, unassisted, before exit. This is what
-the council decided distinguishes real capacity transfer from "shifting the burden": a
-finished tool handed to a Ministry with near-zero IT capacity degrades post-exit and
-leaves trust lower than before.
+Officer personally restarting the pipeline once, unassisted, before exit. That is the line
+between real capacity transfer and "shifting the burden": a finished tool handed to a
+Ministry with near-zero IT capacity degrades post-exit and leaves trust lower than before.
 
 ## Contents
 

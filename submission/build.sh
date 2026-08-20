@@ -55,6 +55,23 @@ done
 echo "==> markdown to html"
 bunx marked --gfm -i "$WORK/all.md" > "$WORK/body.html"
 
+# print.css appends the href after repo-relative links, because a paper reader
+# cannot click one. Most of these docs write the link AS its own path though
+# ([`../decisions/x.md`](../decisions/x.md)), so the rule printed the path twice.
+# Tag those so the CSS can skip them. CSS cannot compare text to attr(href).
+python3 - "$WORK/body.html" <<'PY'
+import re, sys, html
+p = sys.argv[1]
+s = open(p).read()
+def tag(m):
+    href, inner = m.group(1), m.group(2)
+    text = html.unescape(re.sub(r"<[^>]+>", "", inner)).strip()
+    return m.group(0) if text != href.strip() else f'<a class="self-titled" href="{href}">{inner}</a>'
+s, n = re.subn(r'<a href="([^"]+)">(.*?)</a>', tag, s, flags=re.S)
+open(p, "w").write(s)
+print(f"    tagged {s.count('self-titled')} self-titled links (of {n} total)")
+PY
+
 {
   echo '<!doctype html><html lang="en"><head><meta charset="utf-8">'
   echo '<title>Sand FDE assignment submission</title><style>'
