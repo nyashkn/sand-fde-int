@@ -11,7 +11,7 @@ Section 1 is what I would do in Week 1 before proposing anything. Section 2 is t
 would make **at the Week 1 gate**, conditional on the gate passing. Everything is written to be
 falsifiable.
 
-Assumptions are flagged **[A#]** and collected in §2.5.
+Assumptions are flagged **[A#]** and collected in 2.5.
 
 **[A1]** The country is Rwanda, the brief says "one of our expansion countries (i.e. Rwanda)" and
 the provided data uses Rwandan facility names, districts and RWF.
@@ -46,11 +46,11 @@ commonly missed, not because the sentence establishes it.
 | **1** | Solutions Manager, Country Director | *Why were the use cases chosen before discovery?* What does the MoU commit us to in writing, and what has been promised to whom? |
 | **1–2** | **MoH Director** (sponsor) | *"Tell me about a decision last quarter you'd have made differently with better data."* Then: *"When the numbers you're shown disagree with what you believe, which do you act on?"* |
 | **2** | **The bulletin analyst** | The most important interview. Not "what do you need", *"show me last quarter's, and open the files you built it from."* |
-| **2–3** | DHIS2 / HMIS focal point | *Where does the 2–3 week delay actually accrue?* And critically: **how do the paper facilities report today?** (see §1.3) |
+| **2–3** | DHIS2 / HMIS focal point | *Where does the 2–3 week delay actually accrue?* And critically: **how do the paper facilities report today?** (see 1.3) |
 | **3** | 2 district health officers, one strong district, one weak | *"What did you look at immediately before your last resource decision?"* If the answer isn't data, B solves the wrong problem |
 | **3–4** | 1 HealthTrack hospital, 1 OpenMRS clinic, 1 paper-only facility, the **data clerk**, not the medical director | Watch month-end reporting happen |
 | **4** | TB and HIV programme managers | Size C honestly: how many co-infected, how identified today, what happens when one is missed |
-| **4** | **MoH ICT / InfoSec** | Hosting, data residency, service accounts, approval lead times. See §2.4, this is the classic six-week killer |
+| **4** | **MoH ICT / InfoSec** | Hosting, data residency, service accounts, approval lead times. See 2.4, this is the classic six-week killer |
 | **5** | Other FDE, Central FDEs, Product | What patterns already exist. Do not rebuild |
 
 **Question discipline.** Every question is **counterfactual** ("what did you do last month") or
@@ -78,7 +78,7 @@ So Week 1 must establish the actual distribution across at least six states, not
 
 **Why this changes things materially:** if most of the 175 do reach DHIS2 as monthly aggregates,
 then (a) the bulletin's coverage is far better than I assumed and the sampling-bias warning in
-§2.4.1 becomes conditional rather than certain, and (b) the argument against B shifts, B fails
+2.4.1 becomes conditional rather than certain, and (b) the argument against B shifts, B fails
 not on *absence* but on *granularity and freshness*, since monthly aggregates cannot drive
 real-time facility status regardless of how many facilities send them.
 
@@ -111,7 +111,7 @@ real-time facility status regardless of how many facilities send them.
    "nobody can." The analyst may hold undocumented exclusions and corrections, and finding those
    is the point.
 4. **Watch month-end at a paper-only facility**, the register, the transcription, the person, the
-   light. This is also how §1.3 gets answered.
+   light. This is also how 1.3 gets answered.
 5. **Watch a district officer make a real decision.** Not describe one.
 6. **Measure the infrastructure claim.** "4–6 hrs/day power, spotty 3G" is inherited from the
    brief. Verify where it matters.
@@ -155,7 +155,7 @@ and the brief does not consider it. Both are hypotheses to test in Week 1, not f
 
 ## 2.2 The choice: **Problem A**, plus one bounded handover act
 
-> **Commitment (conditional on the Week 1 gate in §2.5a):** automate the Quarterly Health
+> **Commitment (conditional on the Week 1 gate in 2.5a):** automate the Quarterly Health
 > Bulletin, with figure-level lineage built in from the start, and one named Digital Health
 > Officer independently producing a bulletin from a replayed quarter before I leave.
 
@@ -173,7 +173,7 @@ to attempt B, and in a first-country, template-setting engagement, proof is the 
 
 **Why not B, why not C.** B is out of reach *in this sprint*, not impossible: it needs
 facility-level freshness, and the reporting substrate is monthly aggregates on a 2–3 week lag. That
-is a granularity and cadence gap rather than a coverage gap (§1.3), and closing it is a separate
+is a granularity and cadence gap rather than a coverage gap (1.3), and closing it is a separate
 project. C needs probabilistic identity matching across CommCare silos with no shared identifier and
 no MoH clinical-safety review process. A unified *view* does not itself prescribe treatment, and the
 real risk turns on whether matching is advisory or authoritative, which is the point: establishing
@@ -207,7 +207,7 @@ publishing fast on incomplete data would *reduce* trust, which is the opposite o
 | Analyst time per publication cycle | **To be measured in Week 1** (see below) | ≥ 90% reduction |
 | **Data-availability cutoff → published** | ~1–2 weeks after data lands | **≤ 2 working days** |
 | Published figures resolving to a DHIS2 value + snapshot | 0% | 100% |
-| Facilities with reporting status shown | not shown | 100%, by the six states in §1.3 |
+| Facilities with reporting status shown | not shown | 100%, by the six states in 1.3 |
 | Ministry can produce a bulletin unaided (replay test) | no | yes |
 
 **On the baseline number.** The brief says *"40 hours/month"* for a *quarterly* bulletin. Those are
@@ -246,7 +246,7 @@ logging and retention remain in scope regardless.
 ### 2.4.1 The 175 paper facilities
 
 Out of scope for six weeks, and the largest thing this bulletin will not see. How many of the 175
-already reach DHIS2 as monthly aggregates via district clerks is unestablished (§1.3), so the size
+already reach DHIS2 as monthly aggregates via district clerks is unestablished (1.3), so the size
 of the gap is unknown, and whatever it turns out to be, the bulletin should print it: paper-only
 facilities are plausibly smaller and more rural, which is where maternal and neonatal mortality is
 likely highest, so a "top 10 facilities by volume" computed over reporting facilities only would
@@ -268,12 +268,12 @@ in the repository, not here.
 | **A8** |The bulletin is read by someone who decides |Ask Director + 2 district officers what they did with the last one |Stop and re-scope |
 | **A9** |Indicator definitions are consistent across sources |Sample-compare across 3 facilities |Scope to consistent indicators, flag the rest |
 | **A10** |Hosting and InfoSec approval achievable in ≤ 3 weeks |Meet MoH ICT Day 4 |Re-plan around an artifact that runs on Ministry-owned infrastructure |
-| **A11** |A quarter close or a replayable prior quarter falls inside the sprint |Check the reporting calendar Day 1 |Use the replay protocol in §2.6 |
+| **A11** |A quarter close or a replayable prior quarter falls inside the sprint |Check the reporting calendar Day 1 |Use the replay protocol in 2.6 |
 
 ### 2.5a The Week 1 gate
 
 Committing at the end of Week 1 while planning to resolve existential assumptions in Week 2 is
-incoherent: **A8** alone can invalidate the whole commitment. The commitment in §2.2 is therefore
+incoherent: **A8** alone can invalidate the whole commitment. The commitment in 2.2 is therefore
 **conditional on five gates**, assessed at end of Week 1.
 
 | Gate | Passes if |
@@ -313,19 +313,16 @@ approval.
 
 ## 2.7 Fallback plan
 
-Each assumption in §2.5 has a stated failure branch, and none of them ends the engagement. A blocked
-DHIS2 API (**A4**) becomes a scheduled CSV export drop into the same mart, costing ingest automation
-and nothing else. A bulletin that is not templatable (**A5**) means automating tables and charts
-while the narrative stays manual and is labelled as such. Contested definitions (**A9**) ship the
-uncontested sections and push the rest to an annex plus a named Ministry decision; sparse history
-(**A6**) ships the current quarter with a completeness report, which is itself the argument for
-fixing reporting. If no named DHO exists (**A7**) the artifact ships correctly labelled and the
-capacity-transfer claim is dropped; if hosting is blocked (**A10**) the mart, queries and runbook are
-delivered on Ministry infrastructure with no Sand dependency; and if the labour turns out to be
-mostly judgement (**A3**) the target is reset publicly in Week 2, a smaller true claim instead of a
-larger false one.
+Each assumption in 2.5 has a stated failure branch, and none ends the engagement. A blocked DHIS2 API
+(**A4**) becomes a scheduled CSV export into the same mart, costing ingest automation and nothing
+else. A bulletin that is not templatable (**A5**) means automating tables and charts while the
+narrative stays manual and labelled. Contested definitions (**A9**) ship the uncontested sections and
+annex the rest against a named Ministry decision; sparse history (**A6**) ships the current quarter
+with a completeness report. No named DHO (**A7**) ships the artifact correctly labelled with the
+capacity-transfer claim dropped; blocked hosting (**A10**) delivers mart, queries and runbook on
+Ministry infrastructure with no Sand dependency; labour that proves mostly judgement (**A3**) resets
+the target publicly in Week 2, a smaller true claim instead of a larger false one.
 
-**The floor, if everything slips:** a conformed mart, a documented query set and a runbook. That is
-chosen deliberately, because even at worst it removes the re-keying step, is handoverable, and means
-the next engagement starts from a warehouse rather than from zero. The full branch-by-branch table is
-in the repository.
+**The floor, if everything slips:** a conformed mart, a documented query set and a runbook. Even at
+worst that removes the re-keying step, is handoverable, and starts the next engagement from a
+warehouse rather than zero. The branch-by-branch table is in the repository.

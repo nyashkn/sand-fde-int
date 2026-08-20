@@ -52,6 +52,25 @@ for f in "${DOCS[@]}"; do
   printf '\n\n<div class="pagebreak"></div>\n\n' >> "$WORK/all.md"
 done
 
+# Blocks fenced in <!-- pdf:skip --> are for a reader of the .md in the repository and
+# are redundant on paper, where the rendered figure is inserted instead. Kept in the
+# source, dropped here.
+python3 - "$WORK/all.md" <<'PY'
+import re, sys
+p = sys.argv[1]
+s = open(p).read()
+s, n = re.subn(r'<!-- pdf:skip -->.*?<!-- /pdf:skip -->\n?', '', s, flags=re.S)
+assert '<!-- pdf:skip -->' not in s, "unclosed pdf:skip marker"
+
+# The loop above appends a page break after every document, including the last.
+# That trailing one has nothing to push onto a new sheet, so it renders a blank
+# page. The CSS :last-child guard does not catch it because marked leaves
+# trailing whitespace after the div.
+s, b = re.subn(r'(?:\s*<div class="pagebreak"></div>)+\s*\Z', '\n', s)
+open(p, 'w').write(s)
+print(f"    dropped {n} pdf:skip block(s), {b} trailing page break(s)")
+PY
+
 echo "==> markdown to html"
 bunx marked --gfm -i "$WORK/all.md" > "$WORK/body.html"
 

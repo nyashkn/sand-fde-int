@@ -1,16 +1,17 @@
 /* Print stylesheet for the single-PDF submission.
 
-   Palette and type stack are lifted from deliverable-2-prototype/web/src/styles/tokens.css
-   so the document and the bulletin it contains read as one artifact. The contrast ratios
-   documented there (ink/paper 16.6:1, red/paper 5.41:1, gray-mid/paper 5.21:1) hold here
-   unchanged; nothing below introduces a new text/background pair.
+   Type stack is lifted from deliverable-2-prototype/web/src/styles/tokens.css so the
+   document and the bulletin it contains read as one artifact. Paper is white here rather
+   than the bulletin's #f6f4ef: a tinted sheet is a screen affectation that reads as an
+   artefact of the renderer once printed. Every ink-on-paper ratio documented in tokens.css
+   only rises against white, so nothing below weakens a contrast claim made there.
 
    ponytail: one stylesheet, no build step, no framework. It is a print document. */
 
 :root {
   --ink: #161513;
-  --paper: #f6f4ef;
-  --panel: #fffef9;
+  --paper: #ffffff;
+  --panel: #ffffff;
   --red: #c22029;
   --gray-track: #e2ded2;
   --gray-mid: #6b6659;
@@ -30,7 +31,7 @@
 
 @page {
   size: A4;
-  margin: 18mm 16mm 20mm 16mm;
+  margin: 15mm 16mm 15mm 16mm;
 }
 
 /* Background is set on html so the paper colour bleeds to the sheet edge rather
@@ -135,8 +136,13 @@ table {
 
 /* A table may split across pages when it is genuinely long, but the header
    repeats so the split page is still readable, and no single row is torn. */
-thead { display: table-header-group; }
+thead { display: table-header-group; break-after: avoid-page; }
 tr { break-inside: avoid-page; }
+
+/* A header plus one stranded row at the foot of a page reads as a rendering
+   fault rather than a table. Keep the first two rows with their header, so a
+   split only happens where there is enough table above it to look deliberate. */
+tbody tr:nth-child(-n+2) { break-after: avoid-page; }
 
 th {
   font-family: var(--sans);
@@ -159,6 +165,12 @@ td {
 /* ---- structure --------------------------------------------------------- */
 
 .pagebreak { break-after: page; height: 0; }
+
+/* A break emitted after the final document, or after one whose last line already
+   fell on a page boundary, produces a genuinely blank sheet. Suppress the trailing
+   one; the boundary case is handled by not emitting a break the flow already made. */
+.pagebreak:last-child { break-after: auto; }
+.pagebreak + .pagebreak { break-after: auto; }
 
 /* No fixed height. A height close to the page box plus a trailing page break is
    what produced a blank second sheet. Padding positions the block instead. */

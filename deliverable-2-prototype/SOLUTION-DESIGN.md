@@ -56,6 +56,7 @@ over DuckDB-WASM), scoped but not built (see 3.2). Apache Superset also reads th
 Gold-layer Parquet, server-rendered, scoped to the connected central MoH office only (1.2,
 1.3).
 
+<!-- pdf:skip -->
 Plain-text version of the same flow, for a reader of this file directly:
 
 ```
@@ -83,11 +84,12 @@ dhis2_sample.csv  ┘              │
            (static, per     (separate doc,      (scoped, not         (connected MoH
             quarter)         under 102KB)          built)             office only)
 ```
+<!-- /pdf:skip -->
 
 The rendered version of this diagram, plus the mart ERD — deliberately not a star or
 snowflake schema — are reproduced from `artifacts/06-bulletin-architecture-data-flow.html`
 in the PDF submission; open that file directly for the interactive version, including the
-product-decision cards (§1.2 below covers the same ground in prose).
+product-decision cards (1.2 below covers the same ground in prose).
 
 ### 1.2 Which Sand products, and why
 
@@ -121,9 +123,9 @@ design does not get to assume it is available.
 | Orchestration and scheduling | Neither built nor bought yet: `run.py` is invoked by hand today | A quarterly batch completing in seconds doesn't clear the bar for a durable-execution runtime; DBOS was rejected on the same test (ADR 0008). Nothing runs on schedule, no failure alerts (Deliverable 3, item 4). | Low: Hamilton exposes the DAG as a callable graph; wrapping it in cron or the Ministry's own scheduler is additive. |
 | Chart rendering | Buy: Flint (`microsoft/flint-chart`, npm), over hand-rolled Vega-Lite or D3 | One spec compiles to a static render (email, build-time SVG) and an interactive backend (unbuilt explore surface). Constrained grammar and MCP server make agent-authored charts validatable; raw Vega-Lite or D3 would not be (ADR 0008). Deferred in ADR 0010 over npm-only packaging while Python-rendered, re-adopted in ADR 0012 once Astro/TypeScript. | Moderate: a real Vega-Lite compiler bug was worked around (custom sort dropped under multi-layer auto-labels), unfiled upstream. Two details (a hatch fill, a benchmark rule line) use a hand-edit escape hatch since Flint's semantic layer doesn't expose them. |
 | Document rendering (bulletin and email) | Build: Astro, zero JavaScript by default, over a Superset export or the earlier hand-rolled Python renderer (`render.py`, deleted) | Email clients strip script, so a Superset export or SPA cannot produce the email surface at all. The earlier hand-rolled Python renderer duplicated logic against the interactive surface, capping UX (ADR 0010). | Low to moderate: Astro components are the one thing every surface shares; replacing the renderer rebuilds all three, but the Parquet contract doesn't change. |
-| Explore and dashboard surface, connected office | Buy: Apache Superset | Server-rendered dashboards over a live connection suit reliable power and connectivity; not attempted for the offline majority, where it would fail. | Low if a live instance exists in Sand's stack (unconfirmed, see 1.2); moderate to high if stood up from scratch: hosting, credentials, InfoSec approval all open (D1 §2.2). |
+| Explore and dashboard surface, connected office | Buy: Apache Superset | Server-rendered dashboards over a live connection suit reliable power and connectivity; not attempted for the offline majority, where it would fail. | Low if a live instance exists in Sand's stack (unconfirmed, see 1.2); moderate to high if stood up from scratch: hosting, credentials, InfoSec approval all open (D1 2.2). |
 | Distribution (email) | Build: a deliberately separate, smaller HTML document, not the bulletin inlined | Measured, not assumed: inlining the full bulletin hit 99.0 KB against Gmail's ~102 KB clip threshold, with trust-critical disclosure sections (withheld panels, known defects, lineage) at the bottom, first clipped. Inline SVG is also unsupported across major clients (ADR 0011). | Low: already a distinct document; reversing to inline-everything is a template change that reopens the clipping problem ADR 0011 measured. |
-| Hosting | Deferred: no hosting decision made, none needed for a local prototype | D1 originally assumed Sand-hosting, flipped to explicit in-scope on review (§2.2). Where this runs, who owns credentials after week 6, and whether health data may sit in a Sand-hosted environment are open, not settled by a laptop prototype. | Unknown, deliberately unestimated: deciding without InfoSec or Ministry input is the same Rwanda-specific-instance assumption D1 already caught once. |
+| Hosting | Deferred: no hosting decision made, none needed for a local prototype | D1 originally assumed Sand-hosting, flipped to explicit in-scope on review (2.2). Where this runs, who owns credentials after week 6, and whether health data may sit in a Sand-hosted environment are open, not settled by a laptop prototype. | Unknown, deliberately unestimated: deciding without InfoSec or Ministry input is the same Rwanda-specific-instance assumption D1 already caught once. |
 | Statistical checks (temporal signal, stratification survival) | Build: permutation test and stratified correlation, in-repo, seeded | Tests this bulletin's claims against this dataset's structure (117 facilities, 4 tiers, quarterly). None of the five Sand products does statistics this in-context; Health Insight Engine's alerting is closest, unverified, and different (anomaly detection, not per-claim validity). | Low mechanically: ~150 lines of pandas/numpy, seeded, no dependency. The real cost is institutional: a Ministry reading a caveat as correct, not a bug. |
 | Facility identity resolution | Build: declared `org_unit_map.csv`, not auto-matching on a shared key string | Two systems using `NYA001` for the same facility is evidence of a shared code space, not proof of identity. Auto-matching on string equality is how an identity graph silently fuses two real facilities. | Low: additive rows; the real cost is process, since someone must make and record each match. |
 
@@ -189,7 +191,7 @@ stratification check testing tier only). This adds the ones that document does n
 
 ### 3.2 What I would show in Week 3, what works, and what is genuinely broken
 
-D1 §2.6 specifies the Week 3 demo as a reconciliation, not a dashboard tour: last quarter's
+D1 2.6 specifies the Week 3 demo as a reconciliation, not a dashboard tour: last quarter's
 published bulletin, the pipeline re-deriving it from source, the figures that match, and
 the one that does not, with why. This build cannot do that literally: the data is
 synthetic and no prior bulletin exists to reconcile against, a gap between plan and what is
@@ -217,7 +219,7 @@ without backup power, among others).
 **What I would demo instead:** the pipeline re-deriving all four quarters from the same six
 source files live, then walking one `known_contradictions` row end to end, from the raw CSV
 rows through the crosswalk to the exact sentence in the bulletin, so the audience sees a
-real discrepancy traced through every layer, not asserted. Same trust event D1 §2.6 is
+real discrepancy traced through every layer, not asserted. Same trust event D1 2.6 is
 after (a genuine mismatch, explained, not a clean run with nothing to show), built from
 what this pipeline actually has.
 
