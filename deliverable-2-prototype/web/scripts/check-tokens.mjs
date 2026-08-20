@@ -54,6 +54,25 @@ for (const [tsKey, value] of Object.entries(themeInk)) {
   }
 }
 
+/** The scalar walk above matches `key: '#hex'`, which an array literal is not, so a
+ * palette declared as `categorical: [...]` used to pass this check without being read
+ * at all. It was unset, and Flint's own swiss ramp reached the published chart. Walk
+ * the array explicitly: every entry must be some colour tokens.css declares. */
+const categorical = [...(block.match(/categorical:\s*\[([^\]]*)\]/)?.[1] ?? '')
+  .matchAll(/'(#[0-9a-fA-F]+)'/g)].map((m) => m[1].toLowerCase());
+
+if (categorical.length === 0) {
+  problems.push('THEME_SPEC.ink.series.categorical is unset — Flint falls back to its own ramp');
+} else {
+  const known = new Set(Object.values(cssVars));
+  for (const hex of categorical) {
+    if (!known.has(hex)) problems.push(`categorical ${hex}: no matching custom property in tokens.css`);
+  }
+  if (new Set(categorical).size !== categorical.length) {
+    problems.push('categorical: repeated colour, two series would be indistinguishable');
+  }
+}
+
 if (Object.keys(themeInk).length === 0) {
   problems.push('THEME_SPEC.ink not found in charts.ts (regex or export shape changed)');
 }
@@ -64,4 +83,7 @@ if (problems.length > 0) {
   console.error('');
   process.exit(1);
 }
-console.log(`  token check passed: ${Object.keys(themeInk).length} chart theme colours identical to tokens.css`);
+console.log(
+  `  token check passed: ${Object.keys(themeInk).length} chart theme colours`
+  + ` + ${categorical.length} categorical series inks identical to tokens.css`,
+);

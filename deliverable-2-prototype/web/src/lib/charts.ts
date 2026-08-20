@@ -35,7 +35,21 @@ const THEME_SPEC = {
     surface: { canvas: '#f6f4ef', plot: '#f6f4ef' },
     text: { primary: '#161513', secondary: '#6b6659' },
     structure: { grid: '#c9c4b4', axis: '#161513', rule: '#161513' },
-    series: { single: '#c22029' },
+    // `single` themes one-series charts. Multi-series ones (section 3's grouped
+    // equipment bars) resolve `categorical` instead, and leaving it unset let Flint's
+    // own swiss ramp through: the published chart came out red/black/blue/yellow, a
+    // palette in neither tokens.css nor anywhere else in the document. The token check
+    // passed the whole time, because it only read `key: '#hex'` pairs and an array is
+    // not one — see check-tokens.mjs, which now walks this list too.
+    // Ordered by acuity, which is also darkest-to-lightest: NICU, incubators, CPAP,
+    // resuscitation tables. Four is the ceiling this palette supports; a fifth series
+    // needs a small-multiple, not a fifth hue.
+    series: {
+      single: '#c22029',
+      // `as string[]`: the enclosing `as const` would otherwise freeze this readonly,
+      // and Flint's ThemeSpec wants a mutable string[].
+      categorical: ['#c22029', '#161513', '#6b6659', '#c9c4b4'] as string[],
+    },
     accent: '#c22029',
   },
 } as const;

@@ -258,6 +258,20 @@ hr.fold-break {
  .index {
   display: none;
  }
+
+ /* A4's usable width is ~650px against the 1016px screen content width, so a two-up row
+    that reads well on screen overflows the sheet. Collapse to one column and move the
+    cell divider from the inline edge to the block edge, matching the mobile behaviour. */
+ .grid-row.cols-5-7,
+ .grid-row.cols-6-6 {
+  grid-template-columns: 1fr;
+ }
+
+ .cols-5-7 .cell:first-child,
+ .cols-6-6 .cell:first-child {
+  border-inline-end: 0;
+  border-block-end: 2px solid var(--ink);
+ }
 }
 
 .convention {
@@ -294,6 +308,19 @@ hr.fold-break {
 .cols-5-7 .cell:first-child,
 .cols-6-6 .cell:first-child {
  border-inline-end: 2px solid var(--ink);
+}
+
+/* A grid row nested inside a section is a layout device for that section's own figures,
+   not a page-level band. The section already draws the padding and the closing rule, so
+   drop the row's own border and bleed it back out to the section's edges: the cells'
+   inline padding then lands on the same margin as the section's prose. */
+section.deep > .grid-row {
+ border-block-end: 0;
+ margin-inline: calc(-1 * var(--s-6));
+}
+
+section.deep > .grid-row > .cell {
+ padding-block: 0;
 }
 
 .section-kicker {

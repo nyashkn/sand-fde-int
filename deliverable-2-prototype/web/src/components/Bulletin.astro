@@ -72,9 +72,20 @@ const CAUSE_LABEL: Record<string, string> = {
 // ---- section 2 cause chart: ranked, so the largest bar is whichever cause the mart actually
 // puts first, never an assumed clinical ordering. ----
 const causeTotal = causes.reduce((s, c) => s + c.value, 0);
+// Half-width: this chart sits in a cols-6-6 grid beside its own table (same five causes,
+// magnitude on the left, ICD-10 codes and shares on the right). The cell's inner width is
+// 473px (1078 / 2, less the 2px divider and 2x32px cell padding).
+//
+// 280, not 473: `width` sets Flint's PLOT box, and it then adds a gutter for the y-axis
+// labels, which here are long ("Other / no cause recorded"). Measured on this data:
+// 260 -> 451, 280 -> 466, 300 -> 478, 335 -> 508. Overshooting is not cosmetic — the SVG
+// carries its own width attribute and `figure svg { max-width: 100% }` then scales the
+// whole thing down, shrinking the baked-in type with it (585 emitted read 19% small).
+// Re-measure this if the cause labels change length.
+const HALF = 280;
 const causeSvg = await chart('ranking', causes.map((c) => ({
   label: CAUSE_LABEL[c.cause] ?? c.cause, value: c.value, provisional: c.provisional,
-})), { xLabel: 'Neonatal deaths' });
+})), { xLabel: 'Neonatal deaths', width: HALF });
 // causes is already ordered by value DESC (the mart query's own ORDER BY): causes[0] is
 // the largest bucket by construction, not an assumption made here.
 const largestCause = causes[0];
@@ -371,8 +382,10 @@ const CONTRADICTION_LABEL: Record<string, string> = {
   </section>
 
   <section class="deep" id="s2">
-    <div class="print-keep">
     <h2><span class="n">{secNum('s2')}</span>Neonatal deaths by cause, paired with the capability that treats it</h2>
+
+    <div class="grid-row cols-6-6">
+    <div class="cell print-keep">
     <p>
       {largestCauseIsOther ? (
         <span>
@@ -396,6 +409,7 @@ const CONTRADICTION_LABEL: Record<string, string> = {
       Ranked by count, not by assumed clinical severity. <a class="lineage" href="#lineage-cause">lineage, section 8</a>
     </figcaption>
     </div>
+    <div class="cell">
     <table>
       <thead><tr><th>Cause</th><th>ICD-10</th><th class="num">Deaths</th><th class="num">Share</th></tr></thead>
       <tbody>
@@ -424,6 +438,8 @@ const CONTRADICTION_LABEL: Record<string, string> = {
       national, not quarter-scoped: capability data is a facility snapshot, section 3.
       {' '}<a class="lineage" href="#lineage-cause">lineage, section 8</a>
     </figcaption>
+    </div>
+    </div>
 
     <div class="statbox">
       <div class="sb-label">

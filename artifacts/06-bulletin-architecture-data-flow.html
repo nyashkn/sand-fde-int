@@ -119,6 +119,22 @@
       font-family: var(--sans);
     }
 
+
+    /* ---- swimlane: phase bands behind the flow. The seven phase names used to be
+       stand-alone PlantUML entities that its layout engine parked in a row at y=507,
+       reading as seven orphan captions under the diagram rather than as lanes. They
+       are now a header row over banded columns, so a box's phase is legible from its
+       position alone. Geometry is derived from the node bounding boxes; if PlantUML
+       is ever re-run, re-derive the boundaries rather than nudging these numbers. ---- */
+    .flow .lane-band { fill: var(--paper); }
+    .flow .lane-band.alt { fill: var(--ivory); }
+    .flow .lane-rule { stroke: var(--g200); stroke-width: 1; }
+    .flow .lane-head-rule { stroke: var(--g300); stroke-width: 1; }
+    .flow .lane-label {
+      font-family: var(--mono); font-size: 10px; font-weight: 600;
+      fill: var(--g500); letter-spacing: 0.1em;
+    }
+
     .flow text {
       font-family: var(--sans);
       font-size: 11.5px;
@@ -358,44 +374,32 @@
 
     <div class="canvas">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flow"
-        viewBox="0 0 1489 719" role="img" aria-label="Bulletin pipeline data flow, PlantUML component diagram">
+        viewBox="0 -52 1489 771" role="img" aria-label="Bulletin pipeline data flow, PlantUML component diagram">
         <defs />
-        <g><!--entity l_src-->
-          <g class="entity" data-qualified-name="l_src" data-source-line="53" id="ent0001">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="67.96"
-              x="74.47" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="47.96" x="84.47" y="527.34">SOURCES</text>
-          </g><!--entity l_ing-->
-          <g class="entity" data-qualified-name="l_ing" data-source-line="54" id="ent0002">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="55.73"
-              x="319.04" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="35.73" x="329.04" y="527.34">INGEST</text>
-          </g><!--entity l_can-->
-          <g class="entity" data-qualified-name="l_can" data-source-line="55" id="ent0003">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="77.59"
-              x="568.71" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="57.59" x="578.71" y="527.34">CANONICAL</text>
-          </g><!--entity l_mar-->
-          <g class="entity" data-qualified-name="l_mar" data-source-line="56" id="ent0004">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="54.26"
-              x="814.34" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="34.26" x="824.34" y="527.34">MARTS</text>
-          </g><!--entity l_pub-->
-          <g class="entity" data-qualified-name="l_pub" data-source-line="57" id="ent0005">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="62.4"
-              x="1004.33" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="42.4" x="1014.33" y="527.34">PUBLISH</text>
-          </g><!--entity l_ren-->
-          <g class="entity" data-qualified-name="l_ren" data-source-line="58" id="ent0006">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="60.18"
-              x="1224.33" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="40.18" x="1234.33" y="527.34">RENDER</text>
-          </g><!--entity l_out-->
-          <g class="entity" data-qualified-name="l_out" data-source-line="59" id="ent0007">
-            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="60"
-              x="1383.55" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
-              lengthAdjust="spacing" textLength="40" x="1393.55" y="527.34">OUTPUT</text>
-          </g><!--entity facilities-->
+          <g class="lanes" aria-hidden="true">
+          <rect class="lane-band" x="0.0" y="-52.0" width="228.4" height="552.0"/>
+          <rect class="lane-band alt" x="228.4" y="-52.0" width="235.4" height="552.0"/>
+          <rect class="lane-band" x="463.8" y="-52.0" width="262.8" height="552.0"/>
+          <rect class="lane-band alt" x="726.6" y="-52.0" width="229.79999999999995" height="552.0"/>
+          <rect class="lane-band" x="956.4" y="-52.0" width="189.80000000000007" height="552.0"/>
+          <rect class="lane-band alt" x="1146.2" y="-52.0" width="185.0" height="552.0"/>
+          <rect class="lane-band" x="1331.2" y="-52.0" width="157.79999999999995" height="552.0"/>
+          <line class="lane-rule" x1="228.4" y1="-52.0" x2="228.4" y2="500.0"/>
+          <line class="lane-rule" x1="463.8" y1="-52.0" x2="463.8" y2="500.0"/>
+          <line class="lane-rule" x1="726.6" y1="-52.0" x2="726.6" y2="500.0"/>
+          <line class="lane-rule" x1="956.4" y1="-52.0" x2="956.4" y2="500.0"/>
+          <line class="lane-rule" x1="1146.2" y1="-52.0" x2="1146.2" y2="500.0"/>
+          <line class="lane-rule" x1="1331.2" y1="-52.0" x2="1331.2" y2="500.0"/>
+          <line class="lane-head-rule" x1="0" y1="-8.0" x2="1489" y2="-8.0"/>
+          <text class="lane-label" x="114.2" y="-22.0" text-anchor="middle">SOURCES</text>
+          <text class="lane-label" x="346.1" y="-22.0" text-anchor="middle">INGEST</text>
+          <text class="lane-label" x="595.2" y="-22.0" text-anchor="middle">CANONICAL</text>
+          <text class="lane-label" x="841.5" y="-22.0" text-anchor="middle">MARTS</text>
+          <text class="lane-label" x="1051.3" y="-22.0" text-anchor="middle">PUBLISH</text>
+          <text class="lane-label" x="1238.7" y="-22.0" text-anchor="middle">RENDER</text>
+          <text class="lane-label" x="1410.1" y="-22.0" text-anchor="middle">OUTPUT</text>
+          </g>
+        <g><!--entity facilities-->
           <g class="entity" data-qualified-name="facilities" data-source-line="61" id="ent0008">
             <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
               width="125.576" x="45.66" y="7" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
