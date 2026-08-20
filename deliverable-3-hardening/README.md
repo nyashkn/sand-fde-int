@@ -113,7 +113,7 @@ job that fails silently is worse than no job, because the last good bulletin sta
 looks current. Publication must be gated on the checks passing, and a failed run must
 reach a person.
 
-The four checks in `web/scripts/` are already the gate. Wire them to the schedule.
+The five checks in `web/scripts/` are already the gate. Wire them to the schedule.
 
 ---
 

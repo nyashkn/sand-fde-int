@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deliverable 2, §1 — Data flow &amp; the crosswalk</title>
+<style>
+  :root {
+    --ivory: #FAF9F5;
+    --paper: #FFFFFF;
+    --slate: #141413;
+    --clay: #D97757;
+    --clay-d: #B85C3E;
+    --oat: #E3DACC;
+    --olive: #788C5D;
+    --sage: #A8B89A;
+    --rose: #C97B7B;
+    --g100: #F0EEE6;
+    --g200: #E6E3DA;
+    --g300: #D1CFC5;
+    --g500: #87867F;
+    --g700: #3D3D3A;
+    --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page { size: A4 landscape; margin: 6mm 7mm; }
+
+  html, body { background: var(--ivory); }
+
+  body {
+    color: var(--slate);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    padding: 10px 12px 8px;
+  }
+
+  .sheet { max-width: 1500px; margin: 0 auto; }
+
+  header { margin-bottom: 7px; display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+
+  .headline { min-width: 0; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--g500);
+    margin-bottom: 2px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 19px;
+    letter-spacing: -0.008em;
+    line-height: 1.12;
+  }
+
+  .lead {
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--g700);
+    max-width: 540px;
+  }
+
+  .canvas {
+    border: 1.5px solid var(--g300);
+    border-radius: 12px;
+    background: #fff;
+    padding: 8px 10px 3px;
+    overflow-x: auto;
+  }
+
+  svg.flow {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: var(--sans);
+  }
+
+  /* ---- nodes ---- */
+  .node .box { fill: var(--paper); stroke: var(--g300); stroke-width: 1; }
+  .node.custom .box { fill: rgba(217, 119, 87, 0.05); stroke: var(--clay); stroke-width: 2; }
+  .node.buy .box { fill: #fff; stroke: var(--olive); stroke-width: 1.5; stroke-dasharray: 6 4; }
+  .node.output .box { fill: rgba(120, 140, 93, 0.08); stroke: var(--olive); stroke-width: 1.25; }
+  .node.ghost .box { fill: var(--g100); stroke: var(--g300); stroke-width: 1; stroke-dasharray: 5 4; }
+  .node.src .box { fill: var(--g100); stroke: var(--g300); stroke-width: 1; }
+
+  .node .tag {
+    font-family: var(--mono); font-style: italic; font-size: 14px;
+    fill: var(--g500); text-transform: none;
+  }
+  .node.custom .tag { fill: var(--clay-d); }
+  .node.buy .tag { fill: var(--olive); }
+  .node.output .tag { fill: var(--olive); }
+
+  .node .title { font-family: var(--sans); font-weight: 700; font-size: 15.5px; fill: var(--slate); }
+  .node .sub { font-family: var(--mono); font-size: 13.5px; fill: var(--g500); }
+  .node.custom .sub, .node.output .sub, .node.buy .sub { fill: var(--g700); }
+
+  /* ---- canonical band ---- */
+  .band { fill: rgba(217, 119, 87, 0.035); stroke: var(--clay); stroke-width: 1.25; stroke-dasharray: 3 4; }
+  .band-label {
+    font-family: var(--mono); font-size: 13px; font-weight: 700; fill: var(--clay-d);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ---- crosswalk callout ---- */
+  .callout-box { fill: var(--paper); stroke: var(--g300); stroke-width: 1; }
+  .callout-bar { fill: var(--clay); }
+  .callout-h { font-family: var(--sans); font-weight: 700; font-size: 15.5px; fill: var(--slate); }
+  .callout-p { font-family: var(--sans); font-size: 14.5px; fill: var(--g700); }
+  .stat-n { font-family: var(--mono); font-weight: 700; font-size: 15.5px; }
+  .stat-n.stat-obs { fill: var(--clay-d); }
+  .stat-n.stat-dim { fill: var(--olive); }
+  .stat-n.stat-un { fill: var(--g500); }
+  .stat-l { font-family: var(--sans); font-size: 14px; fill: var(--g700); }
+  .callout-rule { stroke: var(--g300); stroke-width: 1; }
+  .callout-eg {
+    font-family: var(--mono); font-size: 13px; font-weight: 700; fill: var(--clay-d);
+    letter-spacing: 0.08em;
+  }
+  .callout-row { font-family: var(--mono); font-size: 14.5px; fill: var(--slate); }
+
+  /* ---- period=ALL callout ---- */
+  .period-box { fill: var(--oat); fill-opacity: 0.45; stroke: var(--g300); stroke-width: 1; }
+  .period-h { font-family: var(--sans); font-weight: 700; font-size: 15px; fill: var(--slate); }
+  .period-p { font-family: var(--sans); font-size: 14px; fill: var(--g700); }
+
+  /* ---- edges ---- */
+  .edge { stroke: var(--g500); stroke-width: 1.25; fill: none; }
+  .edge.dashed { stroke: var(--clay); stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .edge-label {
+    font-family: var(--mono); font-size: 12.5px; fill: var(--clay-d); font-weight: 600;
+  }
+
+  /* ---- axis / lanes ---- */
+  .axis-rule { stroke: var(--g300); stroke-width: 1; }
+  .axis-tick { stroke: var(--g300); stroke-width: 1; }
+  .lane-label {
+    font-family: var(--mono); font-size: 13px; font-weight: 700; fill: var(--g700);
+    letter-spacing: 0.09em; text-transform: uppercase;
+  }
+
+  .ghost-label {
+    font-family: var(--mono); font-size: 12.5px; fill: var(--g500);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: var(--g700);
+  }
+
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+  .chip { width: 18px; height: 12px; border: 1.5px solid var(--g300); border-radius: 3px; background: #fff; }
+  .chip.custom { border-color: var(--clay); border-width: 2px; background: rgba(217, 119, 87, 0.05); }
+  .chip.buy { border-color: var(--olive); border-style: dashed; }
+  .chip.ghost { border-color: var(--g300); border-style: dashed; background: var(--g100); }
+  .chip.output { background: rgba(120, 140, 93, 0.10); border-color: var(--olive); }
+
+  footer.colophon {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--g500);
+    margin-top: 5px;
+    padding-top: 4px;
+    border-top: 1px solid var(--g300);
+    line-height: 1.4;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+
+<body>
+  <div class="sheet">
+
+    <header>
+      <div class="headline">
+        <div class="eyebrow">Deliverable 2 &middot; Solution design &amp; architecture &middot; §1, rebuilt</div>
+        <h1>Six sources, six keys, six grains — one crosswalk melts them into one canonical fact table</h1>
+      </div>
+      <p class="lead">
+        The crosswalk is a <strong>declared CSV read as data at runtime</strong>, not code: it is the
+        one custom idea that makes everything downstream of it uniform. Everything left of it is
+        heterogeneous; everything right of it shares one grain.
+      </p>
+    </header>
+
+    <div class="canvas">
+      <svg xmlns="http://www.w3.org/2000/svg" class="flow" viewBox="0 0 1635 714" role="img"
+        aria-label="Bulletin data flow: six sources through a declared crosswalk into one canonical observation grain, then marts, publish, render and output">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--g500)"/></marker>
+<marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--clay)"/></marker>
+</defs>
+<rect class="band" x="404" y="0" width="428" height="548" rx="10"/>
+<text class="band-label" x="418" y="17">CANONICAL &#8212; THE CUSTOM IDEA</text>
+<g class="node src" transform="translate(16,14)">
+  <rect class="box" width="192" height="66" rx="4"/>
+  <text class="title" x="13" y="28">facilities.csv</text>
+  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+</g>
+<g class="node src" transform="translate(16,87)">
+  <rect class="box" width="192" height="66" rx="4"/>
+  <text class="title" x="13" y="28">clinical_neonatal.csv</text>
+  <text class="sub" x="13" y="48">1,404 rows, monthly</text>
+</g>
+<g class="node src" transform="translate(16,160)">
+  <rect class="box" width="192" height="66" rx="4"/>
+  <text class="title" x="13" y="28">governance.csv</text>
+  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+</g>
+<g class="node src" transform="translate(16,233)">
+  <rect class="box" width="192" height="66" rx="4"/>
+  <text class="title" x="13" y="28">operations.csv</text>
+  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+</g>
+<g class="node src" transform="translate(16,306)">
+  <rect class="box" width="192" height="66" rx="4"/>
+  <text class="title" x="13" y="28">healthcare_workers.csv</text>
+  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+</g>
+<g class="node src" transform="translate(16,379)">
+  <rect class="box" width="192" height="66" rx="4"/>
+  <text class="title" x="13" y="28">dhis2_sample.csv</text>
+  <text class="sub" x="13" y="48">12 rows, 2nd source</text>
+</g>
+<g class="node std" transform="translate(238,198)">
+  <rect class="box" width="150" height="84" rx="4"/>
+  <text class="title" x="13" y="28">Bronze</text>
+  <text class="sub" x="13" y="48">verbatim +</text>
+  <text class="sub" x="13" y="64">provenance</text>
+</g>
+<g class="node custom" transform="translate(418,28)">
+  <rect class="box" width="205" height="100" rx="4"/>
+  <text class="tag" x="13" y="18">«custom»</text>
+  <text class="title" x="13" y="46">Crosswalk</text>
+  <text class="sub" x="13" y="66">declared CSV, 71 rows —</text>
+  <text class="sub" x="13" y="82">read at runtime,</text>
+  <text class="sub" x="13" y="98">not hardcoded</text>
+</g>
+<g class="callout" transform="translate(418,144)">
+  <rect class="callout-box" width="400" height="198" rx="6"/>
+  <rect class="callout-bar" x="0" y="0" width="5" height="198" rx="2"/>
+  <text class="callout-h" x="20" y="24">What the crosswalk does</text>
+  <text class="callout-p" x="20" y="44">Maps every source field → one canonical</text>
+  <text class="callout-p" x="20" y="60">element + a role (id / dim / obs / unmapped).</text>
+  <text class="callout-eg" x="20" y="116">ONE ROW, VERBATIM</text>
+  <text class="callout-row" x="20" y="134">assignment_csv.neonatal_deaths_0_7d →</text>
+  <text class="callout-row" x="20" y="150">neonatal_deaths_early · observation</text>
+  <text class="callout-row" x="20" y="166">ICD-10 P00-P96 · “early neonatal, 0–7d”</text>
+  <text class="stat-n stat-obs" x="20" y="80">52</text>
+  <text class="stat-l" x="50" y="80">observations</text>
+  <text class="stat-n stat-dim" x="148" y="80">5</text>
+  <text class="stat-l" x="169" y="80">identity/dim keys</text>
+  <text class="stat-n stat-un" x="302" y="80">9</text>
+  <text class="stat-l" x="323" y="80">excluded, reasoned</text>
+  <line class="callout-rule" x1="20" y1="100" x2="380" y2="100"/>
+</g>
+<g class="node custom" transform="translate(418,358)">
+  <rect class="box" width="400" height="78" rx="4"/>
+  <text class="tag" x="13" y="18">«custom»</text>
+  <text class="title" x="13" y="46">Silver — canonical grain</text>
+  <text class="sub" x="13" y="66">(org_unit, period, data_element, batch)</text>
+</g>
+<g transform="translate(418,450)">
+  <rect class="period-box" width="400" height="86" rx="6"/>
+  <text class="period-h" x="16" y="21">period = &quot;ALL&quot; — the sentinel</text>
+  <text class="period-p" x="16" y="38">4 snapshot sources have no date column, so</text>
+  <text class="period-p" x="16" y="53">silver stamps period=&quot;ALL&quot; — a deliberate join</text>
+  <text class="period-p" x="16" y="68">key, not a missing value — sharing one grain</text>
+  <text class="period-p" x="16" y="83">with the monthly clinical panel.</text>
+</g>
+<g class="node custom" transform="translate(858,106)">
+  <rect class="box" width="185" height="250" rx="4"/>
+  <text class="tag" x="13" y="18">«custom»</text>
+  <text class="title" x="13" y="46">Gold</text>
+  <text class="sub" x="13" y="66">marts + checks</text>
+  <text class="sub" x="13" y="82">district qtr, NMR</text>
+  <text class="sub" x="13" y="98">capability_summary</text>
+  <text class="sub" x="13" y="114">temporal + strat</text>
+</g>
+<g class="node std" transform="translate(1083,118)">
+  <rect class="box" width="160" height="70" rx="4"/>
+  <text class="title" x="13" y="28">Parquet</text>
+  <text class="sub" x="13" y="48">HTTP range reads</text>
+</g>
+<g class="node buy" transform="translate(1083,218)">
+  <rect class="box" width="160" height="100" rx="4"/>
+  <text class="tag" x="13" y="18">«buy»</text>
+  <text class="title" x="13" y="46">Apache Superset</text>
+  <text class="sub" x="13" y="66">explore surface</text>
+  <text class="sub" x="13" y="82">MoH office only</text>
+</g>
+<g class="node custom" transform="translate(1281,140)">
+  <rect class="box" width="135" height="70" rx="4"/>
+  <text class="tag" x="13" y="18">«custom»</text>
+  <text class="title" x="13" y="46">Astro render</text>
+  <text class="sub" x="13" y="66">zero client JS</text>
+</g>
+<g class="node output" transform="translate(1454,92)">
+  <rect class="box" width="165" height="66" rx="4"/>
+  <text class="tag" x="13" y="18">«output»</text>
+  <text class="title" x="13" y="46">Bulletin, static</text>
+  <text class="sub" x="13" y="66">zero client JS</text>
+</g>
+<g class="node output" transform="translate(1454,176)">
+  <rect class="box" width="165" height="66" rx="4"/>
+  <text class="tag" x="13" y="18">«output»</text>
+  <text class="title" x="13" y="46">Email edition</text>
+  <text class="sub" x="13" y="66">table, inlined</text>
+</g>
+<path class="edge " d="M208,47.0 C242,47.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M208,120.0 C242,120.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M208,193.0 C242,193.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M208,266.0 C242,266.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M208,339.0 C242,339.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M208,412.0 C242,412.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M388,240.0 C426,240.0 380,397.0 418,397.0" marker-end="url(#arrow)"/>
+<path class="edge dashed" d="M623,88.0 C800,88.0 838,174.5 838,208.5 L838,373.0 C838,393.0 828,397.0 818,397.0" marker-end="url(#arrowR)"/>
+<text class="edge-label" x="700" y="79.0">feeds · declared, not hardcoded</text>
+<path class="edge " d="M818,397.0 C842,397.0 834,231.0 858,231.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M1043,231.0 C1067,231.0 1059,153.0 1083,153.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M1243,153.0 C1267,153.0 1257,159.6 1281,159.6" marker-end="url(#arrow)"/>
+<path class="edge dashed" d="M1163.0,188 C1163.0,218 1145.0,208 1163.0,218" marker-end="url(#arrowR)"/>
+<text class="edge-label" x="1086" y="203.0">reads Parquet · no API</text>
+<path class="edge " d="M1416,159.6 C1450,159.6 1420,125.0 1454,125.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M1416,194.6 C1450,194.6 1420,209.0 1454,209.0" marker-end="url(#arrow)"/>
+<line class="axis-rule" x1="16" y1="565" x2="1619" y2="565"/>
+<line class="axis-tick" x1="112.0" y1="565" x2="112.0" y2="573"/>
+<text class="lane-label" x="112.0" y="588" text-anchor="middle">SOURCES</text>
+<line class="axis-tick" x1="313.0" y1="565" x2="313.0" y2="573"/>
+<text class="lane-label" x="313.0" y="588" text-anchor="middle">INGEST</text>
+<line class="axis-tick" x1="618.0" y1="565" x2="618.0" y2="573"/>
+<text class="lane-label" x="618.0" y="588" text-anchor="middle">CANONICAL</text>
+<line class="axis-tick" x1="950.5" y1="565" x2="950.5" y2="573"/>
+<text class="lane-label" x="950.5" y="588" text-anchor="middle">MARTS</text>
+<line class="axis-tick" x1="1163.0" y1="565" x2="1163.0" y2="573"/>
+<text class="lane-label" x="1163.0" y="588" text-anchor="middle">PUBLISH</text>
+<line class="axis-tick" x1="1348.5" y1="565" x2="1348.5" y2="573"/>
+<text class="lane-label" x="1348.5" y="588" text-anchor="middle">RENDER</text>
+<line class="axis-tick" x1="1536.5" y1="565" x2="1536.5" y2="573"/>
+<text class="lane-label" x="1536.5" y="588" text-anchor="middle">OUTPUT</text>
+<text class="ghost-label" x="16" y="604">SAND PRODUCTS CONSIDERED, NOT USED IN D2</text>
+<g class="node ghost" transform="translate(16,616)">
+  <rect class="box" width="300" height="84" rx="4"/>
+  <text class="tag" x="13" y="18">«not used»</text>
+  <text class="title" x="13" y="46">Health Atlas</text>
+  <text class="sub" x="13" y="66">geo intel — not built this cycle</text>
+</g>
+<g class="node ghost" transform="translate(332,616)">
+  <rect class="box" width="300" height="84" rx="4"/>
+  <text class="tag" x="13" y="18">«not used»</text>
+  <text class="title" x="13" y="46">Health Outcome Tracker</text>
+  <text class="sub" x="13" y="66">patient grain — wrong for this report</text>
+</g>
+<g class="node ghost" transform="translate(648,616)">
+  <rect class="box" width="260" height="84" rx="4"/>
+  <text class="tag" x="13" y="18">«not used»</text>
+  <text class="title" x="13" y="46">Health Insight Engine</text>
+  <text class="sub" x="13" y="66">opaque AI — fails 2am-restart test</text>
+</g>
+      </svg>
+
+      <div class="legend">
+        <span><i class="chip custom"></i>Custom, built this cycle</span>
+        <span><i class="chip buy"></i>Bought / adopted, scoped</span>
+        <span><i class="chip ghost"></i>Sand product, not used in D2</span>
+        <span><i class="chip output"></i>Delivered output</span>
+        <span style="color:var(--clay-d); font-weight:600;">— dashed clay = declared mapping, not a hardcoded join</span>
+      </div>
+    </div>
+
+    <footer class="colophon">
+      <span>Synthetic test data throughout (assignment CSVs plus a hand-built DHIS2 sample) — not real Rwanda health records.</span>
+      <span>Source: <code>pipeline/mart/crosswalk.csv</code> (71 rows) &middot; <code>pipeline/dataflow/{bronze,silver,gold}.py</code> &middot; decisions/0008, 0010, 0012</span>
+    </footer>
+
+  </div>
+</body>
+
+</html>

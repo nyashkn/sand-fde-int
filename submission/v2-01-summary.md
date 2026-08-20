@@ -1,7 +1,7 @@
 <div class="masthead">
-<strong>Sand FDE submission — condensed (v2, 5pp)</strong> · Kinyanjui Njoroge · August 2026 ·
-Full submission (36pp incl. handover docs): <code>sand-fde-submission.pdf</code> ·
-Repo: github.com/nyashkn/sand-fde-int
+<strong>Forward Deployed Engineer assignment</strong> · Kinyanjui Njoroge · August 2026 ·
+Live bulletin: sand-fde-bulletin.pages.dev · Repo: github.com/nyashkn/sand-fde-int ·
+Full working notes, runbook, data contract and decision register are in the repository.
 </div>
 
 > All figures below are computed on **synthetic data** — the assignment CSVs plus a hand-built
@@ -40,5 +40,3 @@ Provincial −0.29**. The pooled number describes which tier a facility sits in,
 it would do. Publishing the pooled figure alone would have pointed a Ministry's budget at a
 confound; the bulletin shows every covariate pooled *and* within tier, caveat attached, not
 withheld.
-
-<div class="pagebreak"></div>

@@ -1,0 +1,148 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Sand FDE submission v3</title><style>
+/* v3: plain "typed in Word, exported to PDF" print stylesheet. No editorial
+   palette, no tinted background, no colour accents. Pure white / black,
+   Calibri body, ordinary Word-default table and heading treatment. */
+
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+  --gray: #555555;
+  --line: #808080;
+  --line-light: #bfbfbf;
+
+  --body: Calibri, Carlito, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: Consolas, 'SF Mono', Menlo, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 25mm 20mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--body);
+  font-size: 10.5pt;
+  line-height: 1.3;
+  color: var(--ink);
+  background: var(--paper);
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--body);
+  font-weight: 700;
+  line-height: 1.2;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 0.7em 0 0.3em;
+  color: var(--ink);
+}
+
+h1 { font-size: 15pt; margin-top: 0; }
+h2 { font-size: 12.5pt; margin-top: 0.9em; }
+h3 { font-size: 11pt; }
+h4 { font-size: 10.5pt; }
+
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+p { margin: 0 0 0.5em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: underline; }
+
+ul, ol { margin: 0 0 0.5em; padding-left: 1.3em; }
+li { margin-bottom: 0.15em; break-inside: avoid-page; }
+
+/* A plain indented note, the way a Word document marks a callout without a
+   design system behind it: no fill, a single rule, italic text. */
+p.disclosure {
+  margin: 0.6em 0 0.9em;
+  padding: 0.2em 0 0.2em 0.8em;
+  border-left: 1.5pt solid var(--ink);
+  font-style: italic;
+}
+
+blockquote {
+  margin: 0.5em 0 0.5em 0.8em;
+  padding: 0 0 0 0.8em;
+  border-left: 1.5pt solid var(--ink);
+  break-inside: avoid-page;
+  font-style: italic;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 9.5pt;
+}
+
+hr { border: 0; border-top: 0.75pt solid var(--line-light); margin: 0.9em 0; }
+
+/* ---- tables: plain "Table Grid", the Word default ----------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 0.4em 0 0.7em;
+}
+
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th, td {
+  border: 0.75pt solid var(--line);
+  padding: 3px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-weight: 700;
+  background: var(--paper);
+}
+
+/* ---- structure ------------------------------------------------------------ */
+
+.pagebreak { break-after: page; height: 0; }
+
+.masthead {
+  font-family: var(--body);
+  font-size: 9.5pt;
+  color: var(--ink);
+  margin-bottom: 0.8em;
+  padding-bottom: 0.5em;
+  border-bottom: 0.75pt solid var(--ink);
+}
+.masthead strong { font-weight: 700; }
+
+.cap {
+  font-family: var(--mono);
+  font-size: 8.5pt;
+  color: var(--gray);
+}
+</style></head><body>
+<div class="masthead">
+<strong>D3 &mdash; Production hardening</strong> &amp; <strong>D4 &mdash; Handover</strong> (condensed; full: <code>deliverable-3-hardening/README.md</code>, <code>deliverable-4-handover/README.md</code>)
+</div><h2>D3 &mdash; top 5 fixes before this runs unattended, ranked by impact if skipped</h2>
+<p><strong>1. The batch conflict has no resolution path.</strong> 2024-01 and 2024-03 each arrived twice, 234 rows, no timestamp or revision flag to arbitrate. Pipeline defaults to <code>DEFAULT-BATCH-01</code> and marks every derived figure provisional &mdash; honest, not useful, at 100% provisional. <em>Fix:</em> a triage queue where a named analyst records the choice, with who/when/why, and figures promote to settled (specified, not built). <em>Do not</em> block the pipeline on approval &mdash; a Ministry with near-zero IT capacity would then get no bulletin at all.</p>
+<p><strong>2. Ingestion assumes one file shape.</strong> The 71-field crosswalk was learned by hand; real DHIS2, HealthTrack, OpenMRS and paper forms won&#39;t hold still. <em>Fix:</em> LLM-proposed, human-confirmed, cached column mapping &mdash; never re-inferred per run. Free win: HXL-tagged sources map by lookup, no model call needed.</p>
+<p><strong>3. Chart runtime decided for the bulletin, open for the surface that doesn&#39;t exist yet.</strong> Flint &rarr; Vega-Lite adopted and working; it replaced Observable Plot outright. <em>Do not</em> default the unbuilt explore surface to whichever runtime is closest to hand when that work starts &mdash; decide explicitly, in writing, first.</p>
+<p><strong>4. Nothing runs on a schedule, no one is told when it fails.</strong> Hamilton already exposes the DAG as a callable &mdash; orchestration is a wrapper, not a rewrite. What matters more than the scheduler: publication must gate on the 5 checks passing, and a failed run must reach a person.</p>
+<p><strong>5. Facility geography is unusable.</strong> GPS is uniform-random inside Rwanda&#39;s bounding box for all 117 facilities; the bulletin honestly maps at district grain. <em>Fix:</em> join HDX&#39;s Rwanda Healthsites layer (1,345 real facilities, open licence). <em>Do not</em> reverse-geocode district centroids as a substitute &mdash; that manufactures false precision.</p>
+<p><strong>Already hardened, not just flagged:</strong> disclosed-not-withheld statistical caveats (temporal-signal and stratification checks always annotate, never gate); cross-surface figure agreement (<code>check-agreement.mjs</code>, 7 shared figures); filename/content mismatch refused at publish; chart-palette drift against the stylesheet (<code>check-tokens.mjs</code>); per-figure lineage recorded for every published number.</p>
+<h2>D4 &mdash; Handover</h2>
+<p>The deliverable is not the artifact, it&#39;s a named Digital Health Officer independently restarting the pipeline once, unassisted, before exit. Two training sessions: Session 1 (60&ndash;90min) the DHO drives the full cycle hands-on-keyboard against last quarter&#39;s real data, reading every check pass rather than trusting a green tick; Session 2 (45&ndash;60min) diagnoses a deliberately seeded failure &mdash; a renamed CSV column, a check made to fail on purpose &mdash; using only the runbook&#39;s recovery table. Success is naming which document to open, not fixing that specific break.</p>
+<p>Full clean-rebuild verified 2026-08-11 from a wiped state (<code>mart</code>, <code>web/dist</code>, <code>node_modules</code>, <code>.venv</code> all removed): sync &rarr; rebuild (10 parquet files) &rarr; publish (both quarters) &rarr; verify &mdash; 5/5 checks passed, output reproduced at the same byte hash. That run predates later pipeline changes (ADR-0012) and has <strong>not been re-verified against current code</strong> &mdash; flagged here, not hidden; re-running and diff-checking the hash is the next action before reproducibility can be re-claimed.</p>
+<p>Three documents (<code>deliverable-4-handover/runbook.md</code> &middot; <code>data-contract.md</code> &middot; <code>decision-register.md</code>) answer &quot;what would you hand the MoH IT team&quot; and ship in the repository, not this PDF. <strong>Full detail for all four deliverables, the pipeline code, and the openspec behaviour specs: github.com/nyashkn/sand-fde-int</strong></p>
+<div class="pagebreak"></div>
+</body></html>

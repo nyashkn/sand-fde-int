@@ -17,6 +17,21 @@ Week 1's job is to find which dominates. Distrust is tested *first* — cheapest
 commonly missed — not because the brief's sentence says so. One question for every interview,
 because the answers won't match: *"When two systems give different numbers, what happens?"*
 
+## Who I'd talk to, in what order (Week 1)
+
+| Day | Who | The question that matters |
+|---|---|---|
+| 1 | Solutions Manager, Country Director | Why were the use cases chosen *before* discovery? |
+| 1–2 | **MoH Director** (sponsor) | *"Tell me about a decision last quarter you'd have made differently with better data."* Then: *"When the numbers you're shown disagree with what you believe, which do you act on?"* |
+| 2 | The bulletin analyst | Not "what do you need" — *"show me last quarter's, and open the files you built it from."* |
+| 2–3 | DHIS2/HMIS focal point | Where does the 2–3wk delay actually accrue, and how do paper facilities report today? |
+| 3 | 2 district health officers (1 strong, 1 weak district) | *"What did you look at immediately before your last resource decision?"* |
+| 3–4 | 1 hospital, 1 clinic, 1 paper-only facility — **the data clerk**, not the medical director | Watch month-end reporting happen |
+| 4 | MoH ICT / InfoSec | Hosting, data residency, approval lead times — the classic 6-week killer |
+
+Every question is **counterfactual** ("what did you do last month") or **observational** ("show
+me"), never **solicitational** ("what would you like") — solicitation just returns a feature list.
+
 ## Top assumptions and risks (of 9 tracked in full)
 
 | # | Assumption | If false |
@@ -47,5 +62,3 @@ independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5). All three in
 **Problem A** — but rejected the original justification, finding errors unanimously (an
 impossible 5-day publication target given a 2–3wk upstream lag; an overstated ROI baseline; a
 false claim that A's mart is "most of" B's data layer). All corrected in the full document.
-
-<div class="pagebreak"></div>

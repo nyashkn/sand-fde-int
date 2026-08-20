@@ -1,0 +1,251 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Sand FDE submission v3</title><style>
+/* v3: plain "typed in Word, exported to PDF" print stylesheet. No editorial
+   palette, no tinted background, no colour accents. Pure white / black,
+   Calibri body, ordinary Word-default table and heading treatment. */
+
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+  --gray: #555555;
+  --line: #808080;
+  --line-light: #bfbfbf;
+
+  --body: Calibri, Carlito, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: Consolas, 'SF Mono', Menlo, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 25mm 20mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--body);
+  font-size: 10.5pt;
+  line-height: 1.3;
+  color: var(--ink);
+  background: var(--paper);
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--body);
+  font-weight: 700;
+  line-height: 1.2;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 0.7em 0 0.3em;
+  color: var(--ink);
+}
+
+h1 { font-size: 15pt; margin-top: 0; }
+h2 { font-size: 12.5pt; margin-top: 0.9em; }
+h3 { font-size: 11pt; }
+h4 { font-size: 10.5pt; }
+
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+p { margin: 0 0 0.5em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: underline; }
+
+ul, ol { margin: 0 0 0.5em; padding-left: 1.3em; }
+li { margin-bottom: 0.15em; break-inside: avoid-page; }
+
+/* A plain indented note, the way a Word document marks a callout without a
+   design system behind it: no fill, a single rule, italic text. */
+p.disclosure {
+  margin: 0.6em 0 0.9em;
+  padding: 0.2em 0 0.2em 0.8em;
+  border-left: 1.5pt solid var(--ink);
+  font-style: italic;
+}
+
+blockquote {
+  margin: 0.5em 0 0.5em 0.8em;
+  padding: 0 0 0 0.8em;
+  border-left: 1.5pt solid var(--ink);
+  break-inside: avoid-page;
+  font-style: italic;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 9.5pt;
+}
+
+hr { border: 0; border-top: 0.75pt solid var(--line-light); margin: 0.9em 0; }
+
+/* ---- tables: plain "Table Grid", the Word default ----------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 0.4em 0 0.7em;
+}
+
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th, td {
+  border: 0.75pt solid var(--line);
+  padding: 3px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-weight: 700;
+  background: var(--paper);
+}
+
+/* ---- structure ------------------------------------------------------------ */
+
+.pagebreak { break-after: page; height: 0; }
+
+.masthead {
+  font-family: var(--body);
+  font-size: 9.5pt;
+  color: var(--ink);
+  margin-bottom: 0.8em;
+  padding-bottom: 0.5em;
+  border-bottom: 0.75pt solid var(--ink);
+}
+.masthead strong { font-weight: 700; }
+
+.cap {
+  font-family: var(--mono);
+  font-size: 8.5pt;
+  color: var(--gray);
+}
+</style></head><body>
+<div class="masthead">
+<strong>Forward Deployed Engineer assignment</strong> &middot; Kinyanjui Njoroge &middot; August 2026 &middot;
+Live bulletin: sand-fde-bulletin.pages.dev &middot; Repo: github.com/nyashkn/sand-fde-int &middot;
+Full working notes, runbook, data contract and decision register are in the repository.
+</div><p class="disclosure">All figures below are computed on <strong>synthetic data</strong> &mdash; the assignment CSVs plus a hand-built DHIS2 sample &mdash; not real Rwanda health records. Facility mortality of 14.3&ndash;73.2 per 1,000 live births runs three to four times real Rwandan rates.</p><h2>The choice: Problem A, and why not B or C</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Verdict</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>A &mdash; Quarterly Health Bulletin, automated</strong></td>
+<td><strong>Chosen</strong></td>
+<td>Only option finishable and provable in 6 weeks; operates on data that already arrives, in a shape that already exists. The trust wedge for later work.</td>
+</tr>
+<tr>
+<td>B &mdash; Real-time facility dashboard</td>
+<td>Out of reach this sprint</td>
+<td>Needs facility-level freshness. Reporting substrate is monthly aggregates on a 2&ndash;3wk lag &mdash; a granularity/cadence gap, not a coverage gap, regardless of how many facilities report.</td>
+</tr>
+<tr>
+<td>C &mdash; Unified patient view (TB/HIV)</td>
+<td>Rejected</td>
+<td>Needs a clinical-safety hazard analysis that does not fit in 6 weeks. Propose a weekly reconciliation report instead &mdash; flags likely co-infection for human review, no record merging, none of the risk.</td>
+</tr>
+</tbody></table>
+<p><strong>How this survived review.</strong> The choice was prompted hostilely against three independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5). All three independently chose Problem A &mdash; but rejected the original justification, unanimously finding errors (an impossible 5-day publication target given the 2&ndash;3wk upstream lag; an overstated ROI baseline; a false claim that A&#39;s mart is &quot;most of&quot; B&#39;s data layer). All corrected in the full document.</p>
+<h2>What was built</h2>
+<p>A pipeline that reads the five provided CSVs plus a DHIS2-shaped sample, resolves every field through a 71-row declared crosswalk, and publishes all four 2024 quarters as self-contained HTML with zero client-side JavaScript. Python + Hamilton + DuckDB + Parquet (bronze &rarr; silver &rarr; gold &rarr; checks); Astro + Vega-Lite compiled to static SVG for render. 5 automated checks gate publication, each one added because it caught a real defect.</p>
+<h2>Two findings that shaped it more than any metric in the brief</h2>
+<p><strong>1 &mdash; The largest cause of neonatal death isn&#39;t a clinical cause.</strong> <code>death_other</code> is 30.7% of resolved deaths, the largest single bucket in all ten held months (28.8%&ndash;32.1%). The two named causes behind it can&#39;t be separated: birth asphyxia 23.7% vs prematurity 23.6%, a gap of 15 deaths in 9,036 &mdash; and which one leads flips between months. A bulletin ranking named clinical causes would be reporting noise. The finding is about the reporting system, not newborn medicine.</p>
+<p><strong>2 &mdash; A striking correlation is a confound.</strong> A composite equipment index correlates &asymp; &minus;0.87 with facility mortality, pooled across 117 facilities &mdash; reads as &quot;equip facilities, save newborns.&quot; Stratified by tier it collapses to near zero: District &minus;0.07, Health Centre +0.04, Provincial &minus;0.29. The pooled number describes which tier a facility sits in, not what equipping it would do. Publishing the pooled figure alone would have pointed a Ministry&#39;s budget at a confound; the bulletin shows every covariate pooled and within tier, caveat attached, not withheld.</p>
+<div class="pagebreak"></div><div class="masthead">
+<strong>D1 &mdash; Problem decomposition &amp; scoping</strong> (condensed; full document: <code>deliverable-1-scoping/README.md</code>, red-team amendment log: <code>decisions/0007-cross-provider-redteam-amendments.md</code>)
+</div><h2>&quot;Our data is a mess&quot; is a symptom report, not a problem statement</h2>
+<table>
+<thead>
+<tr>
+<th>Failure class</th>
+<th>Meaning</th>
+<th>Implies</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Absence</td>
+<td>Never captured at all</td>
+<td>Digitisation problem</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Captured, arrives too late to act on</td>
+<td>Pipeline problem &mdash; DHIS2 runs 2&ndash;3wk behind</td>
+</tr>
+<tr>
+<td>Distrust</td>
+<td>Arrives on time, nobody believes it</td>
+<td>Provenance problem &mdash; sources disagree, nobody reconciles</td>
+</tr>
+<tr>
+<td>Last mile</td>
+<td>Believed, never reaches a decision</td>
+<td>Workflow problem</td>
+</tr>
+</tbody></table>
+<p>Week 1&#39;s job is to find which dominates. Distrust is tested first &mdash; cheapest to check, most commonly missed. One question for every interview, because the answers won&#39;t match: <em>&quot;When two systems give different numbers, what happens?&quot;</em></p>
+<h2>Who I&#39;d talk to, in what order (Week 1)</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Who</th>
+<th>The question that matters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Solutions Manager, Country Director</td>
+<td>Why were the use cases chosen before discovery?</td>
+</tr>
+<tr>
+<td>1&ndash;2</td>
+<td><strong>MoH Director</strong> (sponsor)</td>
+<td><em>&quot;Tell me about a decision last quarter you&#39;d have made differently with better data.&quot;</em> Then: <em>&quot;When the numbers you&#39;re shown disagree with what you believe, which do you act on?&quot;</em></td>
+</tr>
+<tr>
+<td>2</td>
+<td>The bulletin analyst</td>
+<td>Not &quot;what do you need&quot; &mdash; <em>&quot;show me last quarter&#39;s, and open the files you built it from.&quot;</em></td>
+</tr>
+<tr>
+<td>2&ndash;3</td>
+<td>DHIS2/HMIS focal point</td>
+<td>Where does the 2&ndash;3wk delay actually accrue, and how do paper facilities report today?</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2 district health officers (1 strong, 1 weak district)</td>
+<td><em>&quot;What did you look at immediately before your last resource decision?&quot;</em></td>
+</tr>
+<tr>
+<td>3&ndash;4</td>
+<td>1 hospital, 1 clinic, 1 paper-only facility &mdash; the data clerk, not the medical director</td>
+<td>Watch month-end reporting happen</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MoH ICT / InfoSec</td>
+<td>Hosting, data residency, approval lead times &mdash; the classic 6-week killer</td>
+</tr>
+</tbody></table>
+<p>Every question is counterfactual (&quot;what did you do last month&quot;) or observational (&quot;show me&quot;), never solicitational (&quot;what would you like&quot;) &mdash; solicitation just returns a feature list.</p>
+<h2>The Week 1 gate</h2>
+<p>The commitment to A is conditional on five gates assessed at end of Week 1, not final at proposal time: <strong>G1</strong> Value (a decision-maker used the last bulletin for something identifiable) &middot; <strong>G2</strong> Mechanisability (&ge;60% of cycle time is mechanical) &middot; <strong>G3</strong> Inputs (DHIS2 access confirmed with a stated cutoff) &middot; <strong>G4</strong> Runtime (a place to run and hand over exists) &middot; <strong>G5</strong> Operator (a named receiver is assigned). G1 or G3 failing means A is the wrong commitment &mdash; said in Week 1, not Week 5.</p>
+<div class="pagebreak"></div>
+</body></html>

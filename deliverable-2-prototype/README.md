@@ -10,7 +10,7 @@ uv sync                          # duckdb, pandas, pyarrow, sf-hamilton
 uv run python run.py             # build the mart
 cd web && bun install
 bun run publish                  # build + publish all four quarters, 2024-Q1 through 2024-Q4
-bun run verify                   # build, inline email, run all four checks
+bun run verify                   # build, inline email, run all five checks
 open ../output/bulletin-2024-Q1.html
 ```
 
@@ -35,16 +35,24 @@ publish`, with every figure carrying its value, its state, and a link to the row
 rules behind it. Lineage records live in the same file as anchors, so it works offline and
 survives being forwarded.
 
-Four required metrics, all answered directly:
+Four required metrics, two answered directly and two substituted, with the substitution
+stated rather than papered over:
 
 | Brief requirement | Status |
 |---|---|
 | Top 10 facilities by volume | rendered, labelled as volume, not quality |
-| Maternal health indicators | rendered, bound to ICD-10 perinatal codes |
-| Facility performance scores | answered directly: governance/operations/staffing data, §3 |
+| Maternal health indicators | **substituted.** The brief names ANC visits, deliveries and complications. The provided CSVs carry deliveries, but no ANC column and no complication column. What ships is neonatal cause of death (ICD-10 P21, P07, P36, Q00 to Q99) and the stillbirth ratio, which are perinatal outcomes, not maternal ones. |
+| Facility performance scores | **partly substituted.** Reporting completeness ships. Timeliness does not and cannot: no source file carries a submission timestamp, so no lag is derivable. What ships instead is governance, operations and staffing capability per tier, section 3. Nothing is scored per facility. |
 | Trend vs previous quarters | shown, caveated: all four quarters, not a two-point delta |
 
-The last two were the interesting ones. `governance.csv`/`operations.csv`/
+**What would close the gap.** ANC visits, maternal complications and reporting timeliness
+are all standard DHIS2 data elements. Ingesting them is a Week 2 crosswalk addition, not a
+pipeline change: the crosswalk already resolves six heterogeneous sources to one grain, and
+these are three more rows in it. The reason they are absent is the provided extract, not the
+design. Claiming them as delivered would have been the easier sentence to write and the
+first thing a reviewer checked.
+
+Facility performance and the trend were the interesting ones to build. `governance.csv`/`operations.csv`/
 `healthcare_workers.csv` were already resolved through the crosswalk and never queried
 past three covariates; the trend was withheld because a guard blocked the whole section
 rather than stating what it could and could not support. Both are gold-layer queries
@@ -128,11 +136,13 @@ Deliverable 3, rather than five paragraphs of intent.
 
 ## Checks
 
-`bun run verify` runs four, each of which has caught a real defect in this build:
+`bun run verify` runs five. Four caught a real defect in this build; one is preventive and
+is marked as such, because a table claiming otherwise would be the first thing to check:
 
 | Check | Holds | Caught |
 |---|---|---|
-| `check-tokens.mjs` | chart theme colours identical to `tokens.css` | (added when the chart engine moved to a `THEME_SPEC` override; guards the same drift class as before) |
+| `check-shipped.mjs` | every declared input the pipeline reads by name is tracked by git | `known_contradictions.csv` and `cause_capability_links.csv`, both read by `gold.py` and neither ever added, so a clone raised `FileNotFoundError` on the first command. Every other check ran against the working tree, where they exist |
+| `check-tokens.mjs` | chart theme colours identical to `tokens.css` | nothing yet. Preventive: added when the chart engine moved to a `THEME_SPEC` override, and it guards the same drift class the previous hand-typed palette had |
 | `check-style.mjs` | em dashes, side stripes, script tags, external assets | a latent em dash, and a false positive in its own first rule |
 | `check-email.mjs` | 102 KB clip ceiling, no SVG, no flex or grid, state as words | `display:grid` shipped in the email stylesheet |
 | `check-agreement.mjs` | seven shared figures identical across both surfaces | email published 6 withheld panels where the bulletin said 2; later, the trend/correlation caveat wording after the withhold gate was removed |

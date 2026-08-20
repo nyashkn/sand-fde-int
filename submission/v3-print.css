@@ -1,0 +1,130 @@
+/* v3: plain "typed in Word, exported to PDF" print stylesheet. No editorial
+   palette, no tinted background, no colour accents. Pure white / black,
+   Calibri body, ordinary Word-default table and heading treatment. */
+
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+  --gray: #555555;
+  --line: #808080;
+  --line-light: #bfbfbf;
+
+  --body: Calibri, Carlito, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: Consolas, 'SF Mono', Menlo, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 25mm 20mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--body);
+  font-size: 10.5pt;
+  line-height: 1.3;
+  color: var(--ink);
+  background: var(--paper);
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--body);
+  font-weight: 700;
+  line-height: 1.2;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 0.7em 0 0.3em;
+  color: var(--ink);
+}
+
+h1 { font-size: 15pt; margin-top: 0; }
+h2 { font-size: 12.5pt; margin-top: 0.9em; }
+h3 { font-size: 11pt; }
+h4 { font-size: 10.5pt; }
+
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+p { margin: 0 0 0.5em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: underline; }
+
+ul, ol { margin: 0 0 0.5em; padding-left: 1.3em; }
+li { margin-bottom: 0.15em; break-inside: avoid-page; }
+
+/* A plain indented note, the way a Word document marks a callout without a
+   design system behind it: no fill, a single rule, italic text. */
+p.disclosure {
+  margin: 0.6em 0 0.9em;
+  padding: 0.2em 0 0.2em 0.8em;
+  border-left: 1.5pt solid var(--ink);
+  font-style: italic;
+}
+
+blockquote {
+  margin: 0.5em 0 0.5em 0.8em;
+  padding: 0 0 0 0.8em;
+  border-left: 1.5pt solid var(--ink);
+  break-inside: avoid-page;
+  font-style: italic;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 9.5pt;
+}
+
+hr { border: 0; border-top: 0.75pt solid var(--line-light); margin: 0.9em 0; }
+
+/* ---- tables: plain "Table Grid", the Word default ----------------------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 0.4em 0 0.7em;
+}
+
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th, td {
+  border: 0.75pt solid var(--line);
+  padding: 3px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-weight: 700;
+  background: var(--paper);
+}
+
+/* ---- structure ------------------------------------------------------------ */
+
+.pagebreak { break-after: page; height: 0; }
+
+.masthead {
+  font-family: var(--body);
+  font-size: 9.5pt;
+  color: var(--ink);
+  margin-bottom: 0.8em;
+  padding-bottom: 0.5em;
+  border-bottom: 0.75pt solid var(--ink);
+}
+.masthead strong { font-weight: 700; }
+
+.cap {
+  font-family: var(--mono);
+  font-size: 8.5pt;
+  color: var(--gray);
+}

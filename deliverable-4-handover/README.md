@@ -87,8 +87,18 @@ rebuild against the post-ADR-0012 code for this pass, specifically to avoid writ
 `deliverable-2-prototype/` while it has other work in flight. Re-running `runbook.md`'s
 "Full clean rebuild" section once, twice, and diffing the two hashes is the next action
 before this deliverable can claim reproducibility again; until then, treat determinism as
-carried over by design (nothing in ADR 0012 introduced a source of run-to-run variance)
-but **not measured** post-rework. This proves the runbook's commands were sufficient for
+carried over by design but **not measured** post-rework.
+
+One correction to the sentence above, since it was measured after this was first written
+and the earlier wording would not survive a reviewer running the pipeline twice. The mart
+is **not** byte-identical between runs, and by design: `bronze.py` stamps every row with
+`ingested_at = datetime.now(timezone.utc)`, one timestamp per run, so that one run is one
+provenance event. Two consecutive runs therefore produce differing `silver.parquet` and
+`observations_resolved.parquet`. Excluding that column and sorting, every other column is
+byte-identical. So the accurate claim is that the pipeline is deterministic **in its
+outputs given its inputs, excluding the provenance timestamp it deliberately varies**, not
+that the files hash the same. The rendered bulletin is unaffected, because no figure reads
+`ingested_at`. This proves the runbook's commands were sufficient for
 a rebuild from nothing as of 2026-08-11. It never proved, and still cannot prove, that a
 specific named person can execute them unassisted; that half of the exit criterion is the
 confirmation named in "Exit criterion" above, still open.

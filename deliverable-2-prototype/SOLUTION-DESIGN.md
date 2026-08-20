@@ -196,13 +196,19 @@ the one that does not, with why. This build cannot do that literally: the data i
 synthetic and no prior bulletin exists to reconcile against, a gap between plan and what is
 buildable here, named rather than glossed over.
 
-**What works today.** All four 2024 quarterly editions build and pass the four checks
-(`check-tokens`, `check-style`, `check-email`, `check-agreement`), plus the publish-time
-guard that refuses to write a file whose name and contents disagree on the quarter (shipped
-once with a mismatched filename, hence the guard). The four required bulletin metrics are
-answered directly, not stubbed: top-10 facilities by volume, maternal indicators bound to
-ICD-10 perinatal codes, facility performance scores from governance and operations data,
-and a genuine four-quarter trend rather than a two-point delta. The checks disclose rather
+**What works today.** All four 2024 quarterly editions build and pass the five checks
+(`check-shipped`, `check-tokens`, `check-style`, `check-email`, `check-agreement`), plus the
+publish-time guard that refuses to write a file whose name and contents disagree on the
+quarter (shipped once with a mismatched filename, hence the guard). Of the four required
+bulletin metrics, two are answered directly and two are substituted with the substitution
+declared: top-10 facilities by volume, and a genuine four-quarter trend rather than a
+two-point delta, are direct. Maternal health indicators are not: the provided CSVs carry no
+ANC column and no complication column, so what ships is neonatal cause of death and the
+stillbirth ratio, which are perinatal rather than maternal. Facility performance ships
+completeness but not timeliness, because no source file carries a submission timestamp, so
+no lag is derivable. Both gaps are in the extract, not the design, and both close with three
+more crosswalk rows against standard DHIS2 elements in Week 2. The full accounting is in
+`README.md`. The checks disclose rather
 than hide: a correlation that fails stratification, or a trend with no measured temporal
 signal, ships with a caveat sentence instead of an empty "withheld" section (ADR 0012).
 Eight known contradictions surface by name, not corrected silently (`staff_last_training` =

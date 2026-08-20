@@ -1,7 +1,7 @@
 <div class="masthead">
-<strong>Sand FDE submission — condensed (v2, 5pp)</strong> · Kinyanjui Njoroge · August 2026 ·
-Full submission (36pp incl. handover docs): <code>sand-fde-submission.pdf</code> ·
-Repo: github.com/nyashkn/sand-fde-int
+<strong>Forward Deployed Engineer assignment</strong> · Kinyanjui Njoroge · August 2026 ·
+Live bulletin: sand-fde-bulletin.pages.dev · Repo: github.com/nyashkn/sand-fde-int ·
+Full working notes, runbook, data contract and decision register are in the repository.
 </div><blockquote>
 <p>All figures below are computed on <strong>synthetic data</strong> — the assignment CSVs plus a hand-built
 DHIS2 sample — not real Rwanda health records. Facility mortality of 14.3–73.2 per 1,000 live
@@ -52,7 +52,7 @@ Provincial −0.29</strong>. The pooled number describes which tier a facility s
 it would do. Publishing the pooled figure alone would have pointed a Ministry&#39;s budget at a
 confound; the bulletin shows every covariate pooled <em>and</em> within tier, caveat attached, not
 withheld.</p>
-<div class="pagebreak"></div><div class="pagebreak"></div><div class="masthead">
+<div class="pagebreak"></div><div class="masthead">
 <strong>D1 — Problem decomposition &amp; scoping</strong> (condensed; full document:
 <code>deliverable-1-scoping/README.md</code>, red-team amendment log:
 <code>decisions/0007-cross-provider-redteam-amendments.md</code>)
@@ -89,6 +89,53 @@ withheld.</p>
 <p>Week 1&#39;s job is to find which dominates. Distrust is tested <em>first</em> — cheapest to check, most
 commonly missed — not because the brief&#39;s sentence says so. One question for every interview,
 because the answers won&#39;t match: <em>&quot;When two systems give different numbers, what happens?&quot;</em></p>
+<h2>Who I&#39;d talk to, in what order (Week 1)</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Who</th>
+<th>The question that matters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Solutions Manager, Country Director</td>
+<td>Why were the use cases chosen <em>before</em> discovery?</td>
+</tr>
+<tr>
+<td>1–2</td>
+<td><strong>MoH Director</strong> (sponsor)</td>
+<td><em>&quot;Tell me about a decision last quarter you&#39;d have made differently with better data.&quot;</em> Then: <em>&quot;When the numbers you&#39;re shown disagree with what you believe, which do you act on?&quot;</em></td>
+</tr>
+<tr>
+<td>2</td>
+<td>The bulletin analyst</td>
+<td>Not &quot;what do you need&quot; — <em>&quot;show me last quarter&#39;s, and open the files you built it from.&quot;</em></td>
+</tr>
+<tr>
+<td>2–3</td>
+<td>DHIS2/HMIS focal point</td>
+<td>Where does the 2–3wk delay actually accrue, and how do paper facilities report today?</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2 district health officers (1 strong, 1 weak district)</td>
+<td><em>&quot;What did you look at immediately before your last resource decision?&quot;</em></td>
+</tr>
+<tr>
+<td>3–4</td>
+<td>1 hospital, 1 clinic, 1 paper-only facility — <strong>the data clerk</strong>, not the medical director</td>
+<td>Watch month-end reporting happen</td>
+</tr>
+<tr>
+<td>4</td>
+<td>MoH ICT / InfoSec</td>
+<td>Hosting, data residency, approval lead times — the classic 6-week killer</td>
+</tr>
+</tbody></table>
+<p>Every question is <strong>counterfactual</strong> (&quot;what did you do last month&quot;) or <strong>observational</strong> (&quot;show
+me&quot;), never <strong>solicitational</strong> (&quot;what would you like&quot;) — solicitation just returns a feature list.</p>
 <h2>Top assumptions and risks (of 9 tracked in full)</h2>
 <table>
 <thead>
@@ -155,4 +202,4 @@ independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5). All three in
 <strong>Problem A</strong> — but rejected the original justification, finding errors unanimously (an
 impossible 5-day publication target given a 2–3wk upstream lag; an overstated ROI baseline; a
 false claim that A&#39;s mart is &quot;most of&quot; B&#39;s data layer). All corrected in the full document.</p>
-<div class="pagebreak"></div><div class="pagebreak"></div>
+<div class="pagebreak"></div>
