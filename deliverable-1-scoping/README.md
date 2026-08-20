@@ -132,57 +132,26 @@ real-time facility status regardless of how many facilities send them.
 
 ## 2.1 A, B and C are solutions, not problems
 
-The brief states three *things to build*. Mapping them back to needs surfaces siblings the brief
-omits, and one opportunity it misses entirely.
+The brief states three *things to build*. Mapping each back to the need it serves surfaces siblings
+the brief omits, and one need it misses entirely. The statements below are my hypotheses phrased in
+stakeholder language, not interview evidence: they are what I would try to falsify in Week 1, not
+things anyone has said.
 
-**The quoted statements below are my hypotheses phrased in stakeholder language, not interview
-evidence.** They are what I would go and try to falsify in Week 1, not things anyone has said.
+**Root outcome: MoH leadership acts on health-system data it can defend, early enough to change the
+next planning cycle.**
 
-```
-OUTCOME, MoH leadership acts on health-system data it can defend,
-          early enough to change the next planning cycle
-│
-├─ O1  the MoH analyst  [hypothesis]
-│  "I spend most of a working month on a document that is stale before
-│   it is read, and I cannot defend its numbers."
-│  ├─ S-A1  Automate the bulletin end to end        ← PROBLEM A
-│  ├─ S-A2  Shorten the cadence (quarterly → monthly)
-│  └─ S-A3  Retire the PDF for a live page
-│
-├─ O2  the District Health Officer  [hypothesis]
-│  "By the time I see a stockout it is a crisis, never a warning."
-│  ├─ S-B1  Real-time facility status dashboard     ← PROBLEM B
-│  ├─ S-B2  SMS exception reporting from facilities
-│  └─ S-B3  Supply-chain-only feed (eLMIS), no clinical
-│
-├─ O3  TB + HIV programme managers  [hypothesis]
-│  "Co-infected patients are counted twice and treated once."
-│  ├─ S-C1  Unified patient view across CommCare    ← PROBLEM C
-│  ├─ S-C2  Weekly reconciliation report, no merging
-│  └─ S-C3  Shared patient identifier (policy, not software)
-│
-└─ O4  the MoH Director  [hypothesis, NOT IN THE BRIEF]
-   "I cannot defend the numbers I am shown, so I do not act on them."
-   ├─ S-D1  Every figure traceable to its DHIS2 value + snapshot
-   ├─ S-D2  Publish completeness beside every indicator
-   └─ S-D3  Reproduce a past quarter from source as a trust proof
-```
+| Need | Whose | The brief's answer | Siblings worth pricing |
+|---|---|---|---|
+| **O1** "I spend most of a working month on a document that is stale before it is read, and I cannot defend its numbers." | MoH analyst | **A**, automate the bulletin end to end | Shorten the cadence, quarterly → monthly; retire the PDF for a live page |
+| **O2** "By the time I see a stockout it is a crisis, never a warning." | District Health Officer | **B**, real-time facility dashboard | SMS exception reporting from facilities; supply-chain-only feed (eLMIS), no clinical |
+| **O3** "Co-infected patients are counted twice and treated once." | TB + HIV programme managers | **C**, unified patient view across CommCare | **Weekly reconciliation report, no merging**; shared patient identifier (policy, not software) |
+| **O4** "I cannot defend the numbers I am shown, so I do not act on them." | MoH Director | **none, not in the brief** | Every figure traceable to its DHIS2 value + snapshot; completeness published beside every indicator; a past quarter reproduced from source as a trust proof |
 
-**Note the root outcome changed in this revision, and why it matters.** My first draft wrote
-*"acts on data within the period it describes."* That root **selects for B**, no quarterly
-retrospective artifact can support in-period action, and I then chose A anyway. That was a
-reverse-fit: picking the shippable wedge and retrofitting an outcome it cannot serve. The root
-above is what A can honestly serve. The gap between the two is real and is stated in §2.2.
-
-**Two things the A/B/C framing hides:**
-
-**O4 may be the Director's actual complaint**, and if it is, none of A, B or C answers it
-directly, because all three answer throughput. Whatever ships should therefore carry S-D1 and S-D2
-as requirements. This is a hypothesis to test in Week 1, not a finding.
-
-**S-C2 is a cheaper answer to O3 than C.** A weekly reconciliation report flags likely co-infected
-patients for human review without merging records. Most of the value, none of the merge risk. The
-brief does not consider it. Worth putting to the programme managers regardless.
+**Two things the A/B/C framing hides.** O4 may be the Director's actual complaint, and none of A, B
+or C answers it, because all three answer throughput. Whatever ships should therefore carry
+traceability and published completeness as requirements rather than features. Separately, the weekly
+reconciliation report is a cheaper answer to O3 than C: most of the value, none of the merge risk,
+and the brief does not consider it. Both are hypotheses to test in Week 1, not findings.
 
 ## 2.2 The choice: **Problem A**, plus one bounded handover act
 
@@ -191,79 +160,47 @@ brief does not consider it. Worth putting to the programme managers regardless.
 > Officer independently producing a bulletin from a replayed quarter before I leave.
 
 **What I am giving up, stated first.** The highest-value outcome for this Ministry is probably
-operational, closer to O2 than O1. A does not deliver that. I am choosing the reachable wedge
-over the valuable-but-unreachable one, and the honest framing to the Director is *"this is the
-thing I can finish and prove in six weeks; here is what it does not do."* Selling A as though it
-serves the operational need would be the failure mode.
+operational, closer to O2 than O1. A does not deliver that. I am choosing the reachable wedge over
+the valuable-but-unreachable one, and the honest framing to the Director is *"this is the thing I
+can finish and prove in six weeks; here is what it does not do."* Selling A as though it serves the
+operational need would be the failure mode.
 
-Three arguments for A:
+**Why A.** It is the only option that can finish and be proven inside six weeks, operating on data
+that already arrives in a shape that already exists. It is the only one with a baseline that
+plausibly already exists, subject to **A3**, which must be measured rather than assumed. And it is
+the trust wedge: a defensible artifact delivered to the analyst and the Director buys the standing
+to attempt B, and in a first-country, template-setting engagement, proof is the currency.
 
-**1, It is the only option that can finish and be proven inside six weeks.** C is disqualified on
-clinical-safety grounds. B requires facility-level freshness that monthly aggregate reporting
-cannot supply, regardless of how many facilities report (§1.3). A operates on data that already
-arrives, in a shape that already exists.
+**Why not B, why not C.** B is out of reach *in this sprint*, not impossible: it needs
+facility-level freshness, and the reporting substrate is monthly aggregates on a 2–3 week lag. That
+is a granularity and cadence gap rather than a coverage gap (§1.3), and closing it is a separate
+project. C needs probabilistic identity matching across CommCare silos with no shared identifier and
+no MoH clinical-safety review process. A unified *view* does not itself prescribe treatment, and the
+real risk turns on whether matching is advisory or authoritative, which is the point: establishing
+that requires a hazard analysis I cannot complete in six weeks. The weekly reconciliation report is
+the version of C I would propose.
 
-**2, It is the only option with a baseline that plausibly already exists.** Subject to §2.5 A3,
-the baseline must be measured, not assumed. B and C would need one built first.
+**What A does not give B**, since the sequencing pitch is where this gets oversold. A builds an
+aggregate, period-grain mart on bulletin cadence; B needs facility-status freshness, stock and
+supply events, intra-period updates, alert state and freshness monitoring. What genuinely transfers
+is the **org-unit dimension and the indicator dictionary**: real, reusable, and far less than a
+foundation. Two further claims I will not make: that anything here is greenfield-free, since Superset,
+dbt and Airflow appearing in Sand's job postings evidences the component types, not a working
+Rwanda-configured instance (gate **G4**); and that the bulletin is necessarily templatable, since a
+government quarterly is typically narrative + tables + interpretation rather than a dashboard export,
+and **A5** resolves whether I am automating the Ministry's artifact or quietly redefining it.
 
-**3, It is the trust wedge.** Delivering a defensible artifact to the analyst and the Director
-buys the standing to attempt B. In a first-country, template-setting engagement, proof is the
-currency.
-
-**An argument I withdraw.** My first draft claimed *"A's mart is most of B's data layer."* Three
-independent reviewers rejected this and they are right. A builds an **aggregate, period-grain**
-mart refreshed on bulletin cadence. B needs facility-status freshness, stock/supply event data,
-intra-period updates, alert state and freshness monitoring. What genuinely transfers is the
-**org-unit dimension and the indicator dictionary**, real, reusable, and far less than "most."
-I was narrating a reporting mart as B's foundation because that resolves the internal conflict with
-the Solutions Manager, not because the architecture says so. The honest sequencing pitch is
-*"A gives us the org-unit hierarchy, the indicator dictionary, and a working relationship, B is
-still most of a project."*
-
-**On "nothing greenfield."** I over-claimed. Superset, dbt and Airflow appear in Sand's own FDE job
-postings; my research file grades that as *strong* evidence, not *confirmed*. It is not evidence
-that a Rwanda MoH DHIS2 connector, a conformed mart, an approved Superset instance, service
-accounts or a bulletin-grade template exist and work today. The correct claim is: **the component
-types are in Sand's stack and staffed for; whether an instance exists for Rwanda MoH is a Week 1
-question, not an assumption.** See gate G4.
-
-**One category risk to name.** A government quarterly bulletin is typically narrative + tables +
-interpretation, not a dashboard export. If it turns out the Ministry's product cannot be a Superset
-scheduled report, then either the architecture claim is wrong or I have silently redefined the
-Ministry's artifact. §2.5 A5 resolves this; I will not redefine the bulletin without saying so.
-
-### Why not B
-
-Not because it is unimportant, it is closest to the Solutions Manager's pre-commitment and closest
-to the maternal/neonatal priority. Because B needs **facility-level freshness**, and the reporting
-substrate is monthly aggregates on a 2–3 week lag. That is a granularity and cadence gap, not
-merely a coverage gap, and closing it is a separate project. B is out of reach *in this sprint*,
-not impossible.
-
-### Why not C
-
-Probabilistic identity matching across CommCare silos with no shared identifier, in six weeks, with
-no MoH clinical-safety review process. I will not overstate the causal chain: a unified *view* does
-not itself prescribe treatment, and the real risk depends on whether matching is advisory or
-authoritative and what review controls exist. But that is precisely the point, **C requires a
-hazard analysis I cannot complete in six weeks**, and shipping identity matching without one is the
-wrong first engagement. **S-C2 is the version of C I would propose.**
-
-### The internal disagreement I would surface, not hide
-
-The Solutions Manager pre-identified the use cases before discovery, and his hypothesis points at
-B. Discovery points at A. I would put the sequencing in writing to him and the Director in Week 1,
-including the honest version of what A does and does not give B. An FDE who lets a pre-sold
-narrative survive contradicting evidence has chosen internal comfort over the client.
+**The internal disagreement I would surface, not hide.** The Solutions Manager pre-identified the
+use cases before discovery, and his hypothesis points at B. Discovery points at A. I would put the
+sequencing in writing to him and the Director in Week 1, including the honest version of what A does
+and does not give B. An FDE who lets a pre-sold narrative survive contradicting evidence has chosen
+internal comfort over the client.
 
 ## 2.3 The measurable outcome
 
-The first draft committed to *"published within 5 working days of quarter close."* **That is
-impossible by construction** and all three reviewers caught it: DHIS2 runs 2–3 weeks behind, and
-nothing in A makes inputs arrive faster. Generating a document faster does not make its data
-appear. Worse, publishing fast on incomplete data would *reduce* trust, the opposite of the goal.
-
-The metric is therefore measured from **data availability**, not from quarter close:
+Measured from **data availability**, not from quarter close. DHIS2 runs 2–3 weeks behind and nothing
+in A makes inputs arrive faster; generating a document faster does not make its data appear, and
+publishing fast on incomplete data would *reduce* trust, which is the opposite of the goal.
 
 | Measure | Baseline | Target |
 |---|---|---|
@@ -274,85 +211,70 @@ The metric is therefore measured from **data availability**, not from quarter cl
 | Ministry can produce a bulletin unaided (replay test) | no | yes |
 
 **On the baseline number.** The brief says *"40 hours/month"* for a *quarterly* bulletin. Those are
-inconsistent by roughly 3× and I propagated the ambiguity. It could mean 40 hrs every month on
-reporting generally, 40 hrs in the publication month, or ~120 hrs per quarterly cycle. **I commit
-to a 90% reduction, not to a number, until the stopwatch resolves it in Week 1.** Committing "40
-hours → 30 minutes" before measuring is how a credibility problem gets manufactured in Week 2.
+inconsistent by roughly 3×: it could mean 40 hrs every month on reporting generally, 40 hrs in the
+publication month, or ~120 hrs per quarterly cycle. **I commit to a 90% reduction, not to a number,
+until the stopwatch resolves it in Week 1.** Committing "40 hours → 30 minutes" before measuring is
+how a credibility problem gets manufactured in Week 2.
 
-**On lineage.** The honest claim is traceability to *the DHIS2 data value, org unit, period,
-version and extraction snapshot*, not to the underlying facility register or patient record. For
-paper-sourced aggregates, record-level provenance does not exist to trace to.
+**On lineage.** Traceability is to *the DHIS2 data value, org unit, period, version and extraction
+snapshot*, not to the underlying facility register or patient record. For paper-sourced aggregates,
+record-level provenance does not exist to trace to.
 
 **One adoption measure, because hours saved is production efficiency, not health value:** is the
-bulletin reviewed before a named decision meeting, and does any exception in it generate an
-assigned action? If A meets every engineering metric and this stays "no," A has not worked.
+bulletin reviewed before a named decision meeting, and does any exception in it generate an assigned
+action? If A meets every engineering metric and this stays "no," A has not worked.
 
 ## 2.4 Explicitly out of scope
 
 - **HealthTrack EMR integration** (45 hospitals, buggy, local servers). Its own project.
-- **Problem C in any form**, including S-C2, proposed, not built.
+- **Problem C in any form**, including the reconciliation report: proposed, not built.
 - **Real-time anything.** That is B.
 - **Correcting source data.** We surface completeness; we do not fix DHIS2's contents.
 - **Patient-level data.** Aggregate only.
-- **Redefining any indicator.** Definition changes are a Ministry decision. This is the classic
-  scope-creep vector on reporting projects.
+- **Redefining any indicator.** A Ministry decision, and the classic scope-creep vector on
+  reporting projects.
 - **New hardware, new mobile apps, new user accounts** outside the existing bulletin workflow.
 
-**Two things I previously put out of scope that are actually in scope**, because all three
-reviewers flagged them as sprint-killers:
+**Two things that look out of scope and are not**, because unresolved they consume the sprint.
+**Hosting, service accounts and InfoSec approval:** where the pipeline runs for MoH Rwanda, who
+holds credentials after Week 6, and whether national health data may sit in a Sand-hosted
+environment. Day 1 question, Day 3 escalation. **Small-cell suppression:** "aggregate-only,
+therefore no PHI" is too categorical, since rare events at facility level combined with geography
+can re-identify. A suppression rule is required before publication, and access control, audit
+logging and retention remain in scope regardless.
 
-- **Hosting, service accounts and InfoSec approval.** Where dbt/Airflow/Superset run for MoH
-  Rwanda, who holds credentials after Week 6, and whether national health data may sit in a
-  Sand-hosted environment. Unresolved, this consumes the sprint. Day 1 question, Day 3 escalation.
-- **Small-cell suppression.** "Aggregate-only, therefore no PHI" was too categorical. Rare events
-  at facility level, combined with geography, can re-identify. A suppression rule is required
-  before publication, and access control, audit logging and retention remain in scope regardless.
+### 2.4.1 The 175 paper facilities
 
-### 2.4.1 The 175 paper facilities, coverage gap, honestly bounded
-
-Out of scope for six weeks. Three things about it, deliberately shorter than the first draft:
-
-**First, establish the facts (§1.3).** How many of the 175 already reach DHIS2 as monthly
-aggregates via district clerks? Until that is known, the size of the gap is unknown.
-
-**Second, whatever the gap is, print it.** Paper-only facilities are plausibly smaller and more
-rural, and if so, that is where maternal and neonatal mortality is likely highest. *I am asserting
-this, not evidencing it; it is checkable against the provided facility data and should be checked.*
-If it holds, a "top 10 facilities by volume" table computed over reporting facilities only
-systematically describes the better-resourced end of the system, and publishing that uncaveated
-would be actively misleading.
-
-**Third, engagement 2 is a measurement, not a pipeline.** A VLM-assisted capture path (photograph
-the register, extract, human confirms, submit with the photo attached as provenance) is a plausible
-unlock, and it is a research programme, not a sketch I should be costing here. The only thing I
-would commit to is the cheap experiment that decides it: **~50 real register photographs, extraction
-run, field-by-field accuracy against manual transcription, failure modes reported.** That number
-either justifies the project or kills it honestly.
-
-Two objections to record now rather than discover later: if the officer must confirm every digit on
-screen, that may be *slower* than typing aggregates into a simple form, so the design has to earn
-its complexity against that baseline. And a photograph of a register may capture names and
-diagnoses, which reintroduces the PHI exposure this sprint avoids.
+Out of scope for six weeks, and the largest thing this bulletin will not see. How many of the 175
+already reach DHIS2 as monthly aggregates via district clerks is unestablished (§1.3), so the size
+of the gap is unknown, and whatever it turns out to be, the bulletin should print it: paper-only
+facilities are plausibly smaller and more rural, which is where maternal and neonatal mortality is
+likely highest, so a "top 10 facilities by volume" computed over reporting facilities only would
+systematically describe the better-resourced end of the system. *I am asserting that, not evidencing
+it; it is checkable against the provided facility data and should be checked.* Closing the gap is a
+measurement programme rather than a pipeline, and the experiment that decides it is cheap: ~50 real
+register photographs, extraction run, field-by-field accuracy against manual transcription. Costed
+in the repository, not here.
 
 ## 2.5 Assumptions and Week 2 validation
 
-| # | Assumption | Why it matters | Validation | If false |
-|---|---|---|---|---|
-| **A3** | The reporting labour is mostly *mechanical* | The automation ceiling and the headline number | **Stopwatch**, Week 1 | Automate assembly only; reset the target publicly |
-| **A4** | DHIS2 API access granted to a service account | Ingest architecture | Ask Day 1, escalate Day 3 | CSV export drop, same mart, same output |
-| **A5** | The bulletin is reproducible as a templated artifact | Whether Superset can be the output at all | Inspect last 2 editions, Day 2 | Generate tables/charts only; narrative stays manual and is named as such |
-| **A6** | ≥2 machine-readable historical editions exist | Trends *and* the validation demo | Request Week 1 | Ship without trends in v1 |
-| **A7** | A **named** DHO with cleared hours exists | The handover act has no subject otherwise | **Written ask, Week 1 Day 2** | Downgrade honestly; stop calling it capacity transfer |
-| **A8** | The bulletin is read by someone who decides | A's entire value | Ask Director + 2 district officers what they did with the last one | Stop and re-scope |
-| **A9** | Indicator definitions are consistent across sources | Whether aggregates are comparable | Sample-compare across 3 facilities | Scope to consistent indicators, flag the rest |
-| **A10** | Hosting and InfoSec approval achievable in ≤ 3 weeks | Whether anything can be deployed | Meet MoH ICT Day 4 | Re-plan around an artifact that runs on Ministry-owned infrastructure |
-| **A11** | A quarter close or a replayable prior quarter falls inside the sprint | Whether the success criteria are observable at all | Check the reporting calendar Day 1 | Use the replay protocol in §2.6 |
+| # | Assumption | Validation | If false |
+|---|---|---|---|
+| **A3** |The reporting labour is mostly *mechanical* |**Stopwatch**, Week 1 |Automate assembly only; reset the target publicly |
+| **A4** |DHIS2 API access granted to a service account |Ask Day 1, escalate Day 3 |CSV export drop, same mart, same output |
+| **A5** |The bulletin is reproducible as a templated artifact |Inspect last 2 editions, Day 2 |Generate tables/charts only; narrative stays manual and is named as such |
+| **A6** |≥2 machine-readable historical editions exist |Request Week 1 |Ship without trends in v1 |
+| **A7** |A **named** DHO with cleared hours exists |**Written ask, Week 1 Day 2** |Downgrade honestly; stop calling it capacity transfer |
+| **A8** |The bulletin is read by someone who decides |Ask Director + 2 district officers what they did with the last one |Stop and re-scope |
+| **A9** |Indicator definitions are consistent across sources |Sample-compare across 3 facilities |Scope to consistent indicators, flag the rest |
+| **A10** |Hosting and InfoSec approval achievable in ≤ 3 weeks |Meet MoH ICT Day 4 |Re-plan around an artifact that runs on Ministry-owned infrastructure |
+| **A11** |A quarter close or a replayable prior quarter falls inside the sprint |Check the reporting calendar Day 1 |Use the replay protocol in §2.6 |
 
 ### 2.5a The Week 1 gate
 
-The first draft committed at the end of Week 1 while planning to resolve existential assumptions in
-Week 2. That is incoherent, A8 alone can invalidate the whole commitment. So the commitment in
-§2.2 is **conditional on five gates**, assessed at end of Week 1:
+Committing at the end of Week 1 while planning to resolve existential assumptions in Week 2 is
+incoherent: **A8** alone can invalidate the whole commitment. The commitment in §2.2 is therefore
+**conditional on five gates**, assessed at end of Week 1.
 
 | Gate | Passes if |
 |---|---|
@@ -368,25 +290,16 @@ Week 2. That is incoherent, A8 alone can invalidate the whole commitment. So the
 
 ## 2.6 Success metric
 
-**Primary:** percentage reduction in analyst time per cycle (target ≥ 90%), against a Week-1
-measured baseline.
+**Primary:** percentage reduction in analyst time per cycle, target ≥ 90%, against a Week-1 measured
+baseline. **Secondary:** data-availability → publication, ≤ 2 working days; figures resolving to a
+DHIS2 value + snapshot, 100%. **The one that matters:** *can the Ministry produce it without me?*
 
-**Secondary:** data-availability → publication (≤ 2 working days); figures resolving to a DHIS2
-value + snapshot (100%).
-
-**The one that matters:** *can the Ministry produce it without me?*
-
-Because a Q[N+1] edition may not fall inside a six-week window (**A11**), this is tested by
-**controlled replay** in Week 6 rather than left to luck. The named DHO, unaided, must:
-
-1. trigger the pipeline for a prior quarter
-2. diagnose a **seeded** failure (a deliberately broken credential or a malformed export)
-3. review the completeness exceptions
-4. generate the bulletin
-5. route it for the normal approval step
-6. publish it
-
-Steps 2 and 5 are the ones that usually get skipped and are the ones that actually predict survival.
+Because a Q[N+1] edition may not fall inside a six-week window (**A11**), that is tested by
+**controlled replay** in Week 6 rather than left to luck. The named DHO, unaided, triggers the
+pipeline for a prior quarter, diagnoses a **seeded** failure (a deliberately broken credential or a
+malformed export), reviews the completeness exceptions, generates the bulletin, routes it for the
+normal approval step, and publishes it. The seeded failure and the approval step are the two that
+usually get skipped, and they are the two that actually predict survival.
 
 **The Week 3 demo** is not a dashboard tour. It is: *"here is last quarter's published bulletin,
 here is the pipeline re-deriving it from source, here are the figures that match, and here is the
@@ -395,21 +308,24 @@ trust event than one that finds none.
 
 **Ownership after exit** needs naming, not just a person: who owns pipeline operations, indicator
 definitions, source corrections, late submissions, bulletin approval, and infrastructure incidents.
-Without that, every anomaly routes back to Sand or the bulletin stalls between generation and
+Without that, every anomaly routes back to Sand, or the bulletin stalls between generation and
 approval.
 
 ## 2.7 Fallback plan
 
-| If | Then | What survives |
-|---|---|---|
-| DHIS2 API blocked (**A4**) | Scheduled CSV export drop into the same mart | Everything except ingest automation |
-| Bulletin not templatable (**A5**) | Automate tables/charts; narrative stays manual, labelled | The mechanical majority, honestly scoped |
-| Definitions contested (**A9**) | Ship uncontested sections; rest as annex | Most of the bulletin + a named Ministry decision |
-| History too sparse (**A6**) | Current quarter + completeness report | The completeness report is itself the argument for fixing reporting |
-| No named DHO (**A7**) | Bulletin-only; walk-through with the IT contact | The artifact, correctly labelled |
-| Hosting blocked (**A10**) | Deliver mart + queries + runbook on Ministry infrastructure | A handoverable asset with no Sand dependency |
-| Labour mostly judgement (**A3**) | Reset the target publicly in Week 2 | A smaller true claim instead of a larger false one |
-| Everything slips | **Floor:** conformed mart + documented query set + runbook | Removes the re-keying step and is handoverable |
+Each assumption in §2.5 has a stated failure branch, and none of them ends the engagement. A blocked
+DHIS2 API (**A4**) becomes a scheduled CSV export drop into the same mart, costing ingest automation
+and nothing else. A bulletin that is not templatable (**A5**) means automating tables and charts
+while the narrative stays manual and is labelled as such. Contested definitions (**A9**) ship the
+uncontested sections and push the rest to an annex plus a named Ministry decision; sparse history
+(**A6**) ships the current quarter with a completeness report, which is itself the argument for
+fixing reporting. If no named DHO exists (**A7**) the artifact ships correctly labelled and the
+capacity-transfer claim is dropped; if hosting is blocked (**A10**) the mart, queries and runbook are
+delivered on Ministry infrastructure with no Sand dependency; and if the labour turns out to be
+mostly judgement (**A3**) the target is reset publicly in Week 2, a smaller true claim instead of a
+larger false one.
 
-The floor is chosen deliberately: even at worst, the mart exists and the next engagement starts
-from a warehouse rather than from zero.
+**The floor, if everything slips:** a conformed mart, a documented query set and a runbook. That is
+chosen deliberately, because even at worst it removes the re-keying step, is handoverable, and means
+the next engagement starts from a warehouse rather than from zero. The full branch-by-branch table is
+in the repository.
