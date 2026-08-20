@@ -1,0 +1,21 @@
+---
+/**
+ * Dev-only route: browse all four quarters live in `astro dev`, hot-reloading on every
+ * edit, without running `bun run publish` and reopening a file. Purely additive: does
+ * not change what `index.astro` builds or what `publish.mjs`/the check scripts read, so
+ * it carries none of the risk of touching the already-verified pipeline.
+ *
+ * `astro build` also emits a static file per quarter here (`dist/2024-Q1.html`, ... under
+ * `build.format: 'file'`), which is harmless output `publish.mjs` simply never looks at,
+ * since it only copies `dist/index.html`.
+ */
+import Bulletin from '../components/Bulletin.astro';
+import { ALL_QUARTERS } from '../lib/mart';
+
+export function getStaticPaths() {
+  return ALL_QUARTERS.map((q) => ({ params: { quarter: q } }));
+}
+
+const { quarter } = Astro.params as { quarter: string };
+---
+<Bulletin quarter={quarter} quarterHref={(q) => `/${q}`} />

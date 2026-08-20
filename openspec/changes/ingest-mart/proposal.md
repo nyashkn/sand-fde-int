@@ -6,7 +6,7 @@ that rejected rows stay retrievable and that findings attach to the rows they ex
 `trust-lineage` requires that provenance be *columns*, not logs, because a log is not
 addressable from a figure.
 
-Applying any of them means inventing the mart inside a validation task or a lineage task , 
+Applying any of them means inventing the mart inside a validation task or a lineage task,
 which is how a schema ends up decided by whichever piece of work reached it first, and then
 quietly contradicted by the next one.
 

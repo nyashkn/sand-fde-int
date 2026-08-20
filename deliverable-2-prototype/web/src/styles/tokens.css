@@ -1,36 +1,31 @@
-/* Design tokens. See DESIGN.md at repo root.
-   Split three ways because the email edition must not ship rules it cannot honour:
-   a display:grid in its stylesheet fails check-email.mjs even when nothing uses it. */
+/* Design tokens. See DESIGN.md at repo root, decisions/0012 for the Swiss/institutional
+   direction. Split three ways because the email edition must not ship rules it cannot
+   honour: a display:grid in its stylesheet fails check-email.mjs even when nothing uses it.
+
+   Every text/background pair below clears WCAG AA (4.5:1) at full saturation, measured
+   with the same relative-luminance formula the browser's own getComputedStyle contrast
+   tooling uses: ink/paper 16.6:1, red/paper 5.41:1, gray-mid/paper 5.21:1. Unlike the prior
+   palette, nothing here needs a darkened "-d" variant to clear the bar. */
 :root {
-  --ink: #1a1917;
-  --ink-soft: #3d3d3a;
-  --muted: #5a5248;
-  --paper: #ffffff;
-  --cream: #faf9f5;
-  --oat: #efebe0;
-  --rule: #ded9cc;
-  --rule-2: #ece8dd;
-  --clay: #c36a47;
-  /* Darkened 2% from the original #a9532f: at #a9532f this was 4.45:1 on --oat,
-     just under WCAG AA's 4.5 for the provisional tag and code text. Measured with
-     the browser's own getComputedStyle, not eyeballed. */
-  --clay-d: #a14f2d;
-  --olive: #6f855a;
-  /* --olive was 3.85:1 on --cream as the "resolved" tag's text color. This is the
-     darkened variant that clears 4.5, used for text only; --olive stays for fills. */
-  --olive-d: #627650;
-  --sage: #a8b89a;
+ --ink: #161513;
+ --paper: #f6f4ef;
+ --panel: #fffef9;
+ --red: #c22029;
+ --gray-track: #e2ded2;
+ --gray-mid: #6b6659;
+ --gray-line: #c9c4b4;
 
-  --serif: ui-serif, Georgia, 'Times New Roman', Times, serif;
-  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
+ --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+ --slab: Rockwell, 'Roboto Slab', Georgia, 'Times New Roman', serif;
+ --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+ --mono: 'SFMono-Regular', 'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace;
 
-  --s-1: 4px;
-  --s-2: 8px;
-  --s-3: 12px;
-  --s-4: 16px;
-  --s-5: 24px;
-  --s-6: 32px;
-  --s-7: 48px;
-  --s-8: 72px;
+ --s-1: 4px;
+ --s-2: 8px;
+ --s-3: 12px;
+ --s-4: 16px;
+ --s-5: 24px;
+ --s-6: 32px;
+ --s-7: 48px;
+ --s-8: 72px;
 }

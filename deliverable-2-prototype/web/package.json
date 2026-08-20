@@ -10,15 +10,16 @@
     "email": "node scripts/email.mjs",
     "check:email": "node scripts/check-email.mjs",
     "check:agreement": "node scripts/check-agreement.mjs",
-    "verify": "node scripts/check-tokens.mjs && astro build && node scripts/email.mjs && node scripts/check-style.mjs && node scripts/check-email.mjs && node scripts/check-agreement.mjs",
-    "publish": "node scripts/publish.mjs 2024-Q1 2024-Q3",
+    "verify": "node scripts/check-shipped.mjs && node scripts/check-tokens.mjs && astro build && node scripts/email.mjs && node scripts/check-style.mjs && node scripts/check-email.mjs && node scripts/check-agreement.mjs",
+    "publish": "node scripts/publish.mjs 2024-Q1 2024-Q2 2024-Q3 2024-Q4",
     "check:tokens": "node scripts/check-tokens.mjs"
   },
   "dependencies": {
     "@duckdb/node-api": "^1.5.5-r.3",
-    "@observablehq/plot": "^0.6.17",
     "astro": "^7.2.0",
-    "linkedom": "^0.18.13"
+    "flint-chart": "^0.5.1",
+    "vega": "^6.3.1",
+    "vega-lite": "^6.4.3"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

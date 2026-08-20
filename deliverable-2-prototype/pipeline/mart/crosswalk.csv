@@ -52,7 +52,7 @@ assignment_csv,neonatologists,staff_neonatologists,observation,,,
 assignment_csv,anesthetists,staff_anesthetists,observation,,,
 assignment_csv,last_neonatal_training_date,staff_last_training,observation,,,
 assignment_csv,staff_per_delivery_2024,,unmapped,,,"Named as derived but unreconstructable: best of 8 formulas matched 58.1%, worse than the column's own mode at 65.8%. Only 3 distinct values, correlates positively with volume."
-assignment_csv,night_shift_coverage,staff_night_coverage,observation,,,"32 of 45 District-tier report no night coverage."
+assignment_csv,night_shift_coverage,staff_night_coverage,observation,,,"Blank for 63 of 117 facilities. Only Full and Partial are ever recorded; there is no value meaning none, so a blank is unreported, not uncovered."
 assignment_csv,avg_referral_time_hrs,ops_referral_time_hrs,observation,,,"Self-reported. r=+0.125 against NMR."
 assignment_csv,referrals_out_monthly,ops_referrals_out,observation,,,"Aggregate outbound exceeds inbound by 74% across a closed network."
 assignment_csv,referrals_in_monthly,ops_referrals_in,observation,,,

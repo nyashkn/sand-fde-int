@@ -10,6 +10,12 @@
  * This reads the rendered output rather than the source, because agreement in the mart
  * is not the claim. The claim is that a Director reading the email and a DHO reading the
  * bulletin see the same number.
+ *
+ * Reads `dist/2024-Q1.html`, not `dist/index.html`: the site root is a landing page
+ * (`src/pages/index.astro`) that links to editions rather than rendering one, so it is no
+ * longer a bulletin surface. `2024-Q1.html` is `src/pages/[quarter].astro`'s static output
+ * for the same default quarter `email.astro` falls back to when `QUARTER` is unset, which
+ * is what an unqualified `astro build` (this check's own build step) produces for both.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -23,7 +29,7 @@ const text = (f) =>
     .replace(/&[a-z]+;|&#\d+;/gi, ' ')
     .replace(/\s+/g, ' ');
 
-const bulletin = text('index.html');
+const bulletin = text('2024-Q1.html');
 const email = text('email.inlined.html');
 
 /** Each claim must appear in both surfaces, spelled identically. */
@@ -32,7 +38,15 @@ const SHARED = [
   { id: 'deaths', re: /([\d,]+) deaths across/ },
   { id: 'live-births', re: /deaths across ([\d,]+) live births/ },
   { id: 'months-held', re: /(\d+) of (\d+) expected months/ },
-  { id: 'provisional-districts', re: /All (\d+) district figures/ },
+  { id: 'provisional-districts', re: /(\d+) of (\d+) district figures/ },
+  // Both surfaces read the same temporal_signal_check / stratification_check row and
+  // must state the same caveat, not a retyped paraphrase: the checks always render now,
+  // never gate, so this is the one place a caveat could silently drift between surfaces
+  // the way the withheld-panel count once did. Anchored on the checks.py-authored prefix
+  // rather than the whole sentence, since the surrounding lead-in prose legitimately
+  // differs between the full bulletin and the abbreviated email.
+  { id: 'temporal-caveat', re: /observed lag-1 [-\d.]+/ },
+  { id: 'correlation-caveat', re: /pooled r=[-+\d.]+/ },
 ];
 
 let failures = 0;
@@ -50,17 +64,8 @@ for (const c of SHARED) {
   }
 }
 
-// Withheld panel count is stated as a bare integer in different sentences, so it is
-// compared as a value rather than a phrase.
-const bw = bulletin.match(/Panels withheld (\d+)/);
-const ew = email.match(/Panels withheld (\d+)/);
-if (bw?.[1] !== ew?.[1]) {
-  failures++;
-  console.error(`  FAIL  withheld-panels\n        bulletin: ${bw?.[1]}\n        email:    ${ew?.[1]}`);
-}
-
 if (failures > 0) {
   console.error(`\n  ${failures} disagreement(s) between the two surfaces.\n`);
   process.exit(1);
 }
-console.log(`  agreement check passed: ${SHARED.length + 1} shared figures identical across 2 surfaces`);
+console.log(`  agreement check passed: ${SHARED.length} shared figures identical across 2 surfaces`);

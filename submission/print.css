@@ -1,0 +1,180 @@
+/* Print stylesheet for the single-PDF submission.
+
+   Palette and type stack are lifted from deliverable-2-prototype/web/src/styles/tokens.css
+   so the document and the bulletin it contains read as one artifact. The contrast ratios
+   documented there (ink/paper 16.6:1, red/paper 5.41:1, gray-mid/paper 5.21:1) hold here
+   unchanged; nothing below introduces a new text/background pair.
+
+   ponytail: one stylesheet, no build step, no framework. It is a print document. */
+
+:root {
+  --ink: #161513;
+  --paper: #f6f4ef;
+  --panel: #fffef9;
+  --red: #c22029;
+  --gray-track: #e2ded2;
+  --gray-mid: #6b6659;
+  --gray-line: #c9c4b4;
+
+  /* 'Times New Roman' is a live fallback, not decoration: no font ahead of it here
+     carries U+2190/U+2192, so D1's arrows render in Times and pull that family into
+     the PDF (~24 KB for two glyphs). Left alone deliberately. Menlo is the only
+     installed face with the arrows, and a monospace arrow set in proportional serif
+     reads worse than a Times one. Fix properly by shipping a webfont, not by
+     reordering system fonts. */
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --slab: Rockwell, 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'SFMono-Regular', 'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 18mm 16mm 20mm 16mm;
+}
+
+/* Background is set on html so the paper colour bleeds to the sheet edge rather
+   than stopping at the content box and reading as a floating panel. */
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+  hyphens: auto;
+}
+
+/* ---- headings ---------------------------------------------------------- */
+
+h1, h2, h3, h4 {
+  font-family: var(--slab);
+  font-weight: 700;
+  line-height: 1.2;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 1.4em 0 0.5em;
+}
+
+h1 { font-size: 20pt; margin-top: 0; }
+h2 { font-size: 15pt; border-bottom: 1.5px solid var(--ink); padding-bottom: 4px; }
+h3 { font-size: 12pt; }
+h4 { font-size: 10.5pt; letter-spacing: 0.02em; }
+
+/* A heading must never be the last thing on a page. Paired with break-after
+   above, this keeps at least the opening lines of the section with it. */
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+/* ---- body -------------------------------------------------------------- */
+
+p { margin: 0 0 0.75em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: none; border-bottom: 0.5px solid var(--gray-line); }
+
+/* Relative repo links are meaningless on paper. Print the path so a reader can
+   find the file in the accompanying repository. */
+a[href^="../"]::after, a[href^="./"]::after, a[href$=".md"]::after {
+  content: " (" attr(href) ")";
+  font-family: var(--mono);
+  font-size: 7.5pt;
+  color: var(--gray-mid);
+}
+
+ul, ol { margin: 0 0 0.75em; padding-left: 1.4em; }
+li { margin-bottom: 0.25em; break-inside: avoid-page; }
+
+blockquote {
+  margin: 1em 0;
+  padding: 0.6em 1em;
+  background: var(--panel);
+  border-left: 3px solid var(--red);
+  break-inside: avoid-page;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 8.5pt;
+  background: var(--panel);
+  padding: 1px 3px;
+}
+
+pre {
+  font-family: var(--mono);
+  font-size: 8pt;
+  line-height: 1.35;
+  background: var(--panel);
+  border: 0.5px solid var(--gray-line);
+  padding: 0.7em 0.9em;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  break-inside: avoid-page;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+
+hr { border: 0; border-top: 0.5px solid var(--gray-line); margin: 1.6em 0; }
+
+/* ---- tables ------------------------------------------------------------ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+  margin: 0.8em 0 1.2em;
+}
+
+/* A table may split across pages when it is genuinely long, but the header
+   repeats so the split page is still readable, and no single row is torn. */
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th {
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-mid);
+  text-align: left;
+  border-bottom: 1px solid var(--ink);
+  padding: 5px 7px 4px;
+  vertical-align: bottom;
+}
+
+td {
+  border-bottom: 0.5px solid var(--gray-line);
+  padding: 5px 7px;
+  vertical-align: top;
+}
+
+/* ---- structure --------------------------------------------------------- */
+
+.pagebreak { break-after: page; height: 0; }
+
+/* No fixed height. A height close to the page box plus a trailing page break is
+   what produced a blank second sheet. Padding positions the block instead. */
+.cover { padding-top: 85mm; }
+.cover h1 { font-size: 30pt; line-height: 1.1; margin-bottom: 0.2em; }
+.cover .sub {
+  font-family: var(--sans);
+  font-size: 11pt;
+  line-height: 1.8;
+  color: var(--gray-mid);
+}
+.cover .rule { border-top: 3px solid var(--red); width: 90px; margin: 1.4em 0; }
+
+figure { margin: 1em 0; break-inside: avoid-page; }
+figure img { width: 100%; border: 0.5px solid var(--gray-line); }
+figcaption {
+  font-family: var(--mono);
+  font-size: 7.5pt;
+  color: var(--gray-mid);
+  margin-top: 5px;
+}

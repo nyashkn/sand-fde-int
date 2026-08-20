@@ -1,16 +1,18 @@
-"""Structural guards — refuse analyses the data cannot support.
+"""Structural checks — annotate, never gate, an analysis the data may not fully support.
 
-Ordinary validation rejects a *row*. These reject a *claim*. Two of the four blockers
-found in the data audit are of that kind: no amount of cleaning makes a trend line
-honest on a series with no temporal signal, or makes a pooled correlation causal when it
-vanishes inside every stratum.
+Ordinary validation rejects a *row*. These annotate a *claim*: no amount of cleaning makes
+a trend line's persistence provably real on a series with no measured temporal signal, or
+makes a pooled correlation causal when it vanishes inside every stratum. The statistics
+are unchanged from when they gated content; only the consumer contract changed. Every
+check's finding now always renders, carrying the same information a hidden state used
+to withdraw, stated as a caveat instead.
 
-They are code rather than a documented rule for a reason recorded in the design: during
-this engagement the ecological fallacy was explicitly warned against and then committed
-three messages later, by the person who raised it. A rule a human has to remember is not
-a control.
+They are code rather than a documented rule for the reason recorded in the original
+design: during this engagement the ecological fallacy was explicitly warned against and
+then committed three messages later, by the person who raised it. A rule a human has to
+remember is not a control.
 
-Seeds are fixed and recorded so a disposition is reproducible.
+Seeds are fixed and recorded so a caveat is reproducible.
 """
 
 from __future__ import annotations
@@ -31,14 +33,19 @@ def _lag1(series: np.ndarray) -> float:
     return float(np.corrcoef(a, b)[0, 1])
 
 
-def temporal_signal_guard(observations_resolved: pd.DataFrame) -> pd.DataFrame:
+def temporal_signal_check(observations_resolved: pd.DataFrame) -> pd.DataFrame:
     """Is month-to-month movement real, or a stable per-entity baseline plus noise?
 
     Test: compute lag-1 autocorrelation over the pooled series, then rebuild the null by
     shuffling each facility's own months among themselves. Shuffling destroys any real
-    temporal ordering while preserving each facility's level — so if the shuffled null
+    temporal ordering while preserving each facility's level, so if the shuffled null
     matches or exceeds the observed value, every bit of apparent persistence is the
     facility's baseline and none of it is a trend.
+
+    This is a narrow claim (real momentum beyond a facility's stable baseline), not
+    "no trend data exists" — a caller reporting a raw quarter-over-quarter series has
+    real numbers regardless of what this test finds; the caveat qualifies whether that
+    movement is statistically distinguishable from noise, nothing more.
     """
     rows = []
     for element in ["live_births", "deliveries_total", "neonatal_deaths_early"]:
@@ -62,7 +69,8 @@ def temporal_signal_guard(observations_resolved: pd.DataFrame) -> pd.DataFrame:
             null.append(np.mean([_lag1(r) for r in shuffled]))
         null_mean, null_sd = float(np.mean(null)), float(np.std(null))
 
-        # Signal exists only if observed clears the null by a clear margin.
+        # Local only: decides which caveat sentence to state, never whether the row
+        # renders. Everything below always renders.
         has_signal = bool(observed > null_mean + 3 * null_sd)
         rows.append({
             "data_element": element,
@@ -71,26 +79,26 @@ def temporal_signal_guard(observations_resolved: pd.DataFrame) -> pd.DataFrame:
             "null_sd": round(null_sd, 4),
             "seed": PERMUTATION_SEED,
             "trials": PERMUTATION_TRIALS,
-            "has_temporal_signal": has_signal,
-            "disposition": "permitted" if has_signal else "withheld",
-            "reason": (
-                "" if has_signal else
+            "caveat": (
+                f"observed lag-1 {observed:.3f} clears the within-facility permutation "
+                f"null of {null_mean:.3f}\u00b1{null_sd:.3f}; treat as a real signal"
+                if has_signal else
                 f"observed lag-1 {observed:.3f} does not exceed a within-facility "
-                f"permutation null of {null_mean:.3f}±{null_sd:.3f}; all apparent "
-                f"persistence is a stable per-facility baseline"
+                f"permutation null of {null_mean:.3f}\u00b1{null_sd:.3f}; treat as "
+                f"directional, not conclusive"
             ),
         })
     return pd.DataFrame(rows)
 
 
-def stratification_guard(
+def stratification_check(
     observations_resolved: pd.DataFrame, org_units: pd.DataFrame
 ) -> pd.DataFrame:
     """Does a pooled association survive inside the strata of a shared driver?
 
     An association presented as explanatory must declare what it was stratified against.
     If the pooled sign does not hold within strata, it describes the stratum and not the
-    thing being explained.
+    thing being explained, and the caveat says exactly that.
     """
     facilities = org_units[org_units["level"] == "facility"][["org_unit", "tier"]]
 
@@ -119,8 +127,9 @@ def stratification_guard(
             if len(g) >= 10 and g["covariate"].std() > 0:
                 within[tier] = round(float(g["nmr"].corr(g["covariate"])), 3)
 
-        # Survives only if every sufficiently-populated stratum keeps the pooled sign
-        # and at least half the pooled magnitude.
+        # Local only: decides which caveat sentence to state, never whether the row
+        # renders. Survives only if every sufficiently-populated stratum keeps the
+        # pooled sign and at least half the pooled magnitude.
         survives = bool(within) and all(
             np.sign(v) == np.sign(pooled) and abs(v) >= abs(pooled) / 2
             for v in within.values()
@@ -131,10 +140,10 @@ def stratification_guard(
             "stratified_by": "tier",
             "pooled_r": round(pooled, 3),
             "within_strata": "; ".join(f"{k} {v:+.3f}" for k, v in sorted(within.items())),
-            "survives_stratification": survives,
-            "disposition": "permitted" if survives else "withheld",
-            "reason": (
-                "" if survives else
+            "caveat": (
+                f"pooled r={pooled:+.3f} is consistent within tier "
+                f"({'; '.join(f'{k} {v:+.3f}' for k, v in sorted(within.items()))})"
+                if survives else
                 f"pooled r={pooled:+.3f} does not survive stratification by tier "
                 f"({'; '.join(f'{k} {v:+.3f}' for k, v in sorted(within.items()))}); "
                 f"the association describes tier, not the covariate"

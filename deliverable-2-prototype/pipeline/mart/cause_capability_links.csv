@@ -1,0 +1,5 @@
+cause_element,capability_element,relationship_note
+neonatal_deaths_prematurity,ops_surfactant,Surfactant is the standard treatment for respiratory distress in premature infants
+neonatal_deaths_asphyxia,governance_bagmask_competency,Bag-mask ventilation is the first-line response to birth asphyxia
+neonatal_deaths_sepsis,ops_antibiotics,Antibiotic availability is the primary determinant of treatable neonatal sepsis
+neonatal_deaths_congenital,capability_nicu_available,Congenital anomalies requiring surgical or intensive stabilisation need NICU-level capability

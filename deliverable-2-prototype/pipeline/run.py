@@ -15,19 +15,21 @@ import duckdb
 from hamilton import driver
 
 from dataflow import bronze as bronze_mod
+from dataflow import checks as checks_mod
 from dataflow import gold as gold_mod
-from dataflow import guards as guards_mod
 from dataflow import silver as silver_mod
 
 OUT = Path(__file__).resolve().parent / "mart"
 
 
 def main() -> int:
-    dr = driver.Builder().with_modules(bronze_mod, silver_mod, gold_mod, guards_mod).build()
+    dr = driver.Builder().with_modules(bronze_mod, silver_mod, gold_mod, checks_mod).build()
 
     GOLD = ["facility_quarter", "district_quarter", "nmr_district_quarter",
             "nmr_facility_quarter", "completeness_summary",
-            "temporal_signal_guard", "stratification_guard"]
+            "temporal_signal_check", "stratification_check",
+            "cause_capability_links", "facility_capability", "capability_summary",
+            "known_contradictions"]
     result = dr.execute(["bronze", "bronze_dhis2", "silver", "org_units",
                          "crosswalk", "org_unit_map", "observations_resolved"] + GOLD)
 
@@ -70,6 +72,16 @@ def main() -> int:
     for name in PUBLISHED:
         con.execute(f"COPY {name} TO '{OUT / (name + '.parquet')}' (FORMAT PARQUET)")
 
+    # Parquet stays the contract (ADR 0010): Python stops there, and Astro reads it
+    # through DuckDB-WASM, never CSV. These five are a human-readable export on top,
+    # not a replacement, for the small tables SOLUTION-DESIGN.md asks a reader to
+    # verify directly. Kept small on purpose: a CSV sibling for silver or
+    # observations_resolved would bloat the repo for no reader benefit.
+    CSV_EXPORT = ["stratification_check", "temporal_signal_check",
+                  "completeness_summary", "nmr_district_quarter", "capability_summary"]
+    for name in CSV_EXPORT:
+        con.execute(f"COPY {name} TO '{OUT / (name + '.csv')}' (FORMAT CSV, HEADER)")
+
     print(f"bronze     {sum(len(d) for d in result['bronze'].values()):>7,} rows "
           f"across {len(result['bronze'])} files")
     print(f"bronze2    {len(result['bronze_dhis2']):>7,} rows  (dhis2)")
@@ -79,6 +91,7 @@ def main() -> int:
     for name in GOLD:
         print(f"gold       {len(result[name]):>7,}  {name}")
     print(f"\nwrote {len(PUBLISHED)} parquet files to {OUT}")
+    print(f"wrote {len(CSV_EXPORT)} csv siblings to {OUT}")
     con.close()
     return 0
 

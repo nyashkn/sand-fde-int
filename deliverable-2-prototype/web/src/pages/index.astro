@@ -1,46 +1,33 @@
 ---
+/**
+ * Landing page, not a bulletin edition.
+ *
+ * `dist/index.html` used to be a full `<Bulletin>` render at `process.env.QUARTER`, so the
+ * deployed site root was a second ~142 KB copy of whichever quarter happened to be last
+ * built, with no signal to a visitor that three other quarters exist. This page replaces
+ * that: it carries no quarter of its own, so it cannot drift the way `process.env.QUARTER`
+ * once did (see the comment this file used to carry, preserved in git history), and it
+ * links out to the four real editions instead of rendering one of them.
+ *
+ * The four editions themselves are unaffected: `src/pages/[quarter].astro` still builds
+ * `dist/2024-Q1.html` etc. via `getStaticPaths`, unchanged by this file.
+ */
 import '../styles/bulletin.css';
-import {
-  completeness, headlineNmr, districtNmr, topFacilities, causeBreakdown, guards, icdCodes,
-  rulesApplied,
-} from '../lib/mart';
-import { chart } from '../lib/charts';
+import { ALL_QUARTERS, headlineNmr, completeness } from '../lib/mart';
 
-// process.env, not import.meta.env: Astro only surfaces PUBLIC_-prefixed vars there,
-// and the difference silently published a file named Q3 holding Q1 figures.
-const QUARTER = process.env.QUARTER ?? '2024-Q1';
-
-const [comp, head, districts, top, causes, g, codes, rules] = await Promise.all([
-  completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER),
-  topFacilities(QUARTER), causeBreakdown(QUARTER), guards(), icdCodes(), rulesApplied(),
-]);
-
-// Read from the mart, never retyped: a hand-written rule name in a provenance record
-// already produced one that does not exist.
-const RULE = rules[0] ?? 'none';
-
-const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
-const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
-const monthsHeld = comp.length - absent.length;
-
-const NATIONAL_NMR = 19; // WHO / national reporting, used as the benchmark rule
-
-const rankingSvg = chart('ranking', top.map((t) => ({
-  label: t.name, value: t.value, provisional: t.provisional,
-})), { xLabel: 'Deliveries in quarter' });
-
-const districtSvg = chart('distribution-across-units', districts.map((d) => ({
-  label: d.district, value: d.value, provisional: d.provisional,
-})), { xLabel: 'Neonatal deaths per 1,000 live births',
-       benchmark: { value: NATIONAL_NMR, label: `national ~${NATIONAL_NMR}` } });
-
-const CAUSE_LABEL: Record<string, string> = {
-  asphyxia: 'Birth asphyxia', prematurity: 'Prematurity', sepsis: 'Sepsis',
-  congenital: 'Congenital', other: 'Other',
-};
-const monthsPhrase = absent.length
-  ? `${monthsHeld} of ${comp.length} expected months, ${absent.join(' and ')} absent`
-  : `${monthsHeld} of ${comp.length} expected months`;
+const editions = await Promise.all(ALL_QUARTERS.map(async (quarter) => {
+  const [head, comp] = await Promise.all([headlineNmr(quarter), completeness(quarter)]);
+  const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
+  const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
+  const bits = [];
+  if (absent.length) bits.push(`${absent.join(', ')} absent`);
+  if (contested.length) bits.push(`batch conflict in ${contested.join(', ')}`);
+  return {
+    quarter,
+    rate: head.rate,
+    note: bits.length ? bits.join(', ') : 'complete quarter, no batch conflicts',
+  };
+}));
 ---
 
 <!DOCTYPE html>
@@ -48,228 +35,77 @@ const monthsPhrase = absent.length
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quarterly Health Bulletin, {QUARTER}</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Quarterly Health Bulletin (synthetic data)</title>
 </head>
 <body>
 <div class="page" id="top">
 
+  <!-- Synthetic-data disclosure: first content element, same wording and markup as the
+       bulletin's own `.synthetic-notice` block, so this reads as one artifact with the
+       four editions it links to, not a separate unbadged surface. -->
+  <div class="synthetic-notice">
+    Synthetic data, built for a Sand Technologies recruitment exercise. This is not an
+    official Ministry of Health, Rwanda publication: every figure reachable from this page
+    is fabricated and does not describe a real health outcome.
+  </div>
+
   <header class="masthead">
-    <div class="kicker">Ministry of Health, Rwanda &middot; neonatal &middot; {QUARTER}</div>
+    <div class="kicker">Ministry of Health, Rwanda &middot; neonatal &middot; quarterly bulletin</div>
     <h1>Quarterly Health Bulletin</h1>
   </header>
 
-  <!-- First screen answers the Director's question: can I defend this document. -->
-  <div class="answer">
-    <div class="answer-label">Neonatal mortality, {QUARTER}</div>
-    <div class="answer-figure">
-      {head.rate.toFixed(1)}<span class="answer-unit"> per 1,000 live births</span>
-    </div>
-    <p class="answer-basis">
-      <b>{head.deaths.toLocaleString()} deaths</b> across <b>{head.births.toLocaleString()} live births</b>,
-      WHO GHO definition, {monthsPhrase}.
-      {contested.length > 0 && (
-        <span>
-          {' '}All {head.provisionalDistricts} district figures
-          {' '}<span class="tag provisional">provisional</span>: {contested.join(' and ')} each
-          loaded twice with differing values.
-        </span>
-      )}
-      {' '}<a class="lineage" href="#lineage-headline">lineage</a>
+  <section class="deep">
+    <h2><span class="n">About</span>What this is</h2>
+    <p>
+      A Quarterly Health Bulletin prototype, built for a Sand Technologies Forward
+      Deployed Engineer assignment. Every figure reachable from this page is produced end
+      to end from five source CSVs (facility registry, clinical neonatal records,
+      facility capability, referrals, and a DHIS2 sample), through one reproducible
+      pipeline, to static HTML: nothing is edited by hand between the data and what you
+      read. The site itself ships zero client-side JavaScript; every chart, table, and
+      figure is rendered at build time.
     </p>
-
-    <div class="receipts">
-      <div class="receipt">
-        <div class="k">Months held</div>
-        <div class={`v ${absent.length ? 'warn' : 'good'}`}>{monthsHeld}<span style="font-size:15px;color:var(--muted)">/{comp.length}</span></div>
-        <div class="d">{absent.length ? `${absent.join(', ')} absent` : 'complete quarter'}</div>
-      </div>
-      <div class="receipt">
-        <div class="k">Facilities reporting</div>
-        <div class="v good">{Math.max(...comp.map((c) => c.facilities_received))}<span style="font-size:15px;color:var(--muted)">/{comp[0]?.facilities_expected}</span></div>
-        <div class="d">in the months held</div>
-      </div>
-      <div class="receipt">
-        <div class="k">Figures provisional</div>
-        <div class={`v ${head.provisionalDistricts ? 'warn' : 'good'}`}>{head.provisionalDistricts}<span style="font-size:15px;color:var(--muted)">/{head.districts}</span></div>
-        <div class="d">{contested.length ? 'awaiting a batch decision' : 'none contested'}</div>
-      </div>
-      <div class="receipt">
-        <div class="k">Panels withheld</div>
-        <div class="v warn">{g.withheldPanels}</div>
-        <div class="d">data cannot support them, see &sect;4</div>
-      </div>
-    </div>
-  </div>
-
-  {/* The Director reads the first screen. Everyone else came for one section, and
-      without this they scroll 5,500px to find it. Plain anchors: works in print,
-      works with no JavaScript, works in a forwarded file. */}
-  <nav class="index" aria-label="Sections">
-    <a href="#s1">&sect;1 Facilities</a>
-    <a href="#s2">&sect;2 Cause of death</a>
-    <a href="#s3">&sect;3 By district</a>
-    <a href="#s4">&sect;4 Withheld</a>
-    <a href="#s5">&sect;5 Known defects</a>
-    <a href="#s6">&sect;6 Lineage</a>
-  </nav>
-
-  <p class="convention">
-    Provisional figures are hatched in bars, hollow in dots, underlined in tables.
-    Every figure links to its lineage record.
-  </p>
-
-  {/* Captions state what a figure is and the one misreading that would cause harm.
-      Nothing here explains method: that lives in the README and openspec/specs, and it
-      was filling this document with an engineering argument the Director did not ask for. */}
-  <section id="s1">
-    <h2><span class="n">&sect;1</span>Facilities by delivery volume</h2>
-    <figure set:html={rankingSvg} />
-    <figcaption>
-      Top {top.length} of 117 by total deliveries. Volume tracks tier, so this is not a
-      quality ranking. <a class="lineage" href="#lineage-top">lineage</a>
-    </figcaption>
   </section>
 
-  <section id="s2">
-    <h2><span class="n">&sect;2</span>Neonatal deaths by cause</h2>
-    <table>
-      <thead><tr><th>Cause</th><th>ICD-10</th><th class="num">Deaths</th><th class="num">Share</th></tr></thead>
-      <tbody>
-        {causes.map((c) => (
-          <tr class={c.provisional ? 'provisional' : ''}>
-            <td>{CAUSE_LABEL[c.cause] ?? c.cause}</td>
-            <td class="mono">{codes[`neonatal_deaths_${c.cause}`] ?? 'not coded'}</td>
-            <td class="num">{c.value.toLocaleString()}</td>
-            <td class="num">{((c.value / causes.reduce((s, x) => s + x.value, 0)) * 100).toFixed(1)}%</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <figcaption>
-      Reconciles to total neonatal deaths in 1,404 of 1,404 source rows.
-      {' '}<a class="lineage" href="#lineage-cause">lineage</a>
-    </figcaption>
-  </section>
-
-  <section id="s3">
-    <h2><span class="n">&sect;3</span>Neonatal mortality by district</h2>
-    <figure set:html={districtSvg} />
-    <figcaption>
-      {districts.length} districts, {districts[districts.length - 1]?.value.toFixed(1)} to {districts[0]?.value.toFixed(1)} per 1,000.
-      District grain: facility coordinates are unusable, &sect;5.
-      {' '}<a class="lineage" href="#lineage-district">lineage</a>
-    </figcaption>
-  </section>
-
-  <section id="s4">
-    <h2><span class="n">&sect;4</span>Withheld</h2>
-    {/* The lead is the guard's own recorded reason, not a restatement of it. The pipeline
-        already writes one sentence per row carrying the numbers that decided the
-        disposition, so anything written here by hand would be a second, driftable copy. */}
-    <div class="withheld-panel">
-      <div class="hd">Withheld &middot; trend against previous quarter</div>
-      <p class="lead">{g.temporal.find((t) => t.withheld)?.reason}</p>
-      <table>
-        <thead><tr><th>Series</th><th class="num">Observed lag-1</th><th class="num">Permutation null</th><th>Disposition</th></tr></thead>
-        <tbody>
-          {g.temporal.map((t) => (
-            <tr>
-              <td class="mono">{t.element}</td>
-              <td class="num">{t.observed >= 0 ? '+' : ''}{t.observed.toFixed(3)}</td>
-              <td class="num">{t.nullMean >= 0 ? '+' : ''}{t.nullMean.toFixed(3)} &plusmn; {t.nullSd.toFixed(3)}</td>
-              <td><span class="tag withheld">withheld</span></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <figcaption>Seed {g.temporal[0]?.seed}, {g.temporal[0]?.trials} trials.</figcaption>
-    </div>
-
-    <div class="withheld-panel">
-      <div class="hd">Withheld &middot; what drives mortality</div>
-      <p class="lead">{g.strat.find((s) => s.withheld)?.reason}</p>
-      <table>
-        <thead><tr><th>Covariate</th><th class="num">Pooled r</th><th>Within tier</th><th>Disposition</th></tr></thead>
-        <tbody>
-          {g.strat.map((s) => (
-            <tr>
-              <td class="mono">{s.covariate}</td>
-              <td class="num">{s.pooled >= 0 ? '+' : ''}{s.pooled.toFixed(3)}</td>
-              <td class="mono">{s.within}</td>
-              <td><span class="tag withheld">withheld</span></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  <section class="deep">
+    <h2><span class="n">Editions</span>Four quarterly editions, 2024</h2>
+    <p>
+      Each edition covers one quarter, resolved independently from the same pipeline.{' '}
+      <b>2024-Q1</b> is the quarter the written submission discusses: it carries both an
+      unresolved batch conflict and a missing month, so it is the edition that exercises
+      every caveat the build has. Start there if you are reading only one.
+    </p>
+    <div class="receipts" style="border-bottom:none;">
+      {editions.map((e) => (
+        <div class="receipt">
+          <div class="k">{e.quarter}{e.quarter === '2024-Q1' ? ', start here' : ''}</div>
+          <div class="v good"><a href={`/${e.quarter}`}>{e.rate.toFixed(1)}</a></div>
+          <div class="d">{e.note}</div>
+        </div>
+      ))}
     </div>
   </section>
 
-  <section id="s5">
-    <h2><span class="n">&sect;5</span>Known defects in the source data</h2>
-    <table>
-      <thead><tr><th>Field</th><th>Finding</th><th class="num">Extent</th><th>Handling</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">gps_lat, gps_lon</td><td>Uniform random within Rwanda's bounding box. Every province spans the full country extent.</td><td class="num">117 / 117</td><td><span class="tag unmeasured">not used</span></td></tr>
-        <tr class="provisional"><td class="mono">2024-01, 2024-03</td><td>Each loaded twice with differing values. No timestamp distinguishes them, and both are internally consistent.</td><td class="num">234 rows</td><td><span class="tag provisional">queued</span></td></tr>
-        <tr><td class="mono">2024-02, 2024-12</td><td>Absent entirely.</td><td class="num">2 months</td><td><span class="tag unmeasured">disclosed</span></td></tr>
-        <tr><td class="mono">facility_name</td><td>Contradicts <code>tier_level</code>.</td><td class="num">62 / 117</td><td><span class="tag unmeasured">label only</span></td></tr>
-        <tr><td class="mono">staff_per_delivery_2024</td><td>Named as derived but unreconstructable. Best of eight formulas matched 58.1%, worse than guessing the column's own mode.</td><td class="num">3 values</td><td><span class="tag unmeasured">not used</span></td></tr>
-        <tr><td class="mono">birth_weight_less_2500g</td><td>Independent of prematurity, r = 0.018, where reality gives 0.6 to 0.9.</td><td class="num">1,404 rows</td><td><span class="tag unmeasured">not used</span></td></tr>
-        <tr><td class="mono">facility_id</td><td>Prefix ambiguous across districts. <code>NYA</code> maps to seven.</td><td class="num">9 prefixes</td><td><span class="tag settled">resolved</span></td></tr>
-      </tbody>
-    </table>
+  <section class="deep">
+    <h2><span class="n">Email</span>Email edition</h2>
+    <p>
+      A short, chart-free summary built for clients that cannot render inline SVG (Gmail,
+      Outlook, and Yahoo drop it): <a href="/email.html">read the email edition</a>.
+    </p>
   </section>
 
-  <section id="s6">
-    <h2><span class="n">&sect;6</span>Lineage</h2>
-
-    {/* One table, not four cards. The cards used eleven different field names between
-        them, so no two figures could be compared, and their per-figure caveats repeated
-        what each section already says. A fixed schema also exposes the gap: a figure
-        missing a definition now has a visibly empty cell. */}
-    <table class="lineage">
-      <thead>
-        <tr><th>Figure</th><th>Grain</th><th>Inputs</th><th>Rule applied</th><th>Definition</th></tr>
-      </thead>
-      <tbody>
-        <tr id="lineage-headline">
-          <th scope="row">Neonatal mortality, headline</th>
-          <td class="mono">national, quarter</td>
-          <td>{head.births.toLocaleString()} live births, {head.deaths.toLocaleString()} deaths, {districts.length} districts, {monthsPhrase}</td>
-          <td><code>{RULE}</code> lowest occurrence ordinal, arbitrary and pending resolution</td>
-          <td>WHO GHO: (early + late neonatal deaths) / live births &times; 1,000</td>
-        </tr>
-        <tr id="lineage-top">
-          <th scope="row">Facilities by delivery volume</th>
-          <td class="mono">facility, quarter</td>
-          <td>117 facilities, {monthsHeld} months each, top {top.length} shown</td>
-          <td><code>{RULE}</code> on contested batches</td>
-          <td>Sum of <code>total_deliveries</code> over held months</td>
-        </tr>
-        <tr id="lineage-cause">
-          <th scope="row">Neonatal deaths by cause</th>
-          <td class="mono">national, quarter</td>
-          <td>5 cause elements, reconciling in 1,404 of 1,404 source rows</td>
-          <td><code>{RULE}</code> on contested batches</td>
-          <td>ICD-10 P21, P07, P36, Q00 to Q99, summed over held months</td>
-        </tr>
-        <tr id="lineage-district">
-          <th scope="row">Neonatal mortality by district</th>
-          <td class="mono">district, quarter</td>
-          <td>{districts.length} districts, {head.births.toLocaleString()} live births, {districts.filter((d) => d.provisional).length} provisional</td>
-          <td><code>{RULE}</code> lowest occurrence ordinal</td>
-          <td>WHO GHO per district, benchmarked against {NATIONAL_NMR} per 1,000</td>
-        </tr>
-      </tbody>
-    </table>
+  <section class="deep">
+    <h2><span class="n">Source</span>Repository</h2>
+    <p>
+      Pipeline, checks, and every source document behind this bulletin are in the
+      repository: <a href="https://github.com/nyashkn/sand-fde-int">github.com/nyashkn/sand-fde-int</a>.
+    </p>
   </section>
 
   <footer class="colophon">
-    Generated from <code>assignment_csv</code> and <code>dhis2</code> &middot;
-    {head.provisionalDistricts} of {head.districts} district figures provisional &middot;
-    {g.withheldPanels} panels withheld<br />
-    Pipeline <code>run.py</code> (Hamilton, DuckDB, Parquet) &middot; site Astro, zero client JavaScript<br />
-    Rebuild: <code>uv run python run.py &amp;&amp; bun run build</code>
+    Generated from <code>assignment_csv</code> and <code>dhis2</code><br />
+    Pipeline <code>run.py</code> (Hamilton, DuckDB, Parquet) &middot; site Astro, zero client JavaScript
   </footer>
 
 </div>

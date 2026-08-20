@@ -210,7 +210,7 @@ clinical-safety grounds. B requires facility-level freshness that monthly aggreg
 cannot supply, regardless of how many facilities report (§1.3). A operates on data that already
 arrives, in a shape that already exists.
 
-**2, It is the only option with a baseline that plausibly already exists.** Subject to §2.5 A3 , 
+**2, It is the only option with a baseline that plausibly already exists.** Subject to §2.5 A3,
 the baseline must be measured, not assumed. B and C would need one built first.
 
 **3, It is the trust wedge.** Delivering a defensible artifact to the analyst and the Director
@@ -244,7 +244,7 @@ Ministry's artifact. §2.5 A5 resolves this; I will not redefine the bulletin wi
 Not because it is unimportant, it is closest to the Solutions Manager's pre-commitment and closest
 to the maternal/neonatal priority. Because B needs **facility-level freshness**, and the reporting
 substrate is monthly aggregates on a 2–3 week lag. That is a granularity and cadence gap, not
-merely a coverage gap, and closing it is a separate project. B is out of reach *in this sprint* , 
+merely a coverage gap, and closing it is a separate project. B is out of reach *in this sprint*,
 not impossible.
 
 ### Why not C
@@ -259,7 +259,7 @@ wrong first engagement. **S-C2 is the version of C I would propose.**
 ### The internal disagreement I would surface, not hide
 
 The Solutions Manager pre-identified the use cases before discovery, and his hypothesis points at
-B. Discovery points at A. I would put the sequencing in writing to him and the Director in Week 1 , 
+B. Discovery points at A. I would put the sequencing in writing to him and the Director in Week 1,
 including the honest version of what A does and does not give B. An FDE who lets a pre-sold
 narrative survive contradicting evidence has chosen internal comfort over the client.
 

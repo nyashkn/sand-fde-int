@@ -38,7 +38,7 @@ Constraints that shape the approach:
 
 **Bind canonical terms to DHIS2, extend with ICD-10, invent nothing else.**
 `orgUnit`, `period`, and `dataElement` come from DHIS2; cause-of-death terms bind to ICD-10
-perinatal P-codes. *Alternative considered:* authoring a clean project vocabulary. Rejected , 
+perinatal P-codes. *Alternative considered:* authoring a clean project vocabulary. Rejected,
 the MoH already speaks DHIS2, and a competing vocabulary would have to be translated back at
 handover, which is precisely the cost the ubiquitous language exists to avoid.
 

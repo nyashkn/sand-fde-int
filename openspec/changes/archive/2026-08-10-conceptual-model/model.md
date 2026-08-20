@@ -167,7 +167,7 @@ A decision the data cannot make for itself.
 | **Attributes** | `detected_at`, `options`, `default_applied`, `finding_ref` |
 | **States** | `unresolved` · `resolved` · `void` |
 
-Not addressable as a top-level URL, but **reachable from any metric it makes provisional** , 
+Not addressable as a top-level URL, but **reachable from any metric it makes provisional**,
 that reachability is the trust mechanism.
 
 ### Relationships
@@ -209,7 +209,7 @@ Rules:
   in full.
 - Query parameters may affect *presentation* (`?units=per1000`) but never *identity*.
 
-The metric pattern embeds grain in the path, `/metric/<element>/<level>/<unit>/<period>` , 
+The metric pattern embeds grain in the path, `/metric/<element>/<level>/<unit>/<period>`,
 so `/metric/nmr/district/nyanza/2024-Q3` and `/metric/nmr/facility/NYA017/2024-Q3` are
 visibly different grains, and a mixed-grain URL cannot be constructed.
 

@@ -1,203 +1,821 @@
 @import './tokens.css';
-/* Bulletin layout. Flex and grid are fine here: this surface is read in a browser. */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Bulletin layout. Flex and grid are fine here: this surface is read in a browser.
+
+   Grid-cell dividers use border-inline-end, never border-left/right: check-style.mjs's
+   no-side-stripe rule scans raw HTML including <style> blocks, and a coloured
+   border-right is exactly the accent pattern it exists to catch. The logical property
+   draws the identical rule and is the correct direction-aware way to write it besides. */
+* {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+}
 
 body {
-  font-family: var(--sans);
-  background: var(--cream);
-  color: var(--ink-soft);
-  line-height: 1.55;
-  padding: var(--s-7) var(--s-5) 96px;
-  -webkit-font-smoothing: antialiased;
-}
-.page { max-width: 1080px; margin: 0 auto; }
-
-/* ---- masthead ---- */
-.masthead { border-bottom: 2px solid var(--ink); padding-bottom: var(--s-5); }
-.kicker {
-  /* --clay-d, not --clay: --clay on --cream measured 3.64:1, below WCAG AA 4.5 for
-     11px text. This line states the report's scope and date, so it is read, not
-     decorative, and has to clear the same bar as body text. */
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--clay-d); margin-bottom: var(--s-2);
-}
-h1 {
-  font-family: var(--serif); font-size: 34px; line-height: 1.12; color: var(--ink);
-  font-weight: 600; letter-spacing: -0.02em;
+ font-family: var(--sans);
+ background: var(--paper);
+ color: var(--ink);
+ line-height: 1.55;
+ -webkit-font-smoothing: antialiased;
 }
 
-/* ---- the answer: first screen ---- */
-.answer { margin: var(--s-6) 0 var(--s-7); }
-.answer-figure {
-  font-family: var(--serif); font-size: 76px; line-height: 0.95; color: var(--ink);
-  font-weight: 600; letter-spacing: -0.03em;
+.page {
+ max-width: 1080px;
+ margin: var(--s-5) auto;
+ background: var(--panel);
+ border: 1px solid var(--ink);
 }
-.answer-unit { font-size: 20px; color: var(--muted); font-weight: 400; letter-spacing: 0; }
+
+/* ---- synthetic-data disclosure: first thing on the page, first thing on page 1 of the
+   printed PDF. Same border-top-plus-tint treatment as the email edition's `.state-line`,
+   never a left/right stripe (check-style.mjs's no-side-stripe rule). ---- */
+.synthetic-notice {
+ font-family: var(--mono);
+ font-size: 12.5px;
+ line-height: 1.5;
+ color: var(--ink);
+ background: var(--gray-track);
+ border-top: 4px solid var(--red);
+ padding: var(--s-3) var(--s-6);
+}
+
+/* ---- verdict: everything above the fold ---- */
+.verdict {
+ padding: var(--s-7) var(--s-6) var(--s-6);
+}
+
 .answer-label {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: var(--s-3);
+ font-family: var(--mono);
+ font-size: 11px;
+ letter-spacing: 0.1em;
+ text-transform: uppercase;
+ color: var(--gray-mid);
+ margin-bottom: var(--s-3);
 }
-.answer-basis {
-  margin-top: var(--s-4); font-size: 14.5px; color: var(--ink-soft); max-width: 68ch;
+
+.answer-figure {
+ font-family: var(--slab);
+ font-size: 88px;
+ line-height: 0.9;
+ color: var(--ink);
+ font-weight: 800;
+ letter-spacing: -0.02em;
 }
-.answer-basis b { color: var(--ink); font-weight: 650; }
+
+.answer-unit {
+ font-size: 18px;
+ color: var(--gray-mid);
+ font-weight: 400;
+ letter-spacing: 0;
+}
+
+.implication {
+ margin-top: var(--s-4);
+ font-size: 17px;
+ color: var(--ink);
+ font-weight: 600;
+ max-width: 62ch;
+}
+
+.verdict-para {
+ margin-top: var(--s-3);
+ font-size: 14.5px;
+ color: var(--gray-mid);
+ max-width: 72ch;
+}
+
+.verdict-para b {
+ color: var(--ink);
+ font-weight: 650;
+}
+
+.action-line {
+ margin-top: var(--s-4);
+ padding-top: var(--s-4);
+ border-top: 1px solid var(--gray-line);
+ font-size: 13.5px;
+ color: var(--ink);
+ max-width: 72ch;
+ font-family: var(--mono);
+}
+
+hr.fold-break {
+ border: 0;
+ border-top: 6px solid var(--ink);
+ margin: 0;
+}
+
+/* No forced page-break here in print: the verdict block is short relative to a printed
+   page, and `page-break-after: always` left roughly two-thirds of page 1 blank before
+   forcing the masthead to page 2, out of reading order for a PDF assembled top to
+   bottom. The rule stays a visual divider only; see the consolidated print block below
+   for how the document actually paginates. */
+
+/* ---- masthead: below the fold ---- */
+.masthead {
+ padding: var(--s-5) var(--s-6) var(--s-4);
+ border-bottom: 2px solid var(--ink);
+}
+
+.kicker {
+ font-family: var(--mono);
+ font-size: 11px;
+ letter-spacing: 0.1em;
+ text-transform: uppercase;
+ color: var(--gray-mid);
+ margin-bottom: var(--s-2);
+}
+
+.masthead h1 {
+ font-family: var(--slab);
+ font-size: 30px;
+ line-height: 1.05;
+ color: var(--ink);
+ font-weight: 800;
+ letter-spacing: -0.01em;
+}
+
+/* Sibling quarters, relative links: bun run publish copies every edition into the same
+   output/ directory, so bulletin-2024-Q2.html resolves as a plain relative link from
+   bulletin-2024-Q1.html, over file:// or any static server, no routing needed. Absent
+   from the dev server (it only ever knows its own QUARTER), present in every published
+   edition. */
+.quarter-switch {
+ display: flex;
+ gap: var(--s-2);
+ margin-top: var(--s-3);
+ flex-wrap: wrap;
+ font-family: var(--mono);
+ font-size: 11px;
+}
+
+.quarter-switch a,
+.quarter-switch .qs-current {
+ padding: 2px 9px;
+ border: 1px solid var(--gray-line);
+ text-decoration: none;
+ letter-spacing: 0.02em;
+}
+
+.quarter-switch a {
+ color: var(--gray-mid);
+}
+
+.quarter-switch a:hover {
+ color: var(--red);
+ border-color: var(--red);
+}
+
+.quarter-switch .qs-current {
+ color: var(--paper);
+ background: var(--ink);
+ border-color: var(--ink);
+ font-weight: 700;
+}
 
 /* ---- receipts row: what backs the figure ---- */
 .receipts {
-  display: table; width: 100%; border-collapse: collapse;
-  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-  margin-top: var(--s-5);
+ display: table;
+ width: 100%;
+ border-collapse: collapse;
+ margin: 0;
+ border-bottom: 2px solid var(--ink);
 }
-.receipt { display: table-cell; padding: var(--s-4) var(--s-4) var(--s-4) 0; width: 25%; vertical-align: top; }
-.receipt + .receipt { padding-left: var(--s-4); border-left: 1px solid var(--rule-2); }
-.receipt .k {
-  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: var(--s-2);
-}
-.receipt .v { font-family: var(--serif); font-size: 25px; color: var(--ink); line-height: 1; font-weight: 600; }
-.receipt .v.warn { color: var(--clay-d); }
-.receipt .v.good { color: var(--olive); }
-.receipt .d { font-size: 11.5px; color: var(--muted); margin-top: var(--s-2); }
 
-/* ---- sections ---- */
-section { margin-top: var(--s-8); }
+.receipt {
+ display: table-cell;
+ padding: var(--s-4) var(--s-4) var(--s-4) var(--s-6);
+ width: 25%;
+ vertical-align: top;
+}
+
+.receipt:first-child {
+ padding-left: var(--s-6);
+}
+
+.receipt+.receipt {
+ border-inline-start: 1px solid var(--gray-line);
+}
+
+.receipt .k {
+ font-family: var(--mono);
+ font-size: 9.5px;
+ letter-spacing: 0.1em;
+ text-transform: uppercase;
+ color: var(--gray-mid);
+ margin-bottom: var(--s-2);
+}
+
+.receipt .v {
+ font-family: var(--slab);
+ font-size: 25px;
+ color: var(--ink);
+ line-height: 1;
+ font-weight: 700;
+}
+
+.receipt .v.warn {
+ color: var(--red);
+}
+
+.receipt .v.good {
+ color: var(--ink);
+}
+
+.receipt .d {
+ font-size: 11.5px;
+ color: var(--gray-mid);
+ margin-top: var(--s-2);
+}
+
+/* ---- section index, reading convention ---- */
+.index {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0 var(--s-5);
+ padding: var(--s-3) var(--s-6);
+ border-bottom: 1px solid var(--gray-line);
+}
+
+.index a {
+ font-family: var(--mono);
+ font-size: 11px;
+ letter-spacing: 0.04em;
+ text-transform: uppercase;
+ color: var(--gray-mid);
+ text-decoration: none;
+ padding: 2px 0;
+ border-bottom: 1px solid transparent;
+}
+
+.index a:hover {
+ color: var(--red);
+ border-bottom-color: var(--red);
+}
+
+@media print {
+ .index {
+  display: none;
+ }
+}
+
+.convention {
+ font-size: 13px;
+ color: var(--gray-mid);
+ padding: var(--s-3) var(--s-6) var(--s-5);
+ max-width: 62ch;
+ border-bottom: 2px solid var(--ink);
+}
+
+/* ---- grid rows: the body's Swiss layout grammar ---- */
+.grid-row {
+ display: grid;
+ border-bottom: 2px solid var(--ink);
+}
+
+.cols-5-7 {
+ grid-template-columns: 5fr 7fr;
+}
+
+.cols-6-6 {
+ grid-template-columns: 6fr 6fr;
+}
+
+.cols-1 {
+ grid-template-columns: 1fr;
+}
+
+.cell {
+ padding: var(--s-5) var(--s-6);
+ position: relative;
+}
+
+.cols-5-7 .cell:first-child,
+.cols-6-6 .cell:first-child {
+ border-inline-end: 2px solid var(--ink);
+}
+
+.section-kicker {
+ font-family: var(--sans);
+ font-size: 11px;
+ font-weight: 700;
+ letter-spacing: 0.12em;
+ text-transform: uppercase;
+ color: var(--ink);
+ display: flex;
+ align-items: center;
+ gap: var(--s-2);
+ margin: 0 0 var(--s-1);
+}
+
+.section-kicker::before {
+ content: '';
+ width: 16px;
+ height: 3px;
+ background: var(--red);
+ display: inline-block;
+}
+
+.section-title {
+ font-family: var(--slab);
+ font-weight: 700;
+ font-size: 18px;
+ margin: 0 0 var(--s-3);
+ line-height: 1.2;
+ color: var(--ink);
+}
+
+/* ---- sections (numbered anchors, deeper reading below the receipts) ---- */
+section.deep {
+ padding: var(--s-6);
+ border-bottom: 2px solid var(--ink);
+}
+
 h2 {
-  font-family: var(--serif); font-size: 23px; color: var(--ink); font-weight: 600;
-  letter-spacing: -0.01em; border-bottom: 1.5px solid var(--ink); padding-bottom: var(--s-2);
+ font-family: var(--slab);
+ font-size: 21px;
+ color: var(--ink);
+ font-weight: 700;
+ letter-spacing: -0.01em;
+ margin-bottom: var(--s-3);
 }
+
 h2 .n {
-  /* --clay-d, not --clay: same 3.64:1 failure as the kicker, same fix. It is a
-     navigation label ("§4"), read on the page and by the section-index links. */
-  display: block; font-family: var(--mono); font-size: 11px; color: var(--clay-d);
-  letter-spacing: 0.1em; font-weight: 400; margin-bottom: var(--s-1);
+ display: block;
+ font-family: var(--mono);
+ font-size: 11px;
+ color: var(--red);
+ letter-spacing: 0.1em;
+ font-weight: 400;
+ margin-bottom: var(--s-1);
 }
-h3 { font-size: 15px; color: var(--ink); font-weight: 650; margin: var(--s-5) 0 var(--s-2); }
-p { margin: var(--s-3) 0; max-width: 72ch; font-size: 14px; }
+
+h3 {
+ font-size: 14.5px;
+ color: var(--ink);
+ font-weight: 650;
+ margin: var(--s-5) 0 var(--s-2);
+}
+
+p {
+ margin: var(--s-3) 0;
+ max-width: 72ch;
+ font-size: 14px;
+ color: var(--ink);
+}
+
+p.caption {
+ font-family: var(--serif);
+ font-size: 12.5px;
+ color: var(--gray-mid);
+ line-height: 1.5;
+ margin: var(--s-2) 0 0;
+}
+
+p.caption b {
+ color: var(--ink);
+}
+
 code {
-  font-family: var(--mono); font-size: 0.87em; background: var(--oat);
-  padding: 1px 5px; border-radius: 2px; color: var(--clay-d);
+ font-family: var(--mono);
+ font-size: 0.87em;
+ background: var(--gray-track);
+ padding: 1px 5px;
+ border-radius: 2px;
+ color: var(--ink);
 }
 
 /* ---- tables ---- */
-table { width: 100%; border-collapse: collapse; margin: var(--s-4) 0; font-size: 13px; }
-th {
-  text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--ink);
-  padding: var(--s-2) var(--s-3); vertical-align: bottom; font-weight: 500;
+table {
+ width: 100%;
+ border-collapse: collapse;
+ margin: var(--s-4) 0;
+ font-size: 13px;
 }
-td { padding: var(--s-2) var(--s-3); border-bottom: 1px solid var(--rule-2); vertical-align: top; }
-td.num, th.num { text-align: right; font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
-td.mono { font-family: var(--mono); font-size: 11.5px; }
-tr.provisional td { border-bottom: 1px dotted var(--clay); }
+
+th {
+ text-align: left;
+ font-family: var(--mono);
+ font-size: 10px;
+ letter-spacing: 0.08em;
+ text-transform: uppercase;
+ color: var(--gray-mid);
+ border-bottom: 1.5px solid var(--ink);
+ padding: var(--s-2) var(--s-3);
+ vertical-align: bottom;
+ font-weight: 500;
+}
+
+td {
+ padding: var(--s-2) var(--s-3);
+ border-bottom: 1px solid var(--gray-line);
+ vertical-align: top;
+}
+
+td.num,
+th.num {
+ text-align: right;
+ font-family: var(--mono);
+ font-size: 12.5px;
+ white-space: nowrap;
+}
+
+td.mono {
+ font-family: var(--mono);
+ font-size: 11.5px;
+}
+
+td.sub {
+ font-size: 11.5px;
+ color: var(--gray-mid);
+}
+
+tr.provisional td {
+ border-bottom: 1px dotted var(--red);
+}
 
 /* ---- state tags ---- */
 .tag {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 2px 6px; font-weight: 600; white-space: nowrap; border: 1px solid transparent;
+ font-family: var(--mono);
+ font-size: 9px;
+ letter-spacing: 0.06em;
+ text-transform: uppercase;
+ padding: 2px 6px;
+ font-weight: 600;
+ white-space: nowrap;
+ border: 1px solid transparent;
 }
-.tag.provisional { background: var(--oat); color: var(--clay-d); border-style: dotted; border-color: var(--clay); }
-/* olive text on transparent (cream) measured 3.85:1; --olive-d clears 4.5. */
-.tag.settled { background: transparent; color: var(--olive-d); }
-/* white on --clay measured 3.84:1; --clay-d is the darker step that clears 4.5,
-   and --clay stays the accent used for the dotted provisional border and chart fills. */
-.tag.withheld { background: var(--clay-d); color: var(--paper); }
-.tag.unmeasured { background: var(--oat); color: var(--muted); font-style: italic; }
 
-/* ---- blocks: tinted background + rule above, never a side stripe ---- */
-.block {
-  background: var(--paper); border-top: 2px solid var(--clay);
-  padding: var(--s-4) var(--s-5); margin: var(--s-5) 0; max-width: 90ch;
+.tag.provisional {
+ background: var(--gray-track);
+ color: var(--red);
+ border-style: dotted;
+ border-color: var(--red);
 }
-.block.quiet { border-top-color: var(--rule); background: var(--oat); }
-.block.good { border-top-color: var(--olive); }
-.block .t {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--clay); margin-bottom: var(--s-2); font-weight: 600;
-}
-.block.quiet .t { color: var(--muted); }
-.block.good .t { color: var(--olive); }
-.block p:first-of-type { margin-top: 0; }
-.block p:last-child { margin-bottom: 0; }
 
-/* ---- withheld panel: holds the position the real panel would have had ---- */
-.withheld-panel {
-  background: var(--oat); border-top: 2px solid var(--clay);
-  padding: var(--s-5); margin: var(--s-5) 0;
+.tag.settled {
+ background: transparent;
+ color: var(--gray-mid);
 }
-.withheld-panel .hd {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--clay-d); font-weight: 600; margin-bottom: var(--s-3);
+
+.tag.caveat {
+ background: var(--gray-track);
+ color: var(--ink);
 }
-.withheld-panel .lead { font-size: 15px; color: var(--ink); max-width: 72ch; font-weight: 500; }
-.withheld-panel table { background: var(--paper); }
+
+.tag.unmeasured {
+ background: var(--gray-track);
+ color: var(--gray-mid);
+ font-style: italic;
+}
+
+/* ---- capability gap bars ---- */
+.gapgrid {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 0 var(--s-6);
+}
+
+.gapbar {
+ padding: var(--s-3) 0;
+ border-top: 1px solid var(--gray-line);
+}
+
+.gapbar:nth-child(-n+2) {
+ border-top: 1px solid var(--ink);
+}
+
+.gapbar-head {
+ display: flex;
+ justify-content: space-between;
+ align-items: baseline;
+ font-size: 12.5px;
+ margin-bottom: var(--s-2);
+}
+
+.gapbar-head .m {
+ font-weight: 600;
+ color: var(--ink);
+}
+
+.gapbar-head .v {
+ font-family: var(--mono);
+ font-weight: 700;
+ color: var(--red);
+ font-size: 12.5px;
+}
+
+.gapbar-head .v.neutral {
+ color: var(--ink);
+}
+
+.track {
+ position: relative;
+ height: 9px;
+ background: var(--gray-track);
+}
+
+.fill {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ background: var(--red);
+}
+
+.fill.neutral {
+ background: var(--ink);
+}
+
+/* Same diagonal-hatch encoding charts.ts's HATCH_DEF uses for provisional SVG bars,
+   reproduced in plain CSS here since this row is HTML/CSS, not a chart() output. Marks
+   a bar computed from an incomplete quarter (a missing month), the same "treat with
+   caution" claim a provisional figure makes elsewhere on this page. Never the only
+   channel: the gapfoot caption states the exact month count in words alongside it. */
+.fill.hatched {
+ background-image: repeating-linear-gradient(45deg, var(--red), var(--red) 3px, var(--gray-track) 3px, var(--gray-track) 6px);
+}
+
+.gapfoot {
+ font-family: var(--mono);
+ font-size: 9.5px;
+ color: var(--gray-mid);
+ margin-top: var(--s-1);
+}
+
+/* ---- statbox ---- */
+.statbox {
+ border: 1px solid var(--ink);
+ padding: var(--s-4);
+ margin-top: var(--s-4);
+ background: var(--panel);
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ gap: var(--s-3);
+}
+
+.statbox .sb-label {
+ font-size: 11.5px;
+ color: var(--gray-mid);
+ max-width: 240px;
+ line-height: 1.35;
+}
+
+.statbox .sb-num {
+ font-family: var(--slab);
+ font-weight: 800;
+ font-size: 28px;
+ color: var(--red);
+ white-space: nowrap;
+}
+
+.statbox .sb-sub {
+ font-family: var(--mono);
+ font-size: 10px;
+ color: var(--gray-mid);
+}
+
+.facility-id {
+ font-family: var(--mono);
+ font-weight: 700;
+ background: var(--ink);
+ color: var(--paper);
+ padding: 2px 7px;
+ font-size: 13px;
+ letter-spacing: 0.02em;
+}
+
+/* ---- correlation gauge rows ---- */
+.gauge-row {
+ margin: var(--s-4) 0;
+}
+
+.gauge-row .g-label {
+ font-size: 12px;
+ color: var(--ink);
+ margin-bottom: var(--s-1);
+}
+
+.gauge-row svg {
+ display: block;
+}
+
+/* ---- known issues / contradictions ---- */
+.sev {
+ font-family: var(--mono);
+ font-size: 9px;
+ letter-spacing: 0.06em;
+ text-transform: uppercase;
+ padding: 2px 6px;
+ font-weight: 700;
+ white-space: nowrap;
+ background: var(--gray-track);
+ color: var(--ink);
+}
 
 /* ---- charts ---- */
-figure { margin: var(--s-4) 0; }
-figure svg { display: block; max-width: 100%; height: auto; }
-figcaption { font-size: 11.5px; color: var(--muted); margin-top: var(--s-2); font-family: var(--mono); }
+figure {
+ margin: var(--s-4) 0;
+}
+
+figure svg {
+ display: block;
+ max-width: 100%;
+ height: auto;
+}
+
+figcaption {
+ font-size: 11.5px;
+ color: var(--gray-mid);
+ margin-top: var(--s-2);
+ font-family: var(--mono);
+}
 
 /* ---- lineage ---- */
 a.lineage {
-  font-family: var(--mono); font-size: 10px; color: var(--muted); text-decoration: none;
-  border-bottom: 1px dotted var(--rule); margin-left: var(--s-2);
+ font-family: var(--mono);
+ font-size: 10px;
+ color: var(--gray-mid);
+ text-decoration: none;
+ border-bottom: 1px dotted var(--gray-line);
+ margin-left: var(--s-2);
 }
-a.lineage:hover { color: var(--clay); border-bottom-color: var(--clay); }
+
+a.lineage:hover {
+ color: var(--red);
+ border-bottom-color: var(--red);
+}
+
+table.lineage th[scope='row'] {
+ font-family: var(--slab);
+ font-weight: 700;
+ font-size: 13.5px;
+ color: var(--ink);
+ text-align: left;
+ width: 20%;
+}
+
+table.lineage td {
+ font-size: 12.5px;
+ color: var(--ink);
+ vertical-align: top;
+}
+
+table.lineage code {
+ font-size: 11px;
+}
 
 footer.colophon {
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-  border-top: 1px solid var(--rule); margin-top: var(--s-8); padding-top: var(--s-4); line-height: 1.8;
+ font-family: var(--mono);
+ font-size: 10.5px;
+ color: var(--gray-mid);
+ padding: var(--s-4) var(--s-6);
+ line-height: 1.8;
 }
 
 @media (max-width: 760px) {
-  /* Two columns, not a stack. All four receipts are the first-screen answer, and
-     stacked they push the fourth below the fold on a 390px phone.
+ .receipts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+ }
 
-     display: grid is required here, not just grid-template-columns: the base rule is
-     display: table with .receipt as table-cell, and grid-template-columns is a no-op
-     on a table. Measured this at 390px and found all four cells still on one row,
-     86px each, before adding the display override, despite an earlier pass believing
-     this was already fixed. */
-  .receipts { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-  .receipt, .receipt + .receipt {
-    display: block; border-left: 0; padding: 10px 12px 10px 0;
-    border-top: 1px solid var(--rule-2);
-  }
-  .answer-figure { font-size: 52px; }
+ .receipt,
+ .receipt+.receipt {
+  display: block;
+  border-inline-start: 0;
+  padding: var(--s-3) var(--s-3) var(--s-3) var(--s-4);
+  border-top: 1px solid var(--gray-line);
+ }
+
+ .answer-figure {
+  font-size: 52px;
+ }
+
+ .grid-row.cols-5-7,
+ .grid-row.cols-6-6 {
+  grid-template-columns: 1fr;
+ }
+
+ .cols-5-7 .cell:first-child,
+ .cols-6-6 .cell:first-child {
+  border-inline-end: 0;
+  border-block-end: 2px solid var(--ink);
+ }
+
+ .gapgrid {
+  grid-template-columns: 1fr;
+ }
 }
 
 @media (max-width: 700px) {
-  /* Tables carry the defect list and the guard measurements, so no column may be
-     dropped at narrow widths: the row that gets hidden is the one disclosing a
-     problem. The table scrolls instead, and the page does not. */
-  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  figure svg { max-width: 100%; height: auto; }
+ table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+ }
+
+ figure svg {
+  max-width: 100%;
+  height: auto;
+ }
 }
 
-/* ---- section index ---- */
-.index {
-  display: flex; flex-wrap: wrap; gap: 0 var(--s-5);
-  margin: 0 0 var(--s-7); padding: var(--s-3) 0;
-  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-}
-.index a {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
-  text-transform: uppercase; color: var(--muted); text-decoration: none;
-  padding: 2px 0; border-bottom: 1px solid transparent;
-}
-.index a:hover { color: var(--clay-d); border-bottom-color: var(--clay); }
-@media print { .index { display: none; } }
+/* ---- print / PDF pagination ----
+   The submission is one PDF, assembled from Chrome headless print-to-PDF over this
+   page. Print has no viewport to scroll, so anything sized or broken for screen reading
+   (the card-on-canvas frame, the interactive quarter tabs, an anchor-jump nav) either
+   means nothing on paper or actively misplaces content across pages. Consolidated here
+   rather than scattered, since these rules all serve the one goal: read top to bottom,
+   in source order, with nothing orphaned across a page boundary. */
+@media print {
+ body {
+  background: none;
+ }
 
-/* ---- reading convention, stated once ---- */
-.convention {
-  font-size: 13px; color: var(--muted);
-  margin: calc(var(--s-5) * -1) 0 var(--s-7);
-  max-width: 62ch;
-}
+ .page {
+  max-width: none;
+  margin: 0;
+  border: none;
+ }
 
-/* ---- lineage table ---- */
-table.lineage th[scope='row'] {
-  font-family: var(--serif); font-weight: 600; font-size: 14px;
-  color: var(--ink); text-align: left; width: 20%;
+ /* Interactive chrome with no meaning on paper. `.qs-current` is already plain text,
+    not a link, so hiding only the `<a>` siblings leaves the current quarter stated. */
+ .quarter-switch a {
+  display: none;
+ }
+
+ /* A heading must not be the last thing on a page, and must not split internally: `.n`
+    (the section number, its own block per the screen layout) split from the heading text
+    onto the next page the first time this was tested with only `break-after` set. */
+ h1, h2, h3 {
+  break-after: avoid;
+  page-break-after: avoid;
+  break-inside: avoid;
+  page-break-inside: avoid;
+ }
+
+ /* Figure and its figcaption are siblings, not parent/child, in the markup (Astro's
+    `set:html` needs the figure to itself); `break-after`/`break-before: avoid` on the
+    pair is the same "keep together" contract as `break-inside: avoid` would give a
+    single wrapping element, without changing the markup shape. */
+ figure {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  break-after: avoid;
+  page-break-after: avoid;
+ }
+
+ figcaption {
+  break-before: avoid;
+  page-break-before: avoid;
+  break-inside: avoid;
+  page-break-inside: avoid;
+ }
+
+ /* A table row must not split across a page boundary; the header repeats on whichever
+    page a table continues onto, so a reader never meets a body row with no header. */
+ table {
+  break-inside: auto;
+ }
+
+ thead {
+  display: table-header-group;
+ }
+
+ tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+ }
+
+ /* Small, single-idea blocks: keep-together reads better than a mid-box split. */
+ .statbox,
+ .gauge-row,
+ .receipt,
+ .gapbar,
+ .verdict,
+ .receipts,
+ .synthetic-notice {
+  break-inside: avoid;
+  page-break-inside: avoid;
+ }
+
+ /* Sections 1-5 each wrap their heading through their first chart's figcaption in
+    `.print-keep`: `break-after: avoid` on the heading alone stops a break
+    immediately after it, but a tall chart (section 4's 30-district scatter, ~950px) still
+    would not fit in whatever space is left on the page and moved to the next page on
+    its own, stranding the heading with blank space beneath it. Grouping heading
+    through figcaption as one break-inside:avoid unit makes the whole lead block move
+    together instead. */
+ .print-keep {
+  break-inside: avoid;
+  page-break-inside: avoid;
+ }
+
+ p {
+  orphans: 3;
+  widows: 3;
+ }
 }
-table.lineage td { font-size: 12.5px; color: var(--ink-soft); vertical-align: top; }
-table.lineage code { font-size: 11px; }

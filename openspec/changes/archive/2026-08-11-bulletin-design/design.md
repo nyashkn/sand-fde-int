@@ -67,7 +67,7 @@ it makes the choice unreviewable.
 **State gets a non-colour channel.**
 Provisional is a hatched fill and a dotted rule; withheld is a full-width block occupying the
 position the panel would have had; unmeasured is an explicit glyph, never an empty cell.
-*Alternative considered:* colour-coded tags, which is the current implementation. Rejected , 
+*Alternative considered:* colour-coded tags, which is the current implementation. Rejected,
 it fails a reader scanning rather than reading, and fails entirely without colour.
 
 **The withheld panel keeps the real panel's position and prominence.**

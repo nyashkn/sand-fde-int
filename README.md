@@ -20,11 +20,11 @@ The four deliverables map 1:1 to the folders below.
 | `deliverable-1-scoping/` | **D1**, discovery process and problem selection. |
 | `deliverable-2-prototype/` | **D2**, solution design + working bulletin prototype. |
 | `deliverable-3-hardening/` | **D3**, top 5 production-readiness gaps. |
-| `deliverable-4-handover/` | **D4**, documentation, training, exit criteria. |
+| `deliverable-4-handover/` | **D4**, runbook, data contract, decision register, exit criteria. |
 
 **Start here if you're reviewing:** `deliverable-1-scoping/` for the reasoning,
-`deliverable-2-prototype/` for the code, `decisions/` if you want to know why something
-is the way it is.
+`deliverable-2-prototype/` for the code, `deliverable-4-handover/` for whether this
+survives without me, `decisions/` if you want to know why something is the way it is.
 
 ---
 
@@ -68,12 +68,14 @@ python3 research/analyze-video.py research/videos/rhos-blue-room.mp4
 ```
 
 Sends the file to `meta/muse-spark-1.2` (native video input) and prints the raw JSON
-response. Note the 50 MB per-file cap and the gateway timeouts on longer clips , 
+response. Note the 50 MB per-file cap and the gateway timeouts on longer clips,
 documented in `research/sand-product-research.md` §7.4.
 
 ### Prototype
 
-See `deliverable-2-prototype/README.md`.
+`deliverable-4-handover/runbook.md` is the authoritative sequence, kept accurate because
+it is run, not just read: `uv sync`, `run.py`, `bun install`, `bun run publish`,
+`bun run verify`. `deliverable-2-prototype/README.md` covers what got built and why.
 
 ---
 
@@ -84,10 +86,11 @@ See `deliverable-2-prototype/README.md`.
 | `artifacts/01-bluelake-admin-ux-walkthrough.html` | Click-through reconstruction of the real Bluelake Admin UI, 4 screens, rebuilt from video frames. |
 | `artifacts/02-modular-architecture-persona-map.html` | Every assignment module placed on the layered architecture, with a persona access matrix and evidence grades. |
 | `artifacts/03-opportunity-map-council-verdict.html` | Problems A/B/C mapped to opportunities, the adversarial council's tally, and the kill criteria behind the D1 verdict. |
-| `artifacts/04-data-quality-audit.html` | The full data-quality sweep: fabricated GPS, the batch-duplicate defect, the ecological-fallacy correlation, every finding behind D2's structural guards. |
+| `artifacts/04-data-quality-eda.html` | Reactive marimo notebook, all five source files: missingness, the batch-duplicate defect reproduced live, facility capability, every known contradiction reproduced with a live cross-tab, both structural checks. |
 | `artifacts/05-bulletin-critique.md` | The D2 §6.6 design critique: measured WCAG contrast failures and a real layout bug caught by checking the property that would make a fix inert, not just the property it set. |
+| `artifacts/06-bulletin-architecture-data-flow.html` | D2 §1: the pipeline data-flow diagram (which Sand products, build vs. buy per component) and the data-mart ERD. |
 
-The four HTML files are self-contained, no build step, no assets, open directly in a
+Five HTML files are self-contained, no build step, no assets, open directly in a
 browser. `05` is markdown; it documents a critique of rendered output rather than being
 one itself.
 

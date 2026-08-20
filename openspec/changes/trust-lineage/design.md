@@ -50,7 +50,7 @@ describes, and would need its own retention story.
 **Compute lineage comes from Hamilton's graph; data lineage comes from the columns. Both are
 required, neither substitutes.**
 Hamilton answers *which function produced this*; the columns answer *which rows, which
-batch, which rule*. *Alternative considered:* relying on Hamilton's graph alone. Rejected , 
+batch, which rule*. *Alternative considered:* relying on Hamilton's graph alone. Rejected,
 it describes the pipeline, not the data that went through it, and cannot say that Q1 is
 missing February.
 

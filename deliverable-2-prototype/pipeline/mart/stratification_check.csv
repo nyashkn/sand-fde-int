@@ -1,0 +1,4 @@
+covariate,outcome,stratified_by,pooled_r,within_strata,caveat
+governance_staff_trained_rate,nmr,tier,-0.844,District +0.111; Health Center +0.042; Provincial +0.144,"pooled r=-0.844 does not survive stratification by tier (District +0.111; Health Center +0.042; Provincial +0.144); the association describes tier, not the covariate"
+capability_cpap_machines,nmr,tier,-0.811,Provincial -0.269,"pooled r=-0.811 does not survive stratification by tier (Provincial -0.269); the association describes tier, not the covariate"
+ops_referral_time_hrs,nmr,tier,0.125,District +0.046; Health Center +0.306; Provincial +0.273,"pooled r=+0.125 does not survive stratification by tier (District +0.046; Health Center +0.306; Provincial +0.273); the association describes tier, not the covariate"

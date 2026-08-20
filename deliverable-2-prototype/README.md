@@ -9,50 +9,69 @@ cd pipeline
 uv sync                          # duckdb, pandas, pyarrow, sf-hamilton
 uv run python run.py             # build the mart
 cd web && bun install
-bun run publish                  # build + publish 2024-Q1 and 2024-Q3
-bun run verify                   # build, inline email, run all three checks
+bun run publish                  # build + publish all four quarters, 2024-Q1 through 2024-Q4
+bun run verify                   # build, inline email, run all four checks
 open ../output/bulletin-2024-Q1.html
 ```
 
 Two commands, no server, no API key, no cloud account. Output is one self-contained HTML
 file with no external assets and no JavaScript.
 
+## Solution design (D2 §1)
+
+`../artifacts/06-bulletin-architecture-data-flow.html`. Two diagrams: the data-flow
+pipeline (sources through Bronze/Silver/Gold to the published surfaces), which Sand
+products are used and why, what is built custom and why, build vs. buy per component; and
+the data-mart ERD (not a normalized schema, six source files unpivoted through one
+crosswalk into one canonical fact table).
+
+The written counterpart, same reasoning in prose and tables, standing alone without the
+HTML artifact, is `SOLUTION-DESIGN.md`.
+
 ## What it produces
 
-`output/bulletin-<quarter>.html`, the bulletin, with every figure carrying its value, its
-state, and a link to the rows and rules behind it. Lineage records live in the same file as
-anchors, so it works offline and survives being forwarded.
+`output/bulletin-<quarter>.html`, one edition per quarter, all four built by `bun run
+publish`, with every figure carrying its value, its state, and a link to the rows and
+rules behind it. Lineage records live in the same file as anchors, so it works offline and
+survives being forwarded.
 
-Four required metrics, one of which is refused:
+Four required metrics, all answered directly:
 
 | Brief requirement | Status |
 |---|---|
 | Top 10 facilities by volume | rendered, labelled as volume, not quality |
 | Maternal health indicators | rendered, bound to ICD-10 perinatal codes |
-| Facility performance scores | **reframed** as a capability inventory |
-| Trend vs previous quarters | **withheld**, the data has no temporal signal |
+| Facility performance scores | answered directly: governance/operations/staffing data, §3 |
+| Trend vs previous quarters | shown, caveated: all four quarters, not a two-point delta |
 
-The last two are the interesting ones. Both are decided by computed guards, not editorial
-judgement, and the bulletin prints the measurement that decided each.
+The last two were the interesting ones. `governance.csv`/`operations.csv`/
+`healthcare_workers.csv` were already resolved through the crosswalk and never queried
+past three covariates; the trend was withheld because a guard blocked the whole section
+rather than stating what it could and could not support. Both are gold-layer queries
+against data already in the mart, not new ingestion. Every check still computes exactly
+what it always computed; it now always renders its finding, caveated, never gated.
 
 ## Layout
 
 ```
 pipeline/
   run.py                 build the mart          Hamilton -> DuckDB -> Parquet
+  eda.py                 marimo notebook, all five source files, reuses gold/checks
   web/                   render every surface    Parquet -> HTML
   dataflow/
     bronze.py            source data, verbatim, nothing dropped
     silver.py            canonical observations at DHIS2 grain
-    gold.py              the marts a bulletin reads
-    guards.py            refuse analyses the data cannot support
+    gold.py              the marts a bulletin reads, incl. facility_capability
+    checks.py            annotate analyses the data may not fully support
   mart/
-    crosswalk.csv        source field -> canonical element        (data, not code)
-    org_unit_map.csv     (source, key) -> one org_unit identity   (declared, not inferred)
-    dhis2_sample.csv     second source, proves the crosswalk
-    *.parquet            published artifacts
+    crosswalk.csv              source field -> canonical element      (data, not code)
+    org_unit_map.csv           (source, key) -> one org_unit identity (declared, not inferred)
+    cause_capability_links.csv cause of death -> the capability that treats it (declared)
+    known_contradictions.csv   crosswalk notes worth stating as findings (declared)
+    dhis2_sample.csv           second source, proves the crosswalk
+    *.parquet                  published artifacts
 output/
-  bulletin-*.html        the deliverable
+  bulletin-*.html        the deliverable, one per quarter
 ```
 
 ## Where to put things
@@ -62,7 +81,8 @@ output/
 | A new source system | rows in `crosswalk.csv` + a loader in `bronze.py` |
 | A new measure from an existing source | one row in `crosswalk.csv` |
 | A facility identity from another system | one row in `org_unit_map.csv` |
-| A data quality check | `guards.py`, or a `@check_output` on the silver node |
+| A data quality check | `checks.py`, or a `@check_output` on the silver node |
+| A cause-of-death to capability pairing | one row in `cause_capability_links.csv` |
 | A new bulletin panel | a section in `web/src/pages/index.astro` |
 
 ## Three decisions worth reading the code for
@@ -77,11 +97,12 @@ auto-matching. Two systems using the string `NYA001` is evidence they share a co
 not proof, and fusing on string equality is how an identity graph merges two distinct real
 entities. An unresolved key raises rather than quietly inventing a facility.
 
-**Guards refuse claims, not rows**, `dataflow/guards.py`. Ordinary validation rejects a
-bad row. These reject a bad *claim*: a trend line on a series with no temporal signal, or a
-pooled correlation that vanishes inside every stratum. They are code rather than a
-documented rule because during this engagement the ecological fallacy was explicitly warned
-against and then committed three messages later, by the person who raised it.
+**Checks annotate claims, never gate rows**, `dataflow/checks.py`. Ordinary validation
+rejects a bad row. These annotate a *claim*: a trend line on a series with no measured
+temporal signal, or a pooled correlation that vanishes inside every stratum. The statistics
+are unchanged from when they gated content (ADR 0008); what changed (ADR 0012) is the
+consumer contract, a check's finding now always renders with a caveat, never hides the
+section it qualifies.
 
 ## Shortcuts taken
 
@@ -92,8 +113,12 @@ against and then committed three messages later, by the person who raised it.
   Resolution belongs to an analyst, and the queue is specified but not built.
 - Gold regenerates fully on every run. Correct and trivially reproducible; would need
   incremental logic at real scale.
-- The stratification guard tests against tier only. It should take the stratification
+- The stratification check tests against tier only. It should take the stratification
   variable as a declared input per association.
+
+Further shortcuts (the second source is synthetic, no scheduler, no auth, GPS excluded as
+fabricated, single-machine DuckDB), the Week 3 plan, and what building this surfaced about
+the capability-mortality correlation, are in `SOLUTION-DESIGN.md` §3.
 
 ## Specification
 
@@ -103,13 +128,14 @@ Deliverable 3, rather than five paragraphs of intent.
 
 ## Checks
 
-`bun run verify` runs three, each of which has caught a real defect in this build:
+`bun run verify` runs four, each of which has caught a real defect in this build:
 
 | Check | Holds | Caught |
 |---|---|---|
+| `check-tokens.mjs` | chart theme colours identical to `tokens.css` | (added when the chart engine moved to a `THEME_SPEC` override; guards the same drift class as before) |
 | `check-style.mjs` | em dashes, side stripes, script tags, external assets | a latent em dash, and a false positive in its own first rule |
 | `check-email.mjs` | 102 KB clip ceiling, no SVG, no flex or grid, state as words | `display:grid` shipped in the email stylesheet |
-| `check-agreement.mjs` | six shared figures identical across both surfaces | email published 6 withheld panels where the bulletin said 2 |
+| `check-agreement.mjs` | seven shared figures identical across both surfaces | email published 6 withheld panels where the bulletin said 2; later, the trend/correlation caveat wording after the withhold gate was removed |
 
 `bun run publish` additionally refuses to write a file whose name and contents disagree
 on the quarter. That guard exists because the unchecked version shipped `bulletin-2024-Q3.html`

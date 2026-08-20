@@ -25,7 +25,7 @@ that deserves a verifiable source rather than a footnote.
 - **Gitignore the videos, cite the Vimeo URLs.** Lighter clone, but the URLs are unlisted
   embeds that could be pulled at any time, and a reviewer would have to re-derive the
   analysis to check anything.
-- **Keep only the analysed frames as stills.** Smaller, but loses the audio narration , 
+- **Keep only the analysed frames as stills.** Smaller, but loses the audio narration,
   several of the most useful direct quotes are spoken, not shown.
 - **Downsample to 360p.** ~45 MB total, but the UI text in the dashboard frames stops being
   legible, which defeats the purpose of keeping them.

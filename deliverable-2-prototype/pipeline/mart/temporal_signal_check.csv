@@ -1,0 +1,4 @@
+data_element,observed_lag1,null_mean,null_sd,seed,trials,caveat
+live_births,-0.1215,-0.1112,0.0288,20260810,200,"observed lag-1 -0.121 does not exceed a within-facility permutation null of -0.111±0.029; treat as directional, not conclusive"
+deliveries_total,-0.1238,-0.1111,0.0288,20260810,200,"observed lag-1 -0.124 does not exceed a within-facility permutation null of -0.111±0.029; treat as directional, not conclusive"
+neonatal_deaths_early,-0.0914,-0.1074,0.0282,20260810,200,"observed lag-1 -0.091 does not exceed a within-facility permutation null of -0.107±0.028; treat as directional, not conclusive"

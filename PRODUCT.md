@@ -13,7 +13,7 @@ about throughput. It is about trust: *"I cannot trust any number I am shown."* P
 distrusted numbers faster is not an improvement.
 
 So the product is not a report generator. It is **a document whose every number can be
-interrogated**, and which refuses to print claims the data cannot support.
+interrogated**, and which states plainly, as a caveat, when the data cannot support a claim.
 
 ## Users
 
@@ -40,10 +40,10 @@ difference between the engagement succeeding and not.
 Plain, exact, unhedged. Numbers carry their denominators. Uncertainty is stated in the same
 breath as the claim it qualifies, never in a footnote.
 
-The document says what it does not know as readily as what it does. A withheld panel states
-why it was withheld. A partial quarter names the months it is missing, next to the figure
-rather than in an appendix. Known defects in the source data are published rather than
-quietly corrected.
+The document says what it does not know as readily as what it does. A caveat says why a
+claim does not clear its statistical bar, in the position the claim would have occupied. A
+partial quarter names the months it is missing, next to the figure rather than in an
+appendix. Known defects in the source data are published rather than quietly corrected.
 
 Never reassuring. Never promotional. A reader should finish a section knowing exactly how
 much weight it will bear.
@@ -63,9 +63,9 @@ much weight it will bear.
 
 ## Strategic principles
 
-**Refusal is a feature.** Where the data cannot support a claim, the document says so in the
-position the claim would have occupied. Demoting a refusal to a footnote would make it look
-like an omission.
+**Disclosure is a feature.** Where the data does not clear its statistical bar, the document
+says so, as a caveat, in the position the claim would have occupied. Demoting that caveat to
+a footnote would make it look like an omission.
 
 **Every figure is interrogable.** State and lineage travel with the number, as data, through
 every surface including ones that cannot execute code.

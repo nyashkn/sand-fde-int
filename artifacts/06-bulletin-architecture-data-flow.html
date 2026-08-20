@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deliverable 2, §1 — Solution design &amp; architecture</title>
+  <style>
+    :root {
+      --ivory: #FAF9F5;
+      --paper: #FFFFFF;
+      --slate: #141413;
+      --clay: #D97757;
+      --clay-d: #B85C3E;
+      --oat: #E3DACC;
+      --olive: #788C5D;
+      --sage: #A8B89A;
+      --rose: #C97B7B;
+      --g100: #F0EEE6;
+      --g200: #E6E3DA;
+      --g300: #D1CFC5;
+      --g500: #87867F;
+      --g700: #3D3D3A;
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--ivory);
+      color: var(--slate);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      padding: 56px 24px 96px;
+    }
+
+    .sheet {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 40px;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 32px;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+
+    .lead {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: var(--g700);
+      max-width: 780px;
+    }
+
+    .lead code {
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 22px;
+      margin: 56px 0 6px;
+      letter-spacing: -0.005em;
+    }
+
+    h2 .n {
+      display: block;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--clay);
+      letter-spacing: 0.1em;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    p.dek {
+      font-size: 13.5px;
+      color: var(--g700);
+      max-width: 780px;
+      margin-bottom: 20px;
+      line-height: 1.55;
+    }
+
+    .canvas {
+      border: 1.5px solid var(--g300);
+      border-radius: 14px;
+      background: #fff;
+      padding: 24px;
+      overflow-x: auto;
+    }
+
+    svg.flow {
+      display: block;
+      min-width: 1160px;
+      height: auto;
+      font-family: var(--sans);
+    }
+
+    .flow text {
+      font-family: var(--sans);
+      font-size: 11.5px;
+      fill: var(--slate);
+    }
+
+    .flow .sub {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      fill: var(--g500);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 16px;
+      font-size: 11.5px;
+      color: var(--g700);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .chip {
+      width: 20px;
+      height: 13px;
+      border: 1.5px solid var(--g300);
+      border-radius: 3px;
+      background: #fff;
+    }
+
+    .chip.custom {
+      border-color: var(--clay);
+    }
+
+    .chip.buy {
+      border-color: var(--olive);
+      border-style: dashed;
+    }
+
+    .chip.ghost {
+      border-color: var(--g300);
+      border-style: dashed;
+      background: var(--g100);
+    }
+
+    .chip.output {
+      background: rgba(120, 140, 93, 0.10);
+      border-color: var(--olive);
+    }
+
+    /* ---- product decision cards ---- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 1080px) {
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .card {
+      border: 1.5px solid var(--g300);
+      border-radius: 10px;
+      background: #fff;
+      padding: 14px 14px 16px;
+    }
+
+    .card.adopted {
+      border-color: var(--olive);
+    }
+
+    .card.custom {
+      border-color: var(--clay);
+    }
+
+    .card .verdict {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .card.adopted .verdict {
+      background: rgba(120, 140, 93, 0.14);
+      color: var(--olive);
+    }
+
+    .card.custom .verdict {
+      background: rgba(217, 119, 87, 0.14);
+      color: var(--clay-d);
+    }
+
+    .card.rejected .verdict {
+      background: var(--g100);
+      color: var(--g500);
+    }
+
+    .card h3 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--g700);
+    }
+
+    /* ---- ERD ---- */
+    .erd-note {
+      background: var(--g100);
+      border: 1px solid var(--g300);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12.5px;
+      color: var(--g700);
+      line-height: 1.55;
+      margin-bottom: 18px;
+      max-width: 780px;
+    }
+
+    .erd-note b {
+      color: var(--slate);
+    }
+
+    svg.erd {
+      display: block;
+      min-width: 1160px;
+      height: auto;
+      font-family: var(--sans);
+    }
+
+    .erd .entity rect {
+      fill: #fff;
+      stroke: var(--g300);
+      stroke-width: 1.5;
+      rx: 7;
+    }
+
+    .erd .entity.hub rect {
+      fill: rgba(217, 119, 87, 0.07);
+      stroke: var(--clay);
+      stroke-width: 2;
+    }
+
+    .erd .entity.mechanism rect {
+      fill: var(--g100);
+      stroke: var(--g300);
+      stroke-dasharray: 3 2;
+    }
+
+    .erd .entity.declared rect {
+      fill: rgba(120, 140, 93, 0.08);
+      stroke: var(--olive);
+      stroke-dasharray: 3 2;
+    }
+
+    .erd text {
+      font-family: var(--sans);
+      font-size: 11px;
+      fill: var(--slate);
+    }
+
+    .erd .key {
+      font-family: var(--mono);
+      font-size: 9px;
+      fill: var(--g500);
+    }
+
+    .erd .title {
+      font-weight: 600;
+    }
+
+    .erd .edge {
+      stroke: var(--g500);
+      stroke-width: 1.3;
+      fill: none;
+      marker-end: url(#arrow-erd);
+    }
+
+    .erd .edge.declared {
+      stroke: var(--olive);
+      stroke-dasharray: 3 2;
+      marker-end: url(#arrow-olive-erd);
+    }
+
+    footer.colophon {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--g500);
+      margin-top: 64px;
+      padding-top: 16px;
+      border-top: 1px solid var(--g300);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sheet">
+
+    <header>
+      <div class="eyebrow">Deliverable 2 &middot; Solution Design &amp; Architecture</div>
+      <h1>Quarterly Health Bulletin: data flow, product choices, and the data-mart shape</h1>
+      <p class="lead">
+        Two diagrams. The first answers the brief's three §1 questions directly, in place, on
+        the diagram: data flow, which Sand products are used and why, what is built custom and
+        why, build vs. buy per component. The second is the data-mart ERD: not a normalized
+        relational schema, six heterogeneous source files unpivoted through one crosswalk into
+        one canonical fact table, which the note above it states before the diagram can be
+        misread as a star schema.
+      </p>
+    </header>
+
+    <h2><span class="n">1</span>Data flow, build vs. buy, and custom components</h2>
+    <p class="dek">
+      Solid clay border marks a custom component; dashed olive marks a bought/adopted one;
+      dashed grey marks a Sand product considered and not used in this deliverable. Full
+      reasoning for each is the card grid below the diagram, not squeezed onto an edge label.
+    </p>
+
+    <div class="canvas">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flow"
+        viewBox="0 0 1489 719" role="img" aria-label="Bulletin pipeline data flow, PlantUML component diagram">
+        <defs />
+        <g><!--entity l_src-->
+          <g class="entity" data-qualified-name="l_src" data-source-line="53" id="ent0001">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="67.96"
+              x="74.47" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="47.96" x="84.47" y="527.34">SOURCES</text>
+          </g><!--entity l_ing-->
+          <g class="entity" data-qualified-name="l_ing" data-source-line="54" id="ent0002">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="55.73"
+              x="319.04" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="35.73" x="329.04" y="527.34">INGEST</text>
+          </g><!--entity l_can-->
+          <g class="entity" data-qualified-name="l_can" data-source-line="55" id="ent0003">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="77.59"
+              x="568.71" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="57.59" x="578.71" y="527.34">CANONICAL</text>
+          </g><!--entity l_mar-->
+          <g class="entity" data-qualified-name="l_mar" data-source-line="56" id="ent0004">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="54.26"
+              x="814.34" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="34.26" x="824.34" y="527.34">MARTS</text>
+          </g><!--entity l_pub-->
+          <g class="entity" data-qualified-name="l_pub" data-source-line="57" id="ent0005">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="62.4"
+              x="1004.33" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="42.4" x="1014.33" y="527.34">PUBLISH</text>
+          </g><!--entity l_ren-->
+          <g class="entity" data-qualified-name="l_ren" data-source-line="58" id="ent0006">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="60.18"
+              x="1224.33" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="40.18" x="1234.33" y="527.34">RENDER</text>
+          </g><!--entity l_out-->
+          <g class="entity" data-qualified-name="l_out" data-source-line="59" id="ent0007">
+            <rect fill="#FFFFFF" height="31.93" rx="2.5" ry="2.5" style="stroke:none;stroke-width:1.5;" width="60"
+              x="1383.55" y="507.54" /><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="40" x="1393.55" y="527.34">OUTPUT</text>
+          </g><!--entity facilities-->
+          <g class="entity" data-qualified-name="facilities" data-source-line="61" id="ent0008">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="125.576" x="45.66" y="7" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="27.324" x="94.786"
+              y="28.82">&#171;src&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="65.1" x="55.66" y="43.136">facilities.csv</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="105.576" x="55.66"
+              y="57.452">117 rows, snapshot</text>
+          </g><!--entity clinical-->
+          <g class="entity" data-qualified-name="clinical" data-source-line="62" id="ent0009">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="130.448" x="43.22" y="90" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="27.324" x="94.782"
+              y="111.82">&#171;src&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="110.448" x="53.22" y="126.136">clinical_neonatal.csv</text><text
+              fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="108.924"
+              x="53.22" y="140.452">1,404 rows, monthly</text>
+          </g><!--entity governance-->
+          <g class="entity" data-qualified-name="governance" data-source-line="63" id="ent0010">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="125.576" x="45.66" y="173" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="27.324" x="94.786"
+              y="194.82">&#171;src&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="84.672" x="55.66" y="209.136">governance.csv</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="105.576" x="55.66"
+              y="223.452">117 rows, snapshot</text>
+          </g><!--entity operations-->
+          <g class="entity" data-qualified-name="operations" data-source-line="64" id="ent0011">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="125.576" x="45.66" y="256" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="27.324" x="94.786"
+              y="277.82">&#171;src&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="78.672" x="55.66" y="292.136">operations.csv</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="105.576" x="55.66"
+              y="306.452">117 rows, snapshot</text>
+          </g><!--entity staffing-->
+          <g class="entity" data-qualified-name="staffing" data-source-line="65" id="ent0012">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="146.432" x="35.23" y="339" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="27.324" x="94.784"
+              y="360.82">&#171;src&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="126.432" x="45.23" y="375.136">healthcare_workers.csv</text><text
+              fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="105.576"
+              x="45.23" y="389.452">117 rows, snapshot</text>
+          </g><!--entity dhis2-->
+          <g class="entity" data-qualified-name="dhis2" data-source-line="66" id="ent0013">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="129.572" x="43.66" y="422" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="27.324" x="94.784"
+              y="443.82">&#171;src&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="95.808" x="53.66" y="458.136">dhis2_sample.csv</text><text
+              fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="109.572"
+              x="53.66" y="472.452">12 rows, 2nd source</text>
+          </g><!--entity bronze-->
+          <g class="entity" data-qualified-name="bronze" data-source-line="68" id="ent0014">
+            <rect fill="#FFFFFF" height="48.632" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="143.672" x="275.07" y="253.19" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="37.98" x="285.07" y="274.95">Bronze</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="123.672" x="285.07"
+              y="289.266">verbatim + provenance</text>
+          </g><!--entity crosswalk-->
+          <g class="entity" data-qualified-name="crosswalk" data-source-line="69" id="ent0015">
+            <rect fill="#FFFFFF" height="63.008" rx="2.5" ry="2.5" style="stroke:#D97757;stroke-width:2;" width="96.92"
+              x="298.45" y="322" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="50.892" x="321.464"
+              y="343.82">&#171;custom&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="55.98" x="308.45" y="358.136">Crosswalk</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="76.92" x="308.45"
+              y="372.452">mapping table</text>
+          </g><!--entity silver-->
+          <g class="entity" data-qualified-name="silver" data-source-line="70" id="ent0016">
+            <rect fill="#FFFFFF" height="77.324" rx="2.5" ry="2.5" style="stroke:#D97757;stroke-width:2;"
+              width="197.156" x="508.92" y="309.84" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="50.892" x="582.052"
+              y="331.66">&#171;custom&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="29.544" x="518.92" y="345.976">Silver</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="94.464" x="518.92"
+              y="360.292">canonical unpivot</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="177.156" x="518.92" y="374.608">(org_unit, period, element,
+              batch)</text>
+          </g><!--entity gold-->
+          <g class="entity" data-qualified-name="gold" data-source-line="71" id="ent0017">
+            <rect fill="#FFFFFF" height="105.956" rx="2.5" ry="2.5" style="stroke:#D97757;stroke-width:2;"
+              width="188.78" x="747.08" y="295.53" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="50.892" x="816.024"
+              y="317.35">&#171;custom&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="25.776" x="757.08" y="331.666">Gold</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="82.56" x="757.08"
+              y="345.982">marts + checks</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="153.78" x="757.08" y="360.298">facility/district quarter,
+              NMR,</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing"
+              textLength="141.156" x="757.08" y="374.614">capability_summary, links,</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="168.78" x="757.08"
+              y="388.93">temporal + stratification checks</text>
+          </g><!--entity parquet-->
+          <g class="entity" data-qualified-name="parquet" data-source-line="72" id="ent0018">
+            <rect fill="#FFFFFF" height="48.632" rx="2.5" ry="2.5" style="stroke:#D1CFC5;stroke-width:0.5;"
+              width="117.332" x="976.86" y="324.19" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="42.228" x="986.86" y="345.95">Parquet</text><text fill="#141413"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="97.332" x="986.86"
+              y="360.266">HTTP range reads</text>
+          </g><!--entity astro-->
+          <g class="entity" data-qualified-name="astro" data-source-line="73" id="ent0019">
+            <rect fill="#FFFFFF" height="48.692" rx="2.5" ry="2.5" style="stroke:#D97757;stroke-width:2;" width="86.444"
+              x="1211.2" y="321.16" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="50.892" x="1228.976"
+              y="342.98">&#171;custom&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="66.444" x="1221.2" y="357.296">Astro render</text>
+          </g><!--entity bulletin-->
+          <g class="entity" data-qualified-name="bulletin" data-source-line="74" id="ent0020">
+            <rect fill="#F4F7F0" height="63.008" rx="2.5" ry="2.5" style="stroke:#788C5D;stroke-width:0.5;"
+              width="95.564" x="1365.77" y="273" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="46.02" x="1390.542"
+              y="294.82">&#171;output&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="75.564" x="1375.77" y="309.136">Bulletin, static</text><text
+              fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="72.432"
+              x="1375.77" y="323.452">zero client JS</text>
+          </g><!--entity email-->
+          <g class="entity" data-qualified-name="email" data-source-line="75" id="ent0021">
+            <rect fill="#F4F7F0" height="63.008" rx="2.5" ry="2.5" style="stroke:#788C5D;stroke-width:0.5;"
+              width="123.8" x="1351.65" y="356" /><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              font-style="italic" lengthAdjust="spacing" textLength="46.02" x="1390.54"
+              y="377.82">&#171;output&#187;</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="68.904" x="1361.65" y="392.136">Email edition</text><text
+              fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="103.8"
+              x="1361.65" y="406.452">table layout, inlined</text>
+          </g><!--entity superset-->
+          <g class="entity" data-qualified-name="superset" data-source-line="76" id="ent0022">
+            <rect fill="#FFFFFF" height="77.324" rx="2.5" ry="2.5"
+              style="stroke:#788C5D;stroke-width:0.5;stroke-dasharray:7,7;" width="112.46" x="1198.19" y="389.84" />
+            <text fill="#141413" font-family="'Helvetica Neue'" font-size="12" font-style="italic"
+              lengthAdjust="spacing" textLength="30.672" x="1239.084" y="411.66">&#171;buy&#187;</text><text
+              fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="92.46"
+              x="1208.19" y="425.976">Apache Superset</text><text fill="#141413" font-family="'Helvetica Neue'"
+              font-size="12" lengthAdjust="spacing" textLength="82.656" x="1208.19" y="440.292">explore
+              surface</text><text fill="#141413" font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing"
+              textLength="84.444" x="1208.19" y="454.608">MoH office only</text>
+          </g><!--entity atlas-->
+          <g class="entity" data-qualified-name="atlas" data-source-line="78" id="ent0023">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5"
+              style="stroke:#D1CFC5;stroke-width:0.5;stroke-dasharray:7,7;" width="169.808" x="23.54" y="559" /><text
+              fill="#87867F" font-family="'Helvetica Neue'" font-size="12" font-style="italic" lengthAdjust="spacing"
+              textLength="41.112" x="87.888" y="580.82">&#171;ghost&#187;</text><text fill="#87867F"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="64.668" x="33.54"
+              y="595.136">Health Atlas</text><text fill="#87867F" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="149.808" x="33.54" y="609.452">geo intel, not built this cycle</text>
+          </g><!--entity tracker-->
+          <g class="entity" data-qualified-name="tracker" data-source-line="79" id="ent0024">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5"
+              style="stroke:#D1CFC5;stroke-width:0.5;stroke-dasharray:7,7;" width="202.892" x="7" y="642" /><text
+              fill="#87867F" font-family="'Helvetica Neue'" font-size="12" font-style="italic" lengthAdjust="spacing"
+              textLength="41.112" x="87.89" y="663.82">&#171;ghost&#187;</text><text fill="#87867F"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="131.364" x="17"
+              y="678.136">Health Outcome Tracker</text><text fill="#87867F" font-family="'Helvetica Neue'"
+              font-size="12" lengthAdjust="spacing" textLength="182.892" x="17" y="692.452">patient grain, wrong for
+              this report</text>
+          </g><!--entity insight-->
+          <g class="entity" data-qualified-name="insight" data-source-line="80" id="ent0025">
+            <rect fill="#F0EEE6" height="63.008" rx="2.5" ry="2.5"
+              style="stroke:#D1CFC5;stroke-width:0.5;stroke-dasharray:7,7;" width="192.032" x="250.89" y="559" /><text
+              fill="#87867F" font-family="'Helvetica Neue'" font-size="12" font-style="italic" lengthAdjust="spacing"
+              textLength="41.112" x="326.35" y="580.82">&#171;ghost&#187;</text><text fill="#87867F"
+              font-family="'Helvetica Neue'" font-size="12" lengthAdjust="spacing" textLength="113.796" x="260.89"
+              y="595.136">Health Insight Engine</text><text fill="#87867F" font-family="'Helvetica Neue'" font-size="12"
+              lengthAdjust="spacing" textLength="172.032" x="260.89" y="609.452">opaque AI, fails 2am-restart
+              test</text>
+          </g><!--link facilities to bronze-->
+          <g class="link" data-entity-1="ent0008" data-entity-2="ent0014" data-link-type="dependency"
+            data-source-line="82" id="lnk26">
+            <path
+              d="M171.53,57.26 C185.01,63.07 198.6,70.41 209.89,79.51 C270.62,128.44 313.0511,207.0154 332.6811,248.2554"
+              fill="none" id="facilities-to-bronze" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="334.83,252.77,334.5736,242.9245,332.6811,248.2554,327.3502,246.3628,334.83,252.77"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link clinical to bronze-->
+          <g class="link" data-entity-1="ent0009" data-entity-2="ent0014" data-link-type="dependency"
+            data-source-line="83" id="lnk27">
+            <path
+              d="M174.14,144.4 C186.36,149.69 198.78,155.77 209.89,162.51 C252.74,188.46 292.2425,224.1269 318.1125,249.3869"
+              fill="none" id="clinical-to-bronze" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="321.69,252.88,318.0451,243.7304,318.1125,249.3869,312.4561,249.4544,321.69,252.88"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link governance to bronze-->
+          <g class="link" data-entity-1="ent0010" data-entity-2="ent0014" data-link-type="dependency"
+            data-source-line="84" id="lnk28">
+            <path d="M171.57,223.69 C203.18,233.44 236.9824,243.8754 269.8024,254.0054" fill="none"
+              id="governance-to-bronze" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="274.58,255.48,267.16,249.0036,269.8024,254.0054,264.8006,256.6478,274.58,255.48"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link operations to bronze-->
+          <g class="link" data-entity-1="ent0011" data-entity-2="ent0014" data-link-type="dependency"
+            data-source-line="85" id="lnk29">
+            <path d="M171.57,284.88 C203.18,283.54 236.7645,282.1216 269.5845,280.7316" fill="none"
+              id="operations-to-bronze" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="274.58,280.52,265.4188,276.9044,269.5845,280.7316,265.7573,284.8972,274.58,280.52"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link staffing to bronze-->
+          <g class="link" data-entity-1="ent0012" data-entity-2="ent0014" data-link-type="dependency"
+            data-source-line="86" id="lnk30">
+            <path
+              d="M181.96,341.17 C191.37,337.29 200.87,333.33 209.89,329.51 C228.22,321.74 232.4,318.86 250.89,311.51 C258.62,308.43 262.0717,307.0579 270.1917,304.0479"
+              fill="none" id="staffing-to-bronze" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="274.88,302.31,265.0508,301.6876,270.1917,304.0479,267.8314,309.1888,274.88,302.31"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link dhis2 to bronze-->
+          <g class="link" data-entity-1="ent0013" data-entity-2="ent0014" data-link-type="dependency"
+            data-source-line="87" id="lnk31">
+            <path
+              d="M173.59,436.23 C186.82,430.37 199.78,422.64 209.89,412.51 C244.12,378.22 215.92,345.04 250.89,311.51 C257.85,304.84 261.7087,301.6573 270.5387,297.3373"
+              fill="none" id="dhis2-to-bronze" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="275.03,295.14,265.1878,295.5022,270.5387,297.3373,268.7035,302.6882,275.03,295.14"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link bronze to silver-->
+          <g class="link" data-entity-1="ent0014" data-entity-2="ent0016" data-link-type="dependency"
+            data-source-line="88" id="lnk32">
+            <path d="M418.91,297 C446.57,304.6 473.9184,312.1065 503.7184,320.2865" fill="none" id="bronze-to-silver"
+              style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="508.54,321.61,500.9199,315.3703,503.7184,320.2865,498.8022,323.085,508.54,321.61"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link crosswalk to silver-->
+          <g class="link" data-entity-1="ent0015" data-entity-2="ent0016" data-link-type="dependency"
+            data-source-line="89" id="lnk33">
+            <path d="M395.64,352.58 C427.23,351.97 464.8109,351.2471 503.4409,350.4971" fill="none"
+              id="crosswalk-to-silver" style="stroke:#87867F;stroke-width:1;stroke-dasharray:7,7;" />
+            <polygon fill="#87867F"
+              points="508.44,350.4,499.3641,346.5755,503.4409,350.4971,499.5193,354.5739,508.44,350.4"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" /><text fill="#87867F"
+              font-family="'Helvetica Neue'" font-size="10" lengthAdjust="spacing" textLength="24.63" x="463.92"
+              y="348.66">feeds</text>
+          </g><!--link silver to gold-->
+          <g class="link" data-entity-1="ent0016" data-entity-2="ent0017" data-link-type="dependency"
+            data-source-line="90" id="lnk34">
+            <path d="M706.54,348.51 C719.9,348.51 728.57,348.51 741.85,348.51" fill="none" id="silver-to-gold"
+              style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F" points="746.85,348.51,737.85,344.51,741.85,348.51,737.85,352.51,746.85,348.51"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link gold to parquet-->
+          <g class="link" data-entity-1="ent0017" data-entity-2="ent0018" data-link-type="dependency"
+            data-source-line="91" id="lnk35">
+            <path d="M936.25,348.51 C949.96,348.51 958.73,348.51 971.45,348.51" fill="none" id="gold-to-parquet"
+              style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F" points="976.45,348.51,967.45,344.51,971.45,348.51,967.45,352.51,976.45,348.51"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link parquet to astro-->
+          <g class="link" data-entity-1="ent0018" data-entity-2="ent0019" data-link-type="dependency"
+            data-source-line="92" id="lnk36">
+            <path d="M1094.65,347.7 C1131.29,347.2 1172.7805,346.6193 1205.9705,346.1593" fill="none"
+              id="parquet-to-astro" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="1210.97,346.09,1201.9154,342.2151,1205.9705,346.1593,1202.0263,350.2143,1210.97,346.09"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link astro to bulletin-->
+          <g class="link" data-entity-1="ent0019" data-entity-2="ent0020" data-link-type="dependency"
+            data-source-line="93" id="lnk37">
+            <path d="M1297.94,334.41 C1318.76,328.98 1339.0416,323.681 1360.4516,318.101" fill="none"
+              id="astro-to-bulletin" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="1365.29,316.84,1355.5721,315.2391,1360.4516,318.101,1357.5897,322.9805,1365.29,316.84"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link astro to email-->
+          <g class="link" data-entity-1="ent0019" data-entity-2="ent0021" data-link-type="dependency"
+            data-source-line="94" id="lnk38">
+            <path d="M1297.94,356.87 C1314.39,361.27 1328.7091,365.1005 1346.5791,369.8705" fill="none"
+              id="astro-to-email" style="stroke:#87867F;stroke-width:1;" />
+            <polygon fill="#87867F"
+              points="1351.41,371.16,1343.746,364.9742,1346.5791,369.8705,1341.6829,372.7036,1351.41,371.16"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" />
+          </g><!--link parquet to superset-->
+          <g class="link" data-entity-1="ent0018" data-entity-2="ent0022" data-link-type="dependency"
+            data-source-line="95" id="lnk39">
+            <path
+              d="M1094.61,370.24 C1101.21,372.7 1107.85,375.16 1114.19,377.51 C1141.72,387.69 1167.6444,397.192 1193.1444,406.522"
+              fill="none" id="parquet-to-superset" style="stroke:#87867F;stroke-width:1;stroke-dasharray:7,7;" />
+            <polygon fill="#87867F"
+              points="1197.84,408.24,1190.7624,401.3911,1193.1444,406.522,1188.0136,408.904,1197.84,408.24"
+              style="stroke:#87867F;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;" /><text fill="#87867F"
+              font-family="'Helvetica Neue'" font-size="10" lengthAdjust="spacing" textLength="62.97" x="1115.19"
+              y="363.31">reads Parquet</text><text fill="#87867F" font-family="'Helvetica Neue'" font-size="10"
+              lengthAdjust="spacing" textLength="53.7" x="1119.825" y="375.24">no API layer</text>
+          </g>
+          <!--link l_src to l_ing--><!--link l_ing to l_can--><!--link l_can to l_mar--><!--link l_mar to l_pub--><!--link l_pub to l_ren--><!--link l_ren to l_out-->
+        </g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span><i class="chip custom"></i>Custom, built this cycle</span>
+      <span><i class="chip buy"></i>Bought / adopted, scoped</span>
+      <span><i class="chip ghost"></i>Sand product, not used in D2</span>
+      <span><i class="chip output"></i>Delivered output</span>
+    </div>
+
+    <div class="cards">
+      <div class="card rejected">
+        <div class="verdict">Not used, D2</div>
+        <h3>Health Atlas</h3>
+        <p>Geographic mapping needs real facility coordinates. The sample's <code>gps_lat</code>/<code>gps_lon</code>
+          are uniform random within Rwanda's bounding box (verified: every province spans the
+          full extent), so facility-point mapping is impossible this cycle. District-grain
+          choropleth is the honest substitute; a full Atlas integration is a D3/D4 item once
+          real coordinates exist.</p>
+      </div>
+      <div class="card rejected">
+        <div class="verdict">Not used, D2</div>
+        <h3>Health Outcome Tracker</h3>
+        <p>The bulletin's facility-to-district-to-national roll-up is real, but it's built
+          directly in the Gold layer (<code>district_quarter</code>, <code>nmr_district_quarter</code>)
+          rather than on this product. No working, Rwanda-configured instance is established to
+          plug a new bulletin into (evidence: a pillar name on an AWS Marketplace listing plus
+          one employee's LinkedIn profile), so the roll-up logic stays bespoke Hamilton nodes
+          instead of migrating to product configuration.</p>
+      </div>
+      <div class="card rejected">
+        <div class="verdict">Not used, D2</div>
+        <h3>Health Insight Engine</h3>
+        <p>Documented shape: AI-driven anomaly detection and alerting. The closest live analog,
+          Rwanda's National Health Intelligence Center, already runs outbreak surveillance, but
+          the brief's four required metrics (top facilities, maternal indicators, performance
+          scores, trend) are descriptive analytics, not alerting: no fit even where a confirmed
+          instance exists. The two checks built instead are simple, seeded, and auditable, the
+          opposite of an opaque model: a DHO needs a traceable method, not a score to trust
+          unread.</p>
+      </div>
+      <div class="card adopted">
+        <div class="verdict">Buy, scoped</div>
+        <h3>Analytics Template Toolkit</h3>
+        <p>Apache Superset, the toolkit's own reporting layer. Adopted for the server-rendered
+          dashboard surface at the connected central MoH office only, where power and
+          connectivity are reliable. Not used for the bulletin or email edition, and distinct
+          from the browser-native Explore surface (Mosaic over DuckDB-WASM), which is scoped in
+          this design but not built this cycle: Superset needs a live connection that surface
+          doesn't, and can't substitute for it in the offline majority of districts.</p>
+      </div>
+      <div class="card rejected">
+        <div class="verdict">Not used, D2</div>
+        <h3>HealthOS Data Models</h3>
+        <p>This binds directly to DHIS2's own public data model
+          (<code>org_unit, period, data_element</code>): the naming conflict resolved here
+          (Bluelake's UI vs. the CSVs' fields vs. DHIS2's UIDs vs. the brief's prose) is specific
+          to this engagement's sources. A generic product can't pre-resolve a conflict defined by
+          which systems a Ministry runs and what its analysts call things. The crosswalk and
+          silver layer are built from scratch instead, deliberately shaped to match what the
+          product likely targets: DHIS2's own grain, ICD-10 perinatal codes, WHO GHO indicator
+          definitions. Weakest evidence grade of the five: the product's likely architecture is
+          inference from generic DHIS2/openHIE/medallion patterns, not anything Sand-specific.
+        </p>
+      </div>
+    </div>
+
+    <h2><span class="n">2</span>Data-mart ERD</h2>
+    <div class="erd-note">
+      <b>Not a normalized relational schema.</b> There is no web of pairwise foreign-key joins
+      here. The real shape is six heterogeneous source tables, each with its own key and grain,
+      unpivoted through one crosswalk mapping into a single canonical long-format fact table.
+      Drawing this as a conventional star or snowflake ERD would misrepresent the architecture,
+      so it is drawn as what it actually is: sources feeding a mapping mechanism feeding one hub.
+    </div>
+
+    <div class="canvas">
+      <svg class="erd" viewBox="0 0 1160 520" role="img" aria-label="Data mart entity relationship diagram">
+        <defs>
+          <marker id="arrow-erd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#87867F" />
+          </marker>
+          <marker id="arrow-olive-erd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#788C5D" />
+          </marker>
+        </defs>
+
+        <!-- edges: 6 sources -> crosswalk -->
+        <path class="edge" d="M216,45 C270,45 270,180 316,180" />
+        <path class="edge" d="M216,110 C270,110 270,180 316,180" />
+        <path class="edge" d="M216,175 C270,175 270,190 316,190" />
+        <path class="edge" d="M216,240 C270,240 270,200 316,200" />
+        <path class="edge" d="M216,305 C270,305 270,210 316,210" />
+        <path class="edge" d="M216,370 C270,370 270,220 316,220" />
+        <!-- crosswalk -> observation -->
+        <path class="edge" d="M486,195 L560,195" />
+        <!-- org unit map / hierarchy feeds identity resolution into observation -->
+        <path class="edge" d="M486,300 C520,300 520,240 560,240" />
+        <!-- declared cause-capability link, satellite, not derived from crosswalk -->
+        <path class="edge declared" d="M780,340 L780,290" />
+
+        <!-- source entities -->
+        <g class="entity">
+          <rect x="16" y="20" width="200" height="50" />
+          <text class="title" x="24" y="42">Facility</text>
+          <text class="key" x="24" y="58">PK facility_id</text>
+        </g>
+        <g class="entity">
+          <rect x="16" y="85" width="200" height="50" />
+          <text class="title" x="24" y="107">ClinicalNeonatal</text>
+          <text class="key" x="24" y="123">(facility_id, reporting_month), not unique</text>
+        </g>
+        <g class="entity">
+          <rect x="16" y="150" width="200" height="50" />
+          <text class="title" x="24" y="172">Governance</text>
+          <text class="key" x="24" y="188">PK facility_id</text>
+        </g>
+        <g class="entity">
+          <rect x="16" y="215" width="200" height="50" />
+          <text class="title" x="24" y="237">Operations</text>
+          <text class="key" x="24" y="253">PK facility_id</text>
+        </g>
+        <g class="entity">
+          <rect x="16" y="280" width="200" height="50" />
+          <text class="title" x="24" y="302">HealthcareWorkers</text>
+          <text class="key" x="24" y="318">PK facility_id</text>
+        </g>
+        <g class="entity">
+          <rect x="16" y="345" width="200" height="50" />
+          <text class="title" x="24" y="367">Dhis2Export</text>
+          <text class="key" x="24" y="383">PK (orgUnit, period), proves crosswalk</text>
+        </g>
+
+        <!-- crosswalk mechanism -->
+        <g class="entity mechanism">
+          <rect x="316" y="160" width="170" height="70" />
+          <text class="title" x="324" y="184">Crosswalk</text>
+          <text class="key" x="324" y="200">mechanism, not data</text>
+          <text class="key" x="324" y="214">(source_system, source_field)</text>
+          <text class="key" x="324" y="226">&#8594; canonical_element</text>
+        </g>
+
+        <!-- org unit map / hierarchy -->
+        <g class="entity mechanism">
+          <rect x="316" y="270" width="170" height="60" />
+          <text class="title" x="324" y="292">OrgUnitMap + OrgUnit</text>
+          <text class="key" x="324" y="308">(source_system, source_key)</text>
+          <text class="key" x="324" y="320">&#8594; org_unit, 3-level hierarchy</text>
+        </g>
+
+        <!-- observation hub -->
+        <g class="entity hub">
+          <rect x="560" y="150" width="220" height="120" />
+          <text class="title" x="572" y="176">Observation</text>
+          <text class="key" x="572" y="194">(silver layer, the canonical hub)</text>
+          <text class="key" x="572" y="212">PK (org_unit, period,</text>
+          <text class="key" x="572" y="226">data_element, batch)</text>
+          <text class="key" x="572" y="244">+ value_num, value_text,</text>
+          <text class="key" x="572" y="256">provenance, quality_flags</text>
+        </g>
+
+        <!-- cause capability link satellite -->
+        <g class="entity declared">
+          <rect x="700" y="340" width="220" height="60" />
+          <text class="title" x="708" y="362">CauseCapabilityLink</text>
+          <text class="key" x="708" y="378">curated, not derived</text>
+          <text class="key" x="708" y="390">cause_element &#8594; capability_element</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span><i class="chip"></i>Source entity, real key</span>
+      <span><i class="chip" style="border-color:#D1CFC5;border-style:dashed;"></i>Mechanism (mapping, not data)</span>
+      <span><i class="chip custom" style="border-width:2px;"></i>Canonical hub</span>
+      <span><i class="chip buy"></i>Declared relationship table</span>
+    </div>
+
+    <footer class="colophon">
+      Sand FDE take-home, Deliverable 2 &sect;1 &middot; source: <code>pipeline/mart/crosswalk.csv</code>,
+      <code>pipeline/dataflow/{bronze,silver,gold}.py</code> &middot; decisions/0008, 0010, 0012
+    </footer>
+
+  </div>
+</body>
+
+</html>

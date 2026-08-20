@@ -49,8 +49,8 @@ const RULES = [
   },
   {
     id: 'state-not-colour-only',
-    why: 'Provisional and withheld must appear as words, since a client that drops CSS still has to carry the state.',
-    hits: /provisional/i.test(html) && /withheld/i.test(html) ? [] : ['state words absent'],
+    why: 'Provisional and caveat must appear as words, since a client that drops CSS still has to carry the state.',
+    hits: /provisional/i.test(html) && /caveat/i.test(html) ? [] : ['state words absent'],
   },
 ];
 

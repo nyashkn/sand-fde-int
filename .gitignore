@@ -12,3 +12,8 @@ __pycache__/
 deliverable-2-prototype/web/node_modules/
 deliverable-2-prototype/web/dist/
 deliverable-2-prototype/web/.astro/
+deliverable-2-prototype/pipeline/__marimo__/
+.html-kit/_archive/
+
+# Submission build scratch, wiped and rewritten by submission/build.sh on every run.
+submission/.work/

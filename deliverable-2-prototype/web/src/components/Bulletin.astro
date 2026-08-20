@@ -1,0 +1,736 @@
+---
+/**
+ * The bulletin, extracted from a page into a component so two routing strategies can
+ * share one template without duplicating it: `pages/index.astro` (env-var-driven, one
+ * build per quarter, what `publish.mjs` and every check script already depend on,
+ * untouched by this split) and `pages/[quarter].astro` (path-driven, one `astro dev`
+ * process serving all four quarters live, for review and iteration without re-exporting).
+ *
+ * `quarterHref` exists because the two callers need different link shapes for the same
+ * switcher: the published static files are flat siblings (`bulletin-2024-Q2.html`), the
+ * dev route is a URL path (`/2024-Q2`). Neither caller may assume the other's shape.
+ */
+import '../styles/bulletin.css';
+import {
+  completeness, headlineNmr, districtNmr, topFacilities, causeBreakdown, checks, icdCodes,
+  rulesApplied, capabilitySummary, causeCapabilityLinks, contradictions, ALL_QUARTERS,
+  stillbirthRate, districtTrend, capabilityByTier, equipmentTierConfound,
+  referralFeedbackTierConfound, tierNmr, neonatologistCoverage, crosswalkCoverage,
+} from '../lib/mart';
+import { chart } from '../lib/charts';
+
+interface Props {
+  quarter: string;
+  quarterHref: (q: string) => string;
+}
+const { quarter: QUARTER, quarterHref } = Astro.props;
+
+const [comp, head, districts, top, causes, chk, codes, rules, capSummary, causeLinks,
+       knownContradictions, trendHeads, trendComps, stillbirths, distTrend, capTier,
+       equipConfound, referralConfound, nmrByTier, neoCoverage, coverage] = await Promise.all([
+  completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER),
+  topFacilities(QUARTER), causeBreakdown(QUARTER), checks(), icdCodes(), rulesApplied(),
+  capabilitySummary(), causeCapabilityLinks(), contradictions(),
+  Promise.all(ALL_QUARTERS.map((q) => headlineNmr(q))),
+  Promise.all(ALL_QUARTERS.map((q) => completeness(q))),
+  stillbirthRate(QUARTER), districtTrend(), capabilityByTier(),
+  equipmentTierConfound(), referralFeedbackTierConfound(), tierNmr(), neonatologistCoverage(),
+  crosswalkCoverage(),
+]);
+
+// ---- section numbering: nav and headings both render off this one array's position,
+// not two hand-typed number lists that happened to agree. ----
+const SECTIONS = ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'] as const;
+const secNum = (id: (typeof SECTIONS)[number]) => String(SECTIONS.indexOf(id) + 1).padStart(2, '0');
+
+const CROSSWALK_URL = 'https://github.com/nyashkn/sand-fde-int/blob/main/deliverable-2-prototype/pipeline/mart/crosswalk.csv';
+
+// Read from the mart, never retyped: a hand-written rule name in a provenance record
+// already produced one that does not exist.
+const RULE = rules[0] ?? 'none';
+
+const absent = comp.filter((c) => c.state === 'absent').map((c) => c.period);
+const contested = comp.filter((c) => c.state === 'contested').map((c) => c.period);
+const monthsHeld = comp.length - absent.length;
+
+const NATIONAL_NMR = 19; // WHO / national reporting, used as the benchmark rule
+
+const rankingSvg = await chart('ranking', top.map((t) => ({
+  label: t.name, value: t.value, provisional: t.provisional,
+})), { xLabel: 'Deliveries in quarter' });
+
+const districtSvg = await chart('distribution-across-units', districts.map((d) => ({
+  label: d.district, value: d.value, provisional: d.provisional,
+})), { xLabel: 'Neonatal deaths per 1,000 live births',
+       benchmark: { value: NATIONAL_NMR, label: `national ~${NATIONAL_NMR}` } });
+
+const CAUSE_LABEL: Record<string, string> = {
+  asphyxia: 'Birth asphyxia', prematurity: 'Prematurity', sepsis: 'Sepsis',
+  congenital: 'Congenital', other: 'Other / no cause recorded',
+};
+
+// ---- section 2 cause chart: ranked, so the largest bar is whichever cause the mart actually
+// puts first, never an assumed clinical ordering. ----
+const causeTotal = causes.reduce((s, c) => s + c.value, 0);
+const causeSvg = await chart('ranking', causes.map((c) => ({
+  label: CAUSE_LABEL[c.cause] ?? c.cause, value: c.value, provisional: c.provisional,
+})), { xLabel: 'Neonatal deaths' });
+// causes is already ordered by value DESC (the mart query's own ORDER BY): causes[0] is
+// the largest bucket by construction, not an assumption made here.
+const largestCause = causes[0];
+const largestCauseShare = causeTotal > 0 ? (largestCause.value / causeTotal) * 100 : 0;
+const largestCauseIsOther = largestCause?.cause === 'other';
+
+// ---- section 5 district-level trend: every district's own line, national overlaid ----
+const nationalTrendPoints = trendHeads.map((h, i) => ({
+  quarter: ALL_QUARTERS[i], value: h.rate,
+  provisional: trendComps[i].some((c) => c.state !== 'complete'),
+}));
+const districtTrendSvg = await chart('district-trend', distTrend.map((d) => ({
+  quarter: d.quarter, district: d.district, value: d.value, provisional: d.provisional,
+})), { xLabel: 'Neonatal deaths per 1,000 live births', nationalTrend: nationalTrendPoints });
+
+// ---- section 3 capability by tier: chart + reference table ----
+const TIER_ORDER = ['District', 'Health Center', 'Provincial', 'Referral'];
+const EQUIPMENT_CHART_METRICS: { metric: string; label: string }[] = [
+  { metric: 'capability_nicu_beds', label: 'NICU beds' },
+  { metric: 'capability_incubators_functional', label: 'Incubators, functional' },
+  { metric: 'capability_cpap_machines', label: 'CPAP machines' },
+  { metric: 'capability_resuscitation_tables', label: 'Resuscitation tables' },
+];
+const capTierByTierMetric = new Map(capTier.map((r) => [`${r.tier}::${r.metric}`, r]));
+const capabilityTierSvg = await chart('grouped-by-category', TIER_ORDER.flatMap((tier) =>
+  EQUIPMENT_CHART_METRICS.map(({ metric, label }) => ({
+    label: tier, group: label,
+    value: capTierByTierMetric.get(`${tier}::${metric}`)?.median ?? 0,
+  }))
+), { xLabel: 'Median count, per facility' });
+
+const CAPABILITY_TABLE_ROWS: { metric: string; label: string; unit: string }[] = [
+  { metric: 'capability_nicu_beds', label: 'NICU beds', unit: 'count' },
+  { metric: 'capability_incubators_functional', label: 'Incubators, functional', unit: 'count' },
+  { metric: 'capability_incubators_total', label: 'Incubators, total', unit: 'count' },
+  { metric: 'capability_radiant_warmers', label: 'Radiant warmers', unit: 'count' },
+  { metric: 'capability_phototherapy_units', label: 'Phototherapy units', unit: 'count' },
+  { metric: 'capability_cpap_machines', label: 'CPAP machines', unit: 'count' },
+  { metric: 'capability_resuscitation_tables', label: 'Resuscitation tables', unit: 'count' },
+  { metric: 'ops_oxygen_cylinders', label: 'Oxygen cylinders available', unit: 'count' },
+  { metric: 'ops_oxygen_concentrators', label: 'Oxygen concentrators', unit: 'count' },
+  { metric: 'ops_stockout_days', label: 'Essential-drug stockout days', unit: 'days/quarter' },
+  { metric: 'governance_death_audit_rate', label: 'Death audits conducted', unit: '%' },
+  { metric: 'governance_supervision_visits', label: 'Supervision visits', unit: '/quarter' },
+  { metric: 'governance_thermal_compliance', label: 'Thermal-care protocol compliance', unit: '%' },
+  { metric: 'governance_ipc_score', label: 'Infection-prevention score', unit: '/100' },
+  { metric: 'staff_nurses_total', label: 'Nurses, total', unit: 'count' },
+  { metric: 'staff_nurses_neonatal', label: 'Nurses, neonatal-trained', unit: 'count' },
+  { metric: 'staff_midwives', label: 'Midwives', unit: 'count' },
+  { metric: 'staff_obstetricians', label: 'Obstetricians', unit: 'count' },
+  { metric: 'staff_pediatricians', label: 'Pediatricians', unit: 'count' },
+  { metric: 'staff_anesthetists', label: 'Anesthetists', unit: 'count' },
+];
+const tierN = new Map(capTier.filter((r, i, a) => a.findIndex((x) => x.tier === r.tier) === i)
+  .map((r) => [r.tier, r.n]));
+
+// ---- section 6: two new stratified findings, same shape as chk.strat, appended for one render path ----
+const extraStrat = [equipConfound, referralConfound];
+const referralTimeRow = chk.strat.find((s) => s.covariate === 'ops_referral_time_hrs');
+const STRAT_LABEL: Record<string, string> = {
+  governance_staff_trained_rate: 'Staff trained on protocol (%)',
+  capability_cpap_machines: 'CPAP machines',
+  ops_referral_time_hrs: 'Average referral time (hrs)',
+  capability_equipment_index: 'Composite equipment index (8 fields, z-scored)',
+  ops_referral_feedback_rate: 'Referral feedback rate (%)',
+};
+const worstTier = nmrByTier[0];
+const bestTier = nmrByTier[nmrByTier.length - 1];
+const monthsPhrase = absent.length
+  ? `${monthsHeld} of ${comp.length} expected months, ${absent.join(' and ')} absent`
+  : `${monthsHeld} of ${comp.length} expected months`;
+
+// ---- capability lookups: capSummary is long-format, one row per (metric, category)
+// for categoricals, one row per metric for numerics. ----
+function categoryStat(metric: string, category: string) {
+  return capSummary.find((c) => c.metric === metric && c.category === category)!;
+}
+function numericStat(metric: string) {
+  return capSummary.find((c) => c.metric === metric && c.kind === 'numeric')!;
+}
+
+const surfactantNo = categoryStat('ops_surfactant', 'No');
+const surfactantYes = categoryStat('ops_surfactant', 'Yes');
+const oxygenPlantNo = categoryStat('ops_oxygen_plant', 'No');
+const ambulanceNo = categoryStat('ops_ambulance', 'No');
+const antibioticsRarely = categoryStat('ops_antibiotics', 'Rarely');
+const antibioticsSometimes = categoryStat('ops_antibiotics', 'Sometimes');
+const antibioticsUsually = categoryStat('ops_antibiotics', 'Usually');
+const antibioticsAlways = categoryStat('ops_antibiotics', 'Always');
+const antibioticsNotReliable = antibioticsRarely.nWith! + antibioticsSometimes.nWith!;
+const qiNo = categoryStat('governance_qi_active', 'No');
+const qiYes = categoryStat('governance_qi_active', 'Yes');
+const protocolOutdated = categoryStat('governance_protocol_status', 'Outdated');
+const protocolNo = categoryStat('governance_protocol_status', 'No');
+const protocolNotCurrent = protocolOutdated.nWith! + protocolNo.nWith!;
+const reportingCompleteness = numericStat('governance_reporting_completeness');
+const neverTrained = categoryStat('staff_last_training', 'Never');
+const neonatologists = numericStat('staff_neonatologists');
+const topFacility = top[0];
+
+const GAP_BARS = [
+  { label: 'No surfactant on site', pct: surfactantNo.pctWith!,
+    note: `${surfactantNo.nWith} of ${surfactantNo.nFacilities} facilities: the standard treatment for prematurity, a top-2 cause of death` },
+  { label: 'No on-site oxygen plant', pct: oxygenPlantNo.pctWith!,
+    note: `${oxygenPlantNo.nWith} of ${oxygenPlantNo.nFacilities} facilities` },
+  { label: 'No ambulance', pct: ambulanceNo.pctWith!,
+    note: `${ambulanceNo.nWith} of ${ambulanceNo.nFacilities} facilities` },
+  { label: 'Antibiotics not reliably available',
+    pct: Math.round((antibioticsNotReliable / antibioticsRarely.nFacilities) * 1000) / 10,
+    note: `${antibioticsNotReliable} of ${antibioticsRarely.nFacilities} report Rarely or Sometimes; only ${antibioticsUsually.nWith! + antibioticsAlways.nWith!} report Usually or Always` },
+  { label: 'No or outdated protocol',
+    pct: Math.round((protocolNotCurrent / protocolOutdated.nFacilities) * 1000) / 10,
+    note: `${protocolNotCurrent} of ${protocolOutdated.nFacilities} facilities without a current protocol` },
+  { label: 'No active QI programme', pct: qiNo.pctWith!,
+    note: `${qiNo.nWith} of ${qiNo.nFacilities} facilities; only ${qiYes.nWith} active` },
+  { label: 'Staff never trained, neonatal', pct: neverTrained.pctWith!,
+    note: `${neverTrained.nWith} of ${neverTrained.nFacilities} facilities` },
+  { label: 'Reporting completeness, median', pct: reportingCompleteness.median!, neutral: true,
+    note: `range ${reportingCompleteness.min}% to ${reportingCompleteness.max}% across ${reportingCompleteness.nFacilities} facilities` },
+];
+
+// ---- cause-capability pairing: real availability figures, not the gap framing above ----
+const CAPABILITY_LABEL: Record<string, string> = {
+  ops_surfactant: `Available at ${surfactantYes.nWith} of ${surfactantYes.nFacilities} facilities`,
+  governance_bagmask_competency: (() => {
+    const s = numericStat('governance_bagmask_competency');
+    return `Median competency ${s.median}% (range ${s.min}% to ${s.max}%) across ${s.nFacilities} facilities`;
+  })(),
+  ops_antibiotics: `Usually or Always available at ${antibioticsUsually.nWith! + antibioticsAlways.nWith!} of ${antibioticsRarely.nFacilities} facilities`,
+  capability_nicu_available: (() => {
+    const yes = categoryStat('capability_nicu_available', 'Yes');
+    return `Available at ${yes.nWith} of ${yes.nFacilities} facilities`;
+  })(),
+};
+
+// ---- trend series, all four quarters, not a 2-point delta ----
+const trendSeries = ALL_QUARTERS.map((q, i) => {
+  const c = trendComps[i];
+  const absentQ = c.filter((x) => x.state === 'absent').map((x) => x.period);
+  return {
+    quarter: q, rate: trendHeads[i].rate, deaths: trendHeads[i].deaths, births: trendHeads[i].births,
+    monthsHeld: c.length - absentQ.length, monthsExpected: c.length,
+  };
+});
+const maxTrendRate = Math.max(...trendSeries.map((t) => t.rate));
+const temporalCaveat = chk.temporal.find((t) => t.element === 'neonatal_deaths_early')?.caveat ?? chk.temporal[0]?.caveat;
+
+// ---- correlation gauges: pooled r and each within-tier r on a shared -1..+1 scale ----
+function gaugeX(r: number) { return 20 + ((r + 1) / 2) * 260; }
+function parseWithin(withinStrata: string): { tier: string; value: number }[] {
+  if (!withinStrata) return [];
+  return withinStrata.split('; ').map((piece) => {
+    const idx = piece.lastIndexOf(' ');
+    return { tier: piece.slice(0, idx), value: Number(piece.slice(idx + 1)) };
+  });
+}
+
+// ---- known issues: the defects that survive, plus every declared contradiction ----
+const CONTRADICTION_LABEL: Record<string, string> = {
+  kangaroo_care_self_contradiction: 'Kangaroo-care self-contradiction',
+  trained_nurses_never_trained: 'Trained-nurses-vs-never-trained',
+  referral_imbalance: 'Referral imbalance',
+  power_without_generator: 'Power without generator',
+  night_shift_coverage_unreported: 'Night-shift coverage unreported',
+  surfactant_no_variance: 'Surfactant availability, no variance',
+  neonatologist_no_variance: 'Neonatologist staffing, no variance',
+  quality_improvement_no_variance: 'Quality-improvement programme, no variance',
+};
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Quarterly Health Bulletin (synthetic data), {QUARTER}</title>
+</head>
+<body>
+<div class="page" id="top">
+
+  <!-- Synthetic-data disclosure: the one fact that qualifies every number below it, so it
+       sits before the verdict, not after the fold-break with the masthead. Static markup,
+       not a banner: nothing here is dismissible, because nothing on this page runs JS. -->
+  <div class="synthetic-notice">
+    Synthetic data, built for a Sand Technologies recruitment exercise. This is not an
+    official Ministry of Health, Rwanda publication: every figure on this page is
+    fabricated and does not describe a real health outcome.
+  </div>
+
+  <!-- Verdict: everything above the fold. No masthead, no navigation, no receipts here:
+       a reader who reads nothing else still gets the number, what it means, whether it is
+       actionable, and what to do next. -->
+  <div class="verdict">
+    <div class="answer-label">Neonatal mortality, {QUARTER}</div>
+    <div class="answer-figure">
+      {head.rate.toFixed(1)}<span class="answer-unit"> per 1,000 live births</span>
+    </div>
+    <p class="implication">
+      {head.rate.toFixed(1)} per 1,000 is {(head.rate / NATIONAL_NMR).toFixed(1)}&times; the WHO / national
+      benchmark of {NATIONAL_NMR} per 1,000.
+    </p>
+    <p class="verdict-para">
+      <b>{head.deaths.toLocaleString()} deaths</b> across <b>{head.births.toLocaleString()} live births</b>,
+      WHO GHO definition, {monthsPhrase}.
+      {contested.length > 0 && (
+        <span>
+          {' '}{head.provisionalDistricts} of {head.districts} district figures are
+          {' '}<span class="tag provisional">provisional</span>: {contested.join(' and ')} each
+          loaded twice with differing values.
+        </span>
+      )}
+      {' '}Only {surfactantYes.nWith} of {surfactantYes.nFacilities} facilities stock surfactant, the
+      standard treatment for prematurity; only {qiYes.nWith} of {qiYes.nFacilities} run an active
+      quality-improvement programme; median self-reported reporting completeness is {' '}
+      {reportingCompleteness.median}%. Capability gaps qualify whether this figure is actionable, not
+      only whether it is settled.
+    </p>
+    <p class="action-line">
+      {contested.length
+        ? `Resolve the ${contested.join(' and ')} batch conflict before treating this figure as final: ${RULE} is a placeholder default, not a decision.`
+        : `No batch conflicts remain unresolved this quarter; figures below are final within the checks in sections 6 and 7.`}
+    </p>
+  </div>
+
+  <hr class="fold-break" />
+
+  <header class="masthead">
+    <div class="kicker">Ministry of Health, Rwanda &middot; neonatal &middot; {QUARTER}</div>
+    <h1>Quarterly Health Bulletin</h1>
+    <nav class="quarter-switch" aria-label="Other quarters">
+      {ALL_QUARTERS.map((q) => (
+        q === QUARTER
+          ? <span class="qs-current">{q}</span>
+          : <a href={quarterHref(q)}>{q}</a>
+      ))}
+    </nav>
+  </header>
+
+  <div class="receipts">
+    <div class="receipt">
+      <div class="k">Months held</div>
+      <div class={`v ${absent.length ? 'warn' : 'good'}`}>{monthsHeld}<span style="font-size:15px;color:var(--gray-mid)">/{comp.length}</span></div>
+      <div class="d">{absent.length ? `${absent.join(', ')} absent` : 'complete quarter'}</div>
+    </div>
+    <div class="receipt">
+      <div class="k">Facilities reporting</div>
+      <div class="v good">{Math.max(...comp.map((c) => c.facilities_received))}<span style="font-size:15px;color:var(--gray-mid)">/{comp[0]?.facilities_expected}</span></div>
+      <div class="d">in the months held</div>
+    </div>
+    <div class="receipt">
+      <div class="k">Figures provisional</div>
+      <div class={`v ${head.provisionalDistricts ? 'warn' : 'good'}`}>{head.provisionalDistricts}<span style="font-size:15px;color:var(--gray-mid)">/{head.districts}</span></div>
+      <div class="d">{contested.length ? 'awaiting a batch decision' : 'none contested'}</div>
+    </div>
+    <div class="receipt">
+      <div class="k">Reporting completeness, median</div>
+      <div class="v good">{reportingCompleteness.median}%</div>
+      <div class="d">range {reportingCompleteness.min}% to {reportingCompleteness.max}%, all facilities</div>
+    </div>
+  </div>
+
+  <nav class="index" aria-label="Sections">
+    <a href="#s1">{secNum('s1')} Facilities</a>
+    <a href="#s2">{secNum('s2')} Cause of death</a>
+    <a href="#s3">{secNum('s3')} Facility capability</a>
+    <a href="#s4">{secNum('s4')} By district</a>
+    <a href="#s5">{secNum('s5')} Trend</a>
+    <a href="#s6">{secNum('s6')} Correlation</a>
+    <a href="#s7">{secNum('s7')} Known issues</a>
+    <a href="#s8">{secNum('s8')} Lineage</a>
+  </nav>
+
+  <p class="convention">
+    Provisional figures are hatched in bars, hollow in dots, underlined in tables. Every check
+    below always renders its finding: a caveat qualifies confidence, it never withholds content.
+    Every figure links to its lineage record.
+  </p>
+
+  <section class="deep" id="s1">
+    <div class="print-keep">
+    <h2><span class="n">{secNum('s1')}</span>Facilities by delivery volume</h2>
+    <figure set:html={rankingSvg} />
+    <figcaption>
+      Top {top.length} of 117 by total deliveries. Volume tracks tier, so this is not a
+      quality ranking. <a class="lineage" href="#lineage-top">lineage, section 8</a>
+    </figcaption>
+    </div>
+  </section>
+
+  <section class="deep" id="s2">
+    <div class="print-keep">
+    <h2><span class="n">{secNum('s2')}</span>Neonatal deaths by cause, paired with the capability that treats it</h2>
+    <p>
+      {largestCauseIsOther ? (
+        <span>
+          The largest single bucket is <b>{CAUSE_LABEL[largestCause.cause]}</b>, {largestCause.value.toLocaleString()}
+          {' '}of {causeTotal.toLocaleString()} deaths ({largestCauseShare.toFixed(1)}%), ahead of every named clinical
+          cause below it. That is a data-system finding, not a clinical one: it means the cause of death was not
+          recorded, not that no cause exists. A reader taking the largest named clinical cause,
+          {' '}{CAUSE_LABEL[causes[1]?.cause] ?? causes[1]?.cause}, as the leading cause of neonatal death in this
+          data would be wrong.
+        </span>
+      ) : (
+        <span>
+          The largest bucket is <b>{CAUSE_LABEL[largestCause?.cause] ?? largestCause?.cause}</b>,
+          {' '}{largestCause?.value.toLocaleString()} of {causeTotal.toLocaleString()} deaths
+          {' '}({largestCauseShare.toFixed(1)}%).
+        </span>
+      )}
+    </p>
+    <figure set:html={causeSvg} />
+    <figcaption>
+      Ranked by count, not by assumed clinical severity. <a class="lineage" href="#lineage-cause">lineage, section 8</a>
+    </figcaption>
+    </div>
+    <table>
+      <thead><tr><th>Cause</th><th>ICD-10</th><th class="num">Deaths</th><th class="num">Share</th></tr></thead>
+      <tbody>
+        {causes.map((c) => {
+          const link = causeLinks.find((l) => l.causeElement === `neonatal_deaths_${c.cause}`);
+          return (
+            <tr class={c.provisional ? 'provisional' : ''}>
+              <td>
+                {CAUSE_LABEL[c.cause] ?? c.cause}
+                {link && (
+                  <div class="td-sub" style="font-size:11.5px;color:var(--gray-mid);margin-top:2px;">
+                    {CAPABILITY_LABEL[link.capabilityElement] ?? link.note}
+                  </div>
+                )}
+              </td>
+              <td class="mono">{codes[`neonatal_deaths_${c.cause}`] ?? 'not coded'}</td>
+              <td class="num">{c.value.toLocaleString()}</td>
+              <td class="num">{((c.value / causes.reduce((s, x) => s + x.value, 0)) * 100).toFixed(1)}%</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+    <figcaption>
+      Reconciles to total neonatal deaths in 1,404 of 1,404 source rows. Capability figures are
+      national, not quarter-scoped: capability data is a facility snapshot, section 3.
+      {' '}<a class="lineage" href="#lineage-cause">lineage, section 8</a>
+    </figcaption>
+
+    <div class="statbox">
+      <div class="sb-label">
+        Stillbirths, {QUARTER}: a different denominator, not a sixth cause row above. A stillbirth
+        never had a live birth, so it cannot enter a live-birth-denominated rate and is not added to
+        the neonatal-death count.
+      </div>
+      <div style="text-align:right;">
+        <div class="sb-num">{stillbirths.rate.toFixed(1)}</div>
+        <div class="sb-sub">
+          per 1,000 total deliveries &middot; {stillbirths.stillbirths.toLocaleString()} of {' '}
+          {stillbirths.deliveries.toLocaleString()}{stillbirths.provisional && ' · provisional'}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="deep" id="s3">
+    <div class="print-keep">
+    <h2><span class="n">{secNum('s3')}</span>Facility capability, national, n = 117</h2>
+    <p>
+      Governance, operations and staffing data from all 117 facilities, resolved through the same
+      {' '}<a href={CROSSWALK_URL}>crosswalk</a> as every other figure on this page but never
+      previously queried past the three covariates section 6 tests. Reporting completeness (median
+      {' '}{reportingCompleteness.median}%) is the brief's own required "facility performance score."
+      Broken out by tier below because tier, not any single equipment field, is what actually
+      separates facilities in this data (section 6): District and Health Center read as
+      near-identical on every metric in the table below, despite the widest mortality gap of any
+      two adjacent tiers.
+    </p>
+    <figure set:html={capabilityTierSvg} />
+    <figcaption>
+      Median count per facility, by tier, {EQUIPMENT_CHART_METRICS.map((m) => m.label).join(', ')}.
+      {' '}<a class="lineage" href="#lineage-capability">lineage, section 8</a>
+    </figcaption>
+    </div>
+    <p>
+      Only {surfactantYes.nWith} of {surfactantYes.nFacilities} facilities stock surfactant and only
+      {' '}{qiYes.nWith} of {qiYes.nFacilities} run an active quality-improvement programme,
+      nationally; both are declared low-variance in section 7 and are not broken out by tier here for
+      that reason. The wider capability set the brief asks for is below, by tier, in full:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          {TIER_ORDER.map((tier) => <th class="num">{tier}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="sub">n facilities</td>
+          {TIER_ORDER.map((tier) => <td class="num mono">{tierN.get(tier) ?? 0}</td>)}
+        </tr>
+        {CAPABILITY_TABLE_ROWS.map((row) => (
+          <tr>
+            <td>{row.label} <span class="sub">({row.unit})</span></td>
+            {TIER_ORDER.map((tier) => {
+              const cell = capTierByTierMetric.get(`${tier}::${row.metric}`);
+              return <td class="num mono">{cell ? cell.median : '–'}</td>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <figcaption>
+      Median per facility, by tier, all facilities, all metrics the <a href={CROSSWALK_URL}>crosswalk</a> resolves
+      under this section that the chart above does not already carry.
+      {' '}<a class="lineage" href="#lineage-capability">lineage, section 8</a>
+    </figcaption>
+    <div class="statbox">
+      <div class="sb-label">
+        Neonatologists on staff: zero at all but {neoCoverage.total - neoCoverage.zero} facilities,
+        both Referral tier. The national mean is a rounding artefact of those two facilities, not
+        staffing depth, section 7.
+      </div>
+      <div style="text-align:right;">
+        <div class="sb-num">{neoCoverage.zero}<span style="font-size:16px;">/{neoCoverage.total}</span></div>
+        <div class="sb-sub">facilities with zero neonatologists</div>
+      </div>
+    </div>
+    <figcaption>national, not quarter-scoped &middot; <a class="lineage" href="#lineage-capability">lineage, section 8</a></figcaption>
+  </section>
+
+  <section class="deep" id="s4">
+    <div class="print-keep">
+    <h2><span class="n">{secNum('s4')}</span>Neonatal mortality by district</h2>
+    <figure set:html={districtSvg} />
+    <figcaption>
+      {districts.length} districts, {districts[districts.length - 1]?.value.toFixed(1)} to {districts[0]?.value.toFixed(1)} per 1,000.
+      District grain: facility coordinates are unusable, section 7.
+      {' '}<a class="lineage" href="#lineage-district">lineage, section 8</a>
+    </figcaption>
+    </div>
+  </section>
+
+  <section class="deep" id="s5">
+    <div class="print-keep">
+    <h2><span class="n">{secNum('s5')}</span>Trend, four quarters of 2024, by district</h2>
+    <p>
+      Not a two-point delta, and not national-only: every one of {districts.length} districts, all
+      four quarters, each labeled with the months actually held. The national series (bold) is the
+      same four points this section showed before this edition; the district lines beneath it are new.
+    </p>
+    <figure set:html={districtTrendSvg} />
+    <figcaption>
+      Thin lines: each district, dashed where that district-quarter figure is provisional (a batch
+      conflict, section 7). Bold line: national, hatched points mark a partial quarter (a missing
+      month, not a batch conflict). <a class="lineage" href="#lineage-trend">lineage, section 8</a>
+    </figcaption>
+    </div>
+    <div class="gapgrid" style="grid-template-columns:1fr;">
+      {trendSeries.map((t) => (
+        <div class="gapbar">
+          <div class="gapbar-head">
+            <span class="m">{t.quarter}{t.quarter === QUARTER ? ' (this edition)' : ''}</span>
+            <span class="v neutral">{t.rate.toFixed(1)} <span style="font-size:10px;color:var(--gray-mid);">per 1,000, national</span></span>
+          </div>
+          <div class="track">
+            <div class={`fill ${t.monthsHeld < t.monthsExpected ? 'hatched' : 'neutral'}`} style={`width:${(t.rate / maxTrendRate) * 100}%`}></div>
+          </div>
+          <div class="gapfoot">
+            {t.deaths.toLocaleString()} deaths / {t.births.toLocaleString()} live births &middot;
+            {' '}{t.monthsHeld} of {t.monthsExpected} months held
+            {t.monthsHeld < t.monthsExpected ? ' (partial quarter)' : ''}
+          </div>
+        </div>
+      ))}
+    </div>
+    <p class="caption">
+      <b>Caveat:</b> {temporalCaveat}. The chart above shows the real quarter-over-quarter series
+      regardless: the caveat qualifies whether that movement is distinguishable from noise, it does
+      not remove the series. Read the crossing, directionless district lines as that caveat made
+      visible, not as evidence a trend is being hidden.
+    </p>
+    <figcaption><a class="lineage" href="#lineage-trend">lineage, section 8</a></figcaption>
+  </section>
+
+  <section class="deep" id="s6">
+    <h2><span class="n">{secNum('s6')}</span>Tier confound: capability looks predictive, until you stratify</h2>
+    <p class="implication" style="max-width:72ch;">
+      District facilities, nominally the mid-tier, have the worst mean neonatal mortality of any
+      tier: {worstTier.meanNmr.toFixed(1)} per 1,000 (n={worstTier.n}), ahead of Health Center
+      ({nmrByTier[1]?.meanNmr.toFixed(1)}, n={nmrByTier[1]?.n}), Provincial
+      ({nmrByTier[2]?.meanNmr.toFixed(1)}, n={nmrByTier[2]?.n}) and Referral
+      ({bestTier.meanNmr.toFixed(1)}, n={bestTier.n}).
+    </p>
+    <p>
+      A composite equipment index correlates {equipConfound.pooled >= 0 ? '+' : ''}{equipConfound.pooled.toFixed(2)}
+      {' '}with facility mortality pooled across all 117 facilities, a relationship strong enough to
+      read as "equip facilities, save newborns." It is not that. Stratified by tier it collapses to
+      near zero or reverses ({equipConfound.within}): District and Health Center hold almost
+      identical equipment (section 3) and still land {Math.abs(worstTier.meanNmr - nmrByTier[1].meanNmr).toFixed(1)}
+      {' '}points apart in mortality. The pooled number
+      describes which tier a facility is in, not what equipping it would do. Every covariate below
+      is tested the same way, pooled and within tier: shown here, not hidden. Every correlation
+      below also tests the same static, national capability snapshot (section 3) against each
+      facility's births-weighted mortality rate summed across all four quarters of 2024, not
+      matched quarter by quarter against that snapshot.
+    </p>
+    <p>
+      Referral closes a similar gap between two figures that sound alike. Whether a referral gets a
+      reply pools at {referralConfound.pooled >= 0 ? '+' : ''}{referralConfound.pooled.toFixed(2)}
+      {' '}against mortality; how fast it happens pools at{' '}
+      {referralTimeRow ? `${referralTimeRow.pooled >= 0 ? '+' : ''}${referralTimeRow.pooled.toFixed(2)}` : 'n/a'}.
+      Neither survives stratification (below): the loop closing and the loop's speed both read as
+      tier artifacts in this data, not real drivers of mortality once tier is held constant.
+    </p>
+    {[...chk.strat, ...extraStrat].map((s) => {
+      const within = parseWithin(s.within);
+      return (
+        <div class="gauge-row">
+          <div class="g-label"><span class="mono">{STRAT_LABEL[s.covariate] ?? s.covariate}</span> vs. neonatal mortality rate, stratified by {s.by}</div>
+          <svg viewBox="0 0 300 30" width="100%" height="34" role="img" aria-label={`Correlation gauge for ${s.covariate}`}>
+            <line x1="20" y1="15" x2="280" y2="15" stroke="var(--gray-line)" stroke-width="1" />
+            <line x1="150" y1="9" x2="150" y2="21" stroke="var(--ink)" stroke-width="1" />
+            <text x="20" y="7" text-anchor="middle" font-size="9" fill="var(--gray-mid)">&minus;1</text>
+            <text x="150" y="7" text-anchor="middle" font-size="9" fill="var(--gray-mid)">0</text>
+            <text x="280" y="7" text-anchor="middle" font-size="9" fill="var(--gray-mid)">+1</text>
+            {within.map((w) => (
+              <circle cx={gaugeX(w.value)} cy="15" r="3.5" fill="var(--ink)" />
+            ))}
+            <circle cx={gaugeX(s.pooled)} cy="15" r="5.5" fill="var(--red)" />
+          </svg>
+          <table>
+            <thead><tr><th>Stratum</th><th class="num">r</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">pooled, all facilities</td><td class="num">{s.pooled >= 0 ? '+' : ''}{s.pooled.toFixed(3)}</td></tr>
+              {within.map((w) => (
+                <tr><td class="mono">{w.tier}</td><td class="num">{w.value >= 0 ? '+' : ''}{w.value.toFixed(3)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="caption"><b>Caveat:</b> {s.caveat}</p>
+        </div>
+      );
+    })}
+    <figcaption><a class="lineage" href="#lineage-correlation">lineage, section 8</a></figcaption>
+  </section>
+
+  <section class="deep" id="s7">
+    <h2><span class="n">{secNum('s7')}</span>Known issues in the source data</h2>
+    <table>
+      <thead><tr><th>Finding</th><th>Detail</th><th class="num">Extent</th><th>Handling</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">gps_lat, gps_lon</td><td>Uniform random within Rwanda's bounding box. Every province spans the full country extent.</td><td class="num">117 / 117</td><td><span class="tag unmeasured">not used</span></td></tr>
+        <tr class="provisional"><td class="mono">2024-01, 2024-03</td><td>Each loaded twice with differing values. No timestamp distinguishes them, and both are internally consistent.</td><td class="num">234 rows</td><td><span class="tag provisional">queued</span></td></tr>
+        <tr><td class="mono">facility_name</td><td>Contradicts <code>tier_level</code>.</td><td class="num">62 / 117</td><td><span class="tag unmeasured">label only</span></td></tr>
+        <tr><td class="mono">staff_per_delivery_2024</td><td>Named as derived but unreconstructable. Best of eight formulas matched 58.1%, worse than guessing the column's own mode.</td><td class="num">3 values</td><td><span class="tag unmeasured">not used</span></td></tr>
+        {knownContradictions.map((c) => (
+          <tr>
+            <td class="mono">{c.elements}</td>
+            <td>{CONTRADICTION_LABEL[c.finding] ?? c.finding}: {c.statement}</td>
+            <td class="num">n/a</td>
+            <td><span class="tag caveat">{c.kind}</span></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <figcaption>Contradictions read live off <code>gold.known_contradictions</code>, sourced from the <a href={CROSSWALK_URL}>crosswalk</a>'s own notes.</figcaption>
+  </section>
+
+  <section class="deep" id="s8">
+    <h2><span class="n">{secNum('s8')}</span>Lineage</h2>
+
+    <p class="caption">
+      {coverage.reachingFigure} of {coverage.totalSourceColumns} source columns reach a figure on
+      this page; {coverage.excluded} are excluded, each with a reason in the
+      {' '}<a href={CROSSWALK_URL}>crosswalk</a>; {coverage.carriedUnused} reaches a gold table and
+      is never rendered.
+    </p>
+
+    <table class="lineage">
+      <thead>
+        <tr><th>Figure</th><th>Grain</th><th>Inputs</th><th>Rule applied</th><th>Definition</th></tr>
+      </thead>
+      <tbody>
+        <tr id="lineage-headline">
+          <th scope="row">Neonatal mortality, headline</th>
+          <td class="mono">national, quarter</td>
+          <td>{head.births.toLocaleString()} live births, {head.deaths.toLocaleString()} deaths, {districts.length} districts, {monthsPhrase}</td>
+          <td><code>{RULE}</code> lowest occurrence ordinal, arbitrary and pending resolution</td>
+          <td>WHO GHO: (early + late neonatal deaths) / live births &times; 1,000</td>
+        </tr>
+        <tr id="lineage-top">
+          <th scope="row">Facilities by delivery volume</th>
+          <td class="mono">facility, quarter</td>
+          <td>117 facilities, {monthsHeld} months each, top {top.length} shown</td>
+          <td><code>{RULE}</code> on contested batches</td>
+          <td>Sum of <code>total_deliveries</code> over held months</td>
+        </tr>
+        <tr id="lineage-cause">
+          <th scope="row">Neonatal deaths by cause</th>
+          <td class="mono">national, quarter</td>
+          <td>5 cause elements, reconciling in 1,404 of 1,404 source rows</td>
+          <td><code>{RULE}</code> on contested batches</td>
+          <td>ICD-10 P21, P07, P36, Q00 to Q99, summed over held months</td>
+        </tr>
+        <tr id="lineage-stillbirths">
+          <th scope="row">Stillbirths</th>
+          <td class="mono">national, quarter</td>
+          <td>{stillbirths.stillbirths.toLocaleString()} stillbirths, {stillbirths.deliveries.toLocaleString()} total deliveries</td>
+          <td><code>{RULE}</code> on contested batches</td>
+          <td>ICD-10 P95, per 1,000 total deliveries, WHO GHO denominator (not live births)</td>
+        </tr>
+        <tr id="lineage-capability">
+          <th scope="row">Facility capability</th>
+          <td class="mono">national, all facilities</td>
+          <td>42 governance/operations/staffing/capability elements, period = ALL, {capSummary.length} metric rows</td>
+          <td>no batch resolution, one snapshot per facility</td>
+          <td><code>gold.facility_capability</code>: pivot of observations_resolved at period = ALL</td>
+        </tr>
+        <tr id="lineage-district">
+          <th scope="row">Neonatal mortality by district</th>
+          <td class="mono">district, quarter</td>
+          <td>{districts.length} districts, {head.births.toLocaleString()} live births, {districts.filter((d) => d.provisional).length} provisional</td>
+          <td><code>{RULE}</code> lowest occurrence ordinal</td>
+          <td>WHO GHO per district, benchmarked against {NATIONAL_NMR} per 1,000</td>
+        </tr>
+        <tr id="lineage-trend">
+          <th scope="row">Trend, four quarters, by district</th>
+          <td class="mono">national + district, quarter, all 2024</td>
+          <td>{trendSeries.reduce((s, t) => s + t.deaths, 0).toLocaleString()} deaths across all four quarters, {districts.length} districts &times; 4 quarters</td>
+          <td>seed {chk.temporal[0]?.seed}, {chk.temporal[0]?.trials} permutation trials; <code>{RULE}</code> on contested district-quarter batches</td>
+          <td><code>checks.temporal_signal_check</code>: lag-1 autocorrelation vs. within-facility permutation null</td>
+        </tr>
+        <tr id="lineage-correlation">
+          <th scope="row">Correlation, mortality drivers</th>
+          <td class="mono">facility, all quarters pooled</td>
+          <td>{chk.strat.length + extraStrat.length} covariates tested against tier</td>
+          <td>stratified by <code>tier</code>, survives only if sign and half-magnitude hold in every stratum with n &ge; 10</td>
+          <td><code>checks.stratification_check</code> ({chk.strat.length}) + <code>web/src/lib/mart.ts</code> equipment index and referral covariates ({extraStrat.length}, this layer, pipeline out of scope): pooled vs. within-tier Pearson r</td>
+        </tr>
+        <tr id="lineage-tier-nmr">
+          <th scope="row">Mean mortality by tier</th>
+          <td class="mono">facility, all quarters pooled, grouped by tier</td>
+          <td>{nmrByTier.reduce((s, t) => s + t.n, 0)} facilities across {nmrByTier.length} tiers</td>
+          <td>no batch resolution beyond <code>nmr_facility_quarter</code>'s own</td>
+          <td>mean of per-facility (deaths &divide; births &times; 1,000), grouped by <code>org_units.tier</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="colophon">
+    Generated from <code>assignment_csv</code> and <code>dhis2</code> &middot;
+    {head.provisionalDistricts} of {head.districts} district figures provisional &middot;
+    every check above always renders its finding, with a caveat, never a gate<br />
+    Pipeline <code>run.py</code> (Hamilton, DuckDB, Parquet) &middot; site Astro, zero client JavaScript<br />
+    Rebuild: <code>uv run python run.py &amp;&amp; bun run build</code>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -2,10 +2,13 @@
 /**
  * The chart palette and the stylesheet must be the same palette.
  *
- * Charts are rendered in Node, where there is no document and no cascade, so Observable
- * Plot cannot read `var(--clay)`. `charts.ts` therefore holds literal hex values that
- * duplicate `tokens.css`. They agree today because they were typed to agree, which is
- * exactly the arrangement that drifts the first time someone adjusts a colour in one file.
+ * Charts render in Node via Flint's Vega-Lite backend, themed by a narrow override of
+ * the `swiss` preset (`THEME_SPEC` in `charts.ts`) rather than a hand-typed literal per
+ * mark: Flint's own `swiss` defaults are close to but not identical to this project's
+ * tokens, so the override exists specifically to pin them exact. That override still
+ * duplicates hex values that also live in `tokens.css`, so the drift risk this check
+ * exists for is unchanged, only its source shape moved from a flat `TOKENS` object to a
+ * few nested `ink.*` keys.
  *
  * This is also the answer to whether a future explore surface can inherit the token set:
  * it can, because the tokens are plain custom properties, but any surface that renders
@@ -22,27 +25,24 @@ const cssVars = Object.fromEntries(
   [...css.matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/gi)].map((m) => [m[1], m[2].trim().toLowerCase()]),
 );
 
-const block = ts.match(/const TOKENS = \{([\s\S]*?)\n\} as const;/)?.[1] ?? '';
-const tsTokens = Object.fromEntries(
-  [...block.matchAll(/^\s*([a-zA-Z0-9_]+):\s*'([^']+)'/gm)].map((m) => [m[1], m[2].trim().toLowerCase()]),
+const block = ts.match(/const THEME_SPEC = \{([\s\S]*?)\n\} as const;/)?.[1] ?? '';
+const themeInk = Object.fromEntries(
+  [...block.matchAll(/\b([a-zA-Z0-9_]+):\s*'(#[0-9a-fA-F]+)'/g)].map((m) => [m[1], m[2].trim().toLowerCase()]),
 );
 
-/** camelCase token in charts.ts -> kebab custom property in tokens.css. */
+/** THEME_SPEC.ink.* key -> kebab custom property in tokens.css. Two keys legitimately
+ * point at the same custom property (canvas/plot are both --paper; axis/rule are both
+ * --ink), which is fine: both must still agree with that one property. */
 const PAIRS = {
-  ink: 'ink', inkSoft: 'ink-soft', muted: 'muted', clay: 'clay', clayD: 'clay-d',
-  olive: 'olive', rule: 'rule', rule2: 'rule-2', cream: 'cream', oat: 'oat', paper: 'paper',
+  canvas: 'paper', plot: 'paper', primary: 'ink', secondary: 'gray-mid',
+  grid: 'gray-line', axis: 'ink', rule: 'ink', single: 'red', accent: 'red',
 };
 
-// Not a colour, so it has no custom property to compare against. Named here so that an
-// unpaired token is a deliberate exemption rather than a silent gap.
-const EXEMPT = new Set(['mono']);
-
 const problems = [];
-for (const [tsKey, value] of Object.entries(tsTokens)) {
-  if (EXEMPT.has(tsKey)) continue;
+for (const [tsKey, value] of Object.entries(themeInk)) {
   const cssKey = PAIRS[tsKey];
   if (!cssKey) {
-    problems.push(`${tsKey}: in charts.ts with no tokens.css counterpart and no exemption`);
+    problems.push(`${tsKey}: in charts.ts THEME_SPEC with no tokens.css counterpart declared here`);
     continue;
   }
   if (!(cssKey in cssVars)) {
@@ -54,11 +54,14 @@ for (const [tsKey, value] of Object.entries(tsTokens)) {
   }
 }
 
+if (Object.keys(themeInk).length === 0) {
+  problems.push('THEME_SPEC.ink not found in charts.ts (regex or export shape changed)');
+}
+
 if (problems.length > 0) {
   console.error('\n  FAIL  chart palette has drifted from the stylesheet');
   for (const p of problems) console.error(`        ${p}`);
   console.error('');
   process.exit(1);
 }
-const n = Object.keys(tsTokens).length - EXEMPT.size;
-console.log(`  token check passed: ${n} chart colours identical to tokens.css`);
+console.log(`  token check passed: ${Object.keys(themeInk).length} chart theme colours identical to tokens.css`);

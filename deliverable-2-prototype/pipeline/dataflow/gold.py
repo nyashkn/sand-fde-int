@@ -15,6 +15,8 @@ as a fix.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 
 # Declared default for an unresolved batch collision. Named and versioned so it appears
@@ -175,4 +177,89 @@ def completeness_summary(silver: pd.DataFrame) -> pd.DataFrame:
                     else "complete"
                 ),
             })
+    return pd.DataFrame(rows)
+
+
+# Facility-snapshot elements (silver's `_DIMENSION_PERIOD="ALL"`), the four families the
+# crosswalk maps every governance/operations/healthcare_workers/capability field into.
+_CAPABILITY_PREFIXES = ("staff_", "governance_", "ops_", "capability_")
+
+
+def cause_capability_links(mart_dir: Path) -> pd.DataFrame:
+    """Cause of death paired with the specific capability gap most relevant to it.
+
+    Declared as data, mirroring `silver.crosswalk()`'s exact read pattern: the pairing is
+    a clinical judgement call, not a statistical inference, so it belongs in a table a
+    non-engineer can review, not in code.
+    """
+    return pd.read_csv(mart_dir / "cause_capability_links.csv", keep_default_na=False)
+
+
+def known_contradictions(mart_dir: Path) -> pd.DataFrame:
+    """Contradictions already found and recorded, verbatim, in the crosswalk's own notes.
+
+    Declared as data for the same reason as `cause_capability_links`: these are read
+    directly off `mart/crosswalk.csv`'s `note` column, not recomputed or reworded here.
+    """
+    return pd.read_csv(mart_dir / "known_contradictions.csv", keep_default_na=False)
+
+
+def facility_capability(observations_resolved: pd.DataFrame, org_units: pd.DataFrame) -> pd.DataFrame:
+    """One row per facility, one column per staff/governance/ops/capability element.
+
+    Facility-snapshot elements are stamped `period="ALL"` (`silver._DIMENSION_PERIOD`), so
+    this is a straight pivot, no time reshaping. `observations_resolved` is already
+    deduplicated to one row per (org_unit, period, data_element), so no aggregation
+    function is needed to unstack it.
+    """
+    snap = observations_resolved[
+        (observations_resolved["period"] == "ALL")
+        & observations_resolved["data_element"].str.startswith(_CAPABILITY_PREFIXES)
+    ].copy()
+    # A column carries whichever form the source used: numeric where the field is
+    # numeric, text where it is categorical (Yes/No/Partial/Never/...).
+    snap["value"] = snap["value_text"].where(snap["value_num"].isna(), snap["value_num"])
+    wide = snap.set_index(["org_unit", "data_element"])["value"].unstack()
+
+    dims = org_units[org_units["level"] == "facility"][
+        ["org_unit", "name", "tier", "district", "province"]
+    ]
+    return wide.reset_index().merge(dims, on="org_unit", how="left")
+
+
+def capability_summary(facility_capability: pd.DataFrame) -> pd.DataFrame:
+    """National rollup, one row per capability metric (numeric), or per metric-category
+    pair (categorical).
+
+    Which branch a metric takes is decided from its own values, not a hand-maintained
+    list, so a new capability element in the crosswalk is summarised correctly without a
+    code change here. Categorical fields report every value's own count and share rather
+    than a single "affirmative" bucket, because which category is the finding differs by
+    field: "Yes" for protocol status, "Never" for last-training-date.
+    """
+    dim_cols = {"org_unit", "name", "tier", "district", "province"}
+    metric_cols = [c for c in facility_capability.columns if c not in dim_cols]
+
+    rows = []
+    for metric in metric_cols:
+        s = facility_capability[metric].dropna()
+        n_facilities = len(s)
+        if n_facilities == 0:
+            continue
+        numeric = pd.to_numeric(s, errors="coerce")
+        if numeric.notna().all():
+            rows.append({
+                "metric": metric, "category": None, "kind": "numeric",
+                "n_facilities": n_facilities, "n_with": None, "pct_with": None,
+                "median": float(numeric.median()), "min": float(numeric.min()),
+                "max": float(numeric.max()), "mean": round(float(numeric.mean()), 3),
+            })
+        else:
+            for category, n_with in s.value_counts().items():
+                rows.append({
+                    "metric": metric, "category": str(category), "kind": "categorical",
+                    "n_facilities": n_facilities, "n_with": int(n_with),
+                    "pct_with": round(int(n_with) / n_facilities * 100, 1),
+                    "median": None, "min": None, "max": None, "mean": None,
+                })
     return pd.DataFrame(rows)

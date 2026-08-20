@@ -28,7 +28,7 @@ sourced fact.
 
 **What it maps to:** No page literally titled "Health Atlas." Strongest public evidence is a
 LinkedIn feature on Sand Senior Software Engineer Linda Prinsloo (Healthcare team, since RHOS's
-Rwanda launch) describing **3D national-scale facility mapping and catchment-area resolution** , 
+Rwanda launch) describing **3D national-scale facility mapping and catchment-area resolution**,
 she physically carried a projector to Rwanda to show MoH stakeholders a 3D facility map, later
 digitized into the platform. Explicit stated goal: find undigitized/unregistered facilities that
 "couldn't accurately serve the population and catchment area."
@@ -119,7 +119,7 @@ integration. A Sand data engineer's LinkedIn profile independently corroborates 
 Amazon QuickSight use on national health system work.
 
 **Best working interpretation:** "Analytics Template Toolkit" = pre-built/reusable Superset
-dashboard templates FDEs deploy against MoH data sources as part of Sand's reusable "playbooks" , 
+dashboard templates FDEs deploy against MoH data sources as part of Sand's reusable "playbooks",
 consistent with the FDE JD's explicit description of using "Sand's product components and
 playbooks" to rapidly deploy MVPs, and HOS's "deployable in under 8 weeks" claim.
 
@@ -256,10 +256,10 @@ as a gap, not attempted further given diminishing returns.
 ### 7.1 Critical correction: the product is NOT branded "HOS"/"Symmetri" on screen
 
 Across both successfully analyzed videos, **the actual on-screen platform name is `Bluelake
-Admin`**, at the URL `bluelake.rhos.africa` (also seen as `bluelake.roa.africa` in one frame , 
+Admin`**, at the URL `bluelake.rhos.africa` (also seen as `bluelake.roa.africa` in one frame,
 likely a subdomain typo/variant in the same deployment). Neither "HOS," "RHOS" as an acronym on
 its own, nor "Symmetri" appears as on-screen text or in spoken narration in either video. The
-spoken term used is **"the rural health operating system, developed by Sand Technologies"** , 
+spoken term used is **"the rural health operating system, developed by Sand Technologies"**,
 narration, not a UI label. `Rural Health Operating System` does appear as one tile among several
 partner/module logos on a wall display, alongside `Kumva Insights`, `THE PULSE`, `Kapsule`,
 `zipline`, `eFiche`, `Starlink`, consistent with the "integration layer over third-party

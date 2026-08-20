@@ -1,0 +1,13 @@
+quarter,period,facilities_expected,facilities_received,batches,state
+2024-Q1,2024-01,117,117,2,contested
+2024-Q1,2024-02,117,0,0,absent
+2024-Q1,2024-03,117,117,2,contested
+2024-Q2,2024-04,117,117,1,complete
+2024-Q2,2024-05,117,117,1,complete
+2024-Q2,2024-06,117,117,1,complete
+2024-Q3,2024-07,117,117,1,complete
+2024-Q3,2024-08,117,117,1,complete
+2024-Q3,2024-09,117,117,1,complete
+2024-Q4,2024-10,117,117,1,complete
+2024-Q4,2024-11,117,117,1,complete
+2024-Q4,2024-12,117,0,0,absent
