@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Deliverable 2, §1 — Data flow &amp; the crosswalk</title>
+<title>Deliverable 2, §1: data flow and the crosswalk</title>
 <style>
   :root {
     --ivory: #FAF9F5;
@@ -93,63 +93,63 @@
   .node.src .box { fill: var(--g100); stroke: var(--g300); stroke-width: 1; }
 
   .node .tag {
-    font-family: var(--mono); font-style: italic; font-size: 14px;
+    font-family: var(--mono); font-style: italic; font-size: 15px;
     fill: var(--g500); text-transform: none;
   }
   .node.custom .tag { fill: var(--clay-d); }
   .node.buy .tag { fill: var(--olive); }
   .node.output .tag { fill: var(--olive); }
 
-  .node .title { font-family: var(--sans); font-weight: 700; font-size: 15.5px; fill: var(--slate); }
-  .node .sub { font-family: var(--mono); font-size: 13.5px; fill: var(--g500); }
+  .node .title { font-family: var(--sans); font-weight: 700; font-size: 17px; fill: var(--slate); }
+  .node .sub { font-family: var(--mono); font-size: 15px; fill: var(--g500); }
   .node.custom .sub, .node.output .sub, .node.buy .sub { fill: var(--g700); }
 
   /* ---- canonical band ---- */
   .band { fill: rgba(217, 119, 87, 0.035); stroke: var(--clay); stroke-width: 1.25; stroke-dasharray: 3 4; }
   .band-label {
-    font-family: var(--mono); font-size: 13px; font-weight: 700; fill: var(--clay-d);
+    font-family: var(--mono); font-size: 14.5px; font-weight: 700; fill: var(--clay-d);
     letter-spacing: 0.06em; text-transform: uppercase;
   }
 
   /* ---- crosswalk callout ---- */
   .callout-box { fill: var(--paper); stroke: var(--g300); stroke-width: 1; }
   .callout-bar { fill: var(--clay); }
-  .callout-h { font-family: var(--sans); font-weight: 700; font-size: 15.5px; fill: var(--slate); }
-  .callout-p { font-family: var(--sans); font-size: 14.5px; fill: var(--g700); }
-  .stat-n { font-family: var(--mono); font-weight: 700; font-size: 15.5px; }
+  .callout-h { font-family: var(--sans); font-weight: 700; font-size: 17px; fill: var(--slate); }
+  .callout-p { font-family: var(--sans); font-size: 16px; fill: var(--g700); }
+  .stat-n { font-family: var(--mono); font-weight: 700; font-size: 17px; }
   .stat-n.stat-obs { fill: var(--clay-d); }
   .stat-n.stat-dim { fill: var(--olive); }
   .stat-n.stat-un { fill: var(--g500); }
-  .stat-l { font-family: var(--sans); font-size: 14px; fill: var(--g700); }
+  .stat-l { font-family: var(--sans); font-size: 15.5px; fill: var(--g700); }
   .callout-rule { stroke: var(--g300); stroke-width: 1; }
   .callout-eg {
-    font-family: var(--mono); font-size: 13px; font-weight: 700; fill: var(--clay-d);
+    font-family: var(--mono); font-size: 14.5px; font-weight: 700; fill: var(--clay-d);
     letter-spacing: 0.08em;
   }
-  .callout-row { font-family: var(--mono); font-size: 14.5px; fill: var(--slate); }
+  .callout-row { font-family: var(--mono); font-size: 16px; fill: var(--slate); }
 
   /* ---- period=ALL callout ---- */
   .period-box { fill: var(--oat); fill-opacity: 0.45; stroke: var(--g300); stroke-width: 1; }
-  .period-h { font-family: var(--sans); font-weight: 700; font-size: 15px; fill: var(--slate); }
-  .period-p { font-family: var(--sans); font-size: 14px; fill: var(--g700); }
+  .period-h { font-family: var(--sans); font-weight: 700; font-size: 16.5px; fill: var(--slate); }
+  .period-p { font-family: var(--sans); font-size: 15.5px; fill: var(--g700); }
 
   /* ---- edges ---- */
   .edge { stroke: var(--g500); stroke-width: 1.25; fill: none; }
   .edge.dashed { stroke: var(--clay); stroke-width: 1.25; stroke-dasharray: 5 4; }
   .edge-label {
-    font-family: var(--mono); font-size: 12.5px; fill: var(--clay-d); font-weight: 600;
+    font-family: var(--mono); font-size: 14px; fill: var(--clay-d); font-weight: 600;
   }
 
   /* ---- axis / lanes ---- */
   .axis-rule { stroke: var(--g300); stroke-width: 1; }
   .axis-tick { stroke: var(--g300); stroke-width: 1; }
   .lane-label {
-    font-family: var(--mono); font-size: 13px; font-weight: 700; fill: var(--g700);
+    font-family: var(--mono); font-size: 14.5px; font-weight: 700; fill: var(--g700);
     letter-spacing: 0.09em; text-transform: uppercase;
   }
 
   .ghost-label {
-    font-family: var(--mono); font-size: 12.5px; fill: var(--g500);
+    font-family: var(--mono); font-size: 14px; fill: var(--g500);
     letter-spacing: 0.08em; text-transform: uppercase;
   }
 
@@ -157,7 +157,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    margin-top: 6px;
+    margin-top: 4px;
     font-size: 10.5px;
     color: var(--g700);
   }
@@ -172,16 +172,15 @@
 
   footer.colophon {
     font-family: var(--mono);
-    font-size: 9px;
+    font-size: 8.5px;
     color: var(--g500);
-    margin-top: 5px;
-    padding-top: 4px;
+    margin-top: 4px;
+    padding-top: 3px;
     border-top: 1px solid var(--g300);
-    line-height: 1.4;
+    line-height: 1.3;
     display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 2px;
   }
 </style>
 </head>
@@ -192,7 +191,7 @@
     <header>
       <div class="headline">
         <div class="eyebrow">Deliverable 2 &middot; Solution design &amp; architecture &middot; §1, rebuilt</div>
-        <h1>Six sources, six keys, six grains — one crosswalk melts them into one canonical fact table</h1>
+        <h1>Six sources, six keys, six grains, one crosswalk melts them into one canonical fact table</h1>
       </div>
       <p class="lead">
         The crosswalk is a <strong>declared CSV read as data at runtime</strong>, not code: it is the
@@ -202,178 +201,184 @@
     </header>
 
     <div class="canvas">
-      <svg xmlns="http://www.w3.org/2000/svg" class="flow" viewBox="0 0 1635 714" role="img"
+      <svg xmlns="http://www.w3.org/2000/svg" class="flow" viewBox="0 0 1765 935" role="img"
         aria-label="Bulletin data flow: six sources through a declared crosswalk into one canonical observation grain, then marts, publish, render and output">
 <defs>
 <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--g500)"/></marker>
 <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--clay)"/></marker>
 </defs>
-<rect class="band" x="404" y="0" width="428" height="548" rx="10"/>
-<text class="band-label" x="418" y="17">CANONICAL &#8212; THE CUSTOM IDEA</text>
+<rect class="band" x="424" y="0" width="442" height="723" rx="10"/>
+<text class="band-label" x="440" y="18">CANONICAL, THE CUSTOM IDEA</text>
 <g class="node src" transform="translate(16,14)">
-  <rect class="box" width="192" height="66" rx="4"/>
-  <text class="title" x="13" y="28">facilities.csv</text>
-  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+  <rect class="box" width="246" height="70" rx="4"/>
+  <text class="title" x="13" y="29">facilities.csv</text>
+  <text class="sub" x="13" y="52">117 rows, snapshot</text>
 </g>
-<g class="node src" transform="translate(16,87)">
-  <rect class="box" width="192" height="66" rx="4"/>
-  <text class="title" x="13" y="28">clinical_neonatal.csv</text>
-  <text class="sub" x="13" y="48">1,404 rows, monthly</text>
+<g class="node src" transform="translate(16,92)">
+  <rect class="box" width="246" height="70" rx="4"/>
+  <text class="title" x="13" y="29">clinical_neonatal.csv</text>
+  <text class="sub" x="13" y="52">1,404 rows, monthly</text>
 </g>
-<g class="node src" transform="translate(16,160)">
-  <rect class="box" width="192" height="66" rx="4"/>
-  <text class="title" x="13" y="28">governance.csv</text>
-  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+<g class="node src" transform="translate(16,170)">
+  <rect class="box" width="246" height="70" rx="4"/>
+  <text class="title" x="13" y="29">governance.csv</text>
+  <text class="sub" x="13" y="52">117 rows, snapshot</text>
 </g>
-<g class="node src" transform="translate(16,233)">
-  <rect class="box" width="192" height="66" rx="4"/>
-  <text class="title" x="13" y="28">operations.csv</text>
-  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+<g class="node src" transform="translate(16,248)">
+  <rect class="box" width="246" height="70" rx="4"/>
+  <text class="title" x="13" y="29">operations.csv</text>
+  <text class="sub" x="13" y="52">117 rows, snapshot</text>
 </g>
-<g class="node src" transform="translate(16,306)">
-  <rect class="box" width="192" height="66" rx="4"/>
-  <text class="title" x="13" y="28">healthcare_workers.csv</text>
-  <text class="sub" x="13" y="48">117 rows, snapshot</text>
+<g class="node src" transform="translate(16,326)">
+  <rect class="box" width="246" height="70" rx="4"/>
+  <text class="title" x="13" y="29">healthcare_workers.csv</text>
+  <text class="sub" x="13" y="52">117 rows, snapshot</text>
 </g>
-<g class="node src" transform="translate(16,379)">
-  <rect class="box" width="192" height="66" rx="4"/>
-  <text class="title" x="13" y="28">dhis2_sample.csv</text>
-  <text class="sub" x="13" y="48">12 rows, 2nd source</text>
+<g class="node src" transform="translate(16,404)">
+  <rect class="box" width="246" height="70" rx="4"/>
+  <text class="title" x="13" y="29">dhis2_sample.csv</text>
+  <text class="sub" x="13" y="52">12 rows, 2nd source</text>
 </g>
-<g class="node std" transform="translate(238,198)">
-  <rect class="box" width="150" height="84" rx="4"/>
-  <text class="title" x="13" y="28">Bronze</text>
-  <text class="sub" x="13" y="48">verbatim +</text>
-  <text class="sub" x="13" y="64">provenance</text>
+<g class="node std" transform="translate(252,214)">
+  <rect class="box" width="160" height="96" rx="4"/>
+  <text class="title" x="13" y="29">Bronze</text>
+  <text class="sub" x="13" y="52">verbatim +</text>
+  <text class="sub" x="13" y="70">provenance</text>
 </g>
-<g class="node custom" transform="translate(418,28)">
-  <rect class="box" width="205" height="100" rx="4"/>
+<g class="node custom" transform="translate(440,30)">
+  <rect class="box" width="215" height="134" rx="4"/>
   <text class="tag" x="13" y="18">«custom»</text>
-  <text class="title" x="13" y="46">Crosswalk</text>
-  <text class="sub" x="13" y="66">declared CSV, 71 rows —</text>
-  <text class="sub" x="13" y="82">read at runtime,</text>
-  <text class="sub" x="13" y="98">not hardcoded</text>
+  <text class="title" x="13" y="48">Crosswalk</text>
+  <text class="sub" x="13" y="71">declared CSV,</text>
+  <text class="sub" x="13" y="89">71 rows, read at</text>
+  <text class="sub" x="13" y="107">runtime,</text>
+  <text class="sub" x="13" y="125">not hardcoded</text>
 </g>
-<g class="callout" transform="translate(418,144)">
-  <rect class="callout-box" width="400" height="198" rx="6"/>
-  <rect class="callout-bar" x="0" y="0" width="5" height="198" rx="2"/>
-  <text class="callout-h" x="20" y="24">What the crosswalk does</text>
-  <text class="callout-p" x="20" y="44">Maps every source field → one canonical</text>
-  <text class="callout-p" x="20" y="60">element + a role (id / dim / obs / unmapped).</text>
-  <text class="callout-eg" x="20" y="116">ONE ROW, VERBATIM</text>
-  <text class="callout-row" x="20" y="134">assignment_csv.neonatal_deaths_0_7d →</text>
-  <text class="callout-row" x="20" y="150">neonatal_deaths_early · observation</text>
-  <text class="callout-row" x="20" y="166">ICD-10 P00-P96 · “early neonatal, 0–7d”</text>
-  <text class="stat-n stat-obs" x="20" y="80">52</text>
-  <text class="stat-l" x="50" y="80">observations</text>
-  <text class="stat-n stat-dim" x="148" y="80">5</text>
-  <text class="stat-l" x="169" y="80">identity/dim keys</text>
-  <text class="stat-n stat-un" x="302" y="80">9</text>
-  <text class="stat-l" x="323" y="80">excluded, reasoned</text>
-  <line class="callout-rule" x1="20" y1="100" x2="380" y2="100"/>
+<g class="callout" transform="translate(440,164)">
+  <rect class="callout-box" width="410" height="289" rx="6"/>
+  <rect class="callout-bar" x="0" y="0" width="5" height="289" rx="2"/>
+  <text class="callout-h" x="20" y="26">What the crosswalk does</text>
+  <text class="callout-p" x="20" y="49">Maps every source field to one</text>
+  <text class="callout-p" x="20" y="68">canonical element, tagged by role.</text>
+  <text class="callout-eg" x="20" y="179">ONE ROW, VERBATIM</text>
+  <text class="callout-row" x="20" y="199">assignment_csv.neonatal_deaths_0_7d</text>
+  <text class="callout-row" x="20" y="217">→ neonatal_deaths_early, observation</text>
+  <text class="callout-row" x="20" y="235">ICD-10 P00-P96,</text>
+  <text class="callout-row" x="20" y="253">“early neonatal, 0–7 days”</text>
+  <text class="stat-n stat-obs" x="20" y="95">52</text>
+  <text class="stat-l" x="54" y="95">observations</text>
+  <text class="stat-n stat-dim" x="20" y="115">5</text>
+  <text class="stat-l" x="44" y="115">identity / dimension keys</text>
+  <text class="stat-n stat-un" x="20" y="135">9</text>
+  <text class="stat-l" x="44" y="135">excluded, each with a reason</text>
+  <line class="callout-rule" x1="20" y1="161" x2="390" y2="161"/>
 </g>
-<g class="node custom" transform="translate(418,358)">
-  <rect class="box" width="400" height="78" rx="4"/>
+<g class="node custom" transform="translate(440,471)">
+  <rect class="box" width="410" height="92" rx="4"/>
   <text class="tag" x="13" y="18">«custom»</text>
-  <text class="title" x="13" y="46">Silver — canonical grain</text>
-  <text class="sub" x="13" y="66">(org_unit, period, data_element, batch)</text>
+  <text class="title" x="13" y="48">Silver, canonical grain</text>
+  <text class="sub" x="13" y="71">(org_unit, period, data_element,</text>
+  <text class="sub" x="13" y="89">batch)</text>
 </g>
-<g transform="translate(418,450)">
-  <rect class="period-box" width="400" height="86" rx="6"/>
-  <text class="period-h" x="16" y="21">period = &quot;ALL&quot; — the sentinel</text>
-  <text class="period-p" x="16" y="38">4 snapshot sources have no date column, so</text>
-  <text class="period-p" x="16" y="53">silver stamps period=&quot;ALL&quot; — a deliberate join</text>
-  <text class="period-p" x="16" y="68">key, not a missing value — sharing one grain</text>
-  <text class="period-p" x="16" y="83">with the monthly clinical panel.</text>
+<g transform="translate(440,579)">
+  <rect class="period-box" width="410" height="130" rx="6"/>
+  <text class="period-h" x="16" y="23">period = &quot;ALL&quot;, the sentinel</text>
+  <text class="period-p" x="16" y="44">4 snapshot sources have no date column,</text>
+  <text class="period-p" x="16" y="62">so silver stamps period=“ALL” as a</text>
+  <text class="period-p" x="16" y="80">deliberate join key, not a missing</text>
+  <text class="period-p" x="16" y="98">value, sharing one grain with the</text>
+  <text class="period-p" x="16" y="116">monthly clinical panel.</text>
 </g>
-<g class="node custom" transform="translate(858,106)">
-  <rect class="box" width="185" height="250" rx="4"/>
+<g class="node custom" transform="translate(890,106)">
+  <rect class="box" width="210" height="300" rx="4"/>
   <text class="tag" x="13" y="18">«custom»</text>
-  <text class="title" x="13" y="46">Gold</text>
-  <text class="sub" x="13" y="66">marts + checks</text>
-  <text class="sub" x="13" y="82">district qtr, NMR</text>
-  <text class="sub" x="13" y="98">capability_summary</text>
-  <text class="sub" x="13" y="114">temporal + strat</text>
+  <text class="title" x="13" y="48">Gold</text>
+  <text class="sub" x="13" y="71">marts + checks</text>
+  <text class="sub" x="13" y="89">district qtr, NMR</text>
+  <text class="sub" x="13" y="107">capability_summary</text>
+  <text class="sub" x="13" y="125">temporal + strat</text>
 </g>
-<g class="node std" transform="translate(1083,118)">
-  <rect class="box" width="160" height="70" rx="4"/>
-  <text class="title" x="13" y="28">Parquet</text>
-  <text class="sub" x="13" y="48">HTTP range reads</text>
+<g class="node std" transform="translate(1140,122)">
+  <rect class="box" width="180" height="82" rx="4"/>
+  <text class="title" x="13" y="29">Parquet</text>
+  <text class="sub" x="13" y="52">HTTP range reads</text>
 </g>
-<g class="node buy" transform="translate(1083,218)">
-  <rect class="box" width="160" height="100" rx="4"/>
+<g class="node buy" transform="translate(1140,224)">
+  <rect class="box" width="180" height="118" rx="4"/>
   <text class="tag" x="13" y="18">«buy»</text>
-  <text class="title" x="13" y="46">Apache Superset</text>
-  <text class="sub" x="13" y="66">explore surface</text>
-  <text class="sub" x="13" y="82">MoH office only</text>
+  <text class="title" x="13" y="48">Apache Superset</text>
+  <text class="sub" x="13" y="71">explore surface</text>
+  <text class="sub" x="13" y="89">MoH office only</text>
 </g>
-<g class="node custom" transform="translate(1281,140)">
-  <rect class="box" width="135" height="70" rx="4"/>
+<g class="node custom" transform="translate(1360,146)">
+  <rect class="box" width="155" height="82" rx="4"/>
   <text class="tag" x="13" y="18">«custom»</text>
-  <text class="title" x="13" y="46">Astro render</text>
-  <text class="sub" x="13" y="66">zero client JS</text>
+  <text class="title" x="13" y="48">Astro render</text>
+  <text class="sub" x="13" y="71">zero client JS</text>
 </g>
-<g class="node output" transform="translate(1454,92)">
-  <rect class="box" width="165" height="66" rx="4"/>
+<g class="node output" transform="translate(1555,96)">
+  <rect class="box" width="190" height="76" rx="4"/>
   <text class="tag" x="13" y="18">«output»</text>
-  <text class="title" x="13" y="46">Bulletin, static</text>
-  <text class="sub" x="13" y="66">zero client JS</text>
+  <text class="title" x="13" y="48">Bulletin, static</text>
+  <text class="sub" x="13" y="71">zero client JS</text>
 </g>
-<g class="node output" transform="translate(1454,176)">
-  <rect class="box" width="165" height="66" rx="4"/>
+<g class="node output" transform="translate(1555,192)">
+  <rect class="box" width="190" height="76" rx="4"/>
   <text class="tag" x="13" y="18">«output»</text>
-  <text class="title" x="13" y="46">Email edition</text>
-  <text class="sub" x="13" y="66">table, inlined</text>
+  <text class="title" x="13" y="48">Email edition</text>
+  <text class="sub" x="13" y="71">table, inlined</text>
 </g>
-<path class="edge " d="M208,47.0 C242,47.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M208,120.0 C242,120.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M208,193.0 C242,193.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M208,266.0 C242,266.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M208,339.0 C242,339.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M208,412.0 C242,412.0 204,240.0 238,240.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M388,240.0 C426,240.0 380,397.0 418,397.0" marker-end="url(#arrow)"/>
-<path class="edge dashed" d="M623,88.0 C800,88.0 838,174.5 838,208.5 L838,373.0 C838,393.0 828,397.0 818,397.0" marker-end="url(#arrowR)"/>
-<text class="edge-label" x="700" y="79.0">feeds · declared, not hardcoded</text>
-<path class="edge " d="M818,397.0 C842,397.0 834,231.0 858,231.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M1043,231.0 C1067,231.0 1059,153.0 1083,153.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M1243,153.0 C1267,153.0 1257,159.6 1281,159.6" marker-end="url(#arrow)"/>
-<path class="edge dashed" d="M1163.0,188 C1163.0,218 1145.0,208 1163.0,218" marker-end="url(#arrowR)"/>
-<text class="edge-label" x="1086" y="203.0">reads Parquet · no API</text>
-<path class="edge " d="M1416,159.6 C1450,159.6 1420,125.0 1454,125.0" marker-end="url(#arrow)"/>
-<path class="edge " d="M1416,194.6 C1450,194.6 1420,209.0 1454,209.0" marker-end="url(#arrow)"/>
-<line class="axis-rule" x1="16" y1="565" x2="1619" y2="565"/>
-<line class="axis-tick" x1="112.0" y1="565" x2="112.0" y2="573"/>
-<text class="lane-label" x="112.0" y="588" text-anchor="middle">SOURCES</text>
-<line class="axis-tick" x1="313.0" y1="565" x2="313.0" y2="573"/>
-<text class="lane-label" x="313.0" y="588" text-anchor="middle">INGEST</text>
-<line class="axis-tick" x1="618.0" y1="565" x2="618.0" y2="573"/>
-<text class="lane-label" x="618.0" y="588" text-anchor="middle">CANONICAL</text>
-<line class="axis-tick" x1="950.5" y1="565" x2="950.5" y2="573"/>
-<text class="lane-label" x="950.5" y="588" text-anchor="middle">MARTS</text>
-<line class="axis-tick" x1="1163.0" y1="565" x2="1163.0" y2="573"/>
-<text class="lane-label" x="1163.0" y="588" text-anchor="middle">PUBLISH</text>
-<line class="axis-tick" x1="1348.5" y1="565" x2="1348.5" y2="573"/>
-<text class="lane-label" x="1348.5" y="588" text-anchor="middle">RENDER</text>
-<line class="axis-tick" x1="1536.5" y1="565" x2="1536.5" y2="573"/>
-<text class="lane-label" x="1536.5" y="588" text-anchor="middle">OUTPUT</text>
-<text class="ghost-label" x="16" y="604">SAND PRODUCTS CONSIDERED, NOT USED IN D2</text>
-<g class="node ghost" transform="translate(16,616)">
-  <rect class="box" width="300" height="84" rx="4"/>
+<path class="edge " d="M262,49.0 C296,49.0 218,262.0 252,262.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M262,127.0 C296,127.0 218,262.0 252,262.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M262,205.0 C296,205.0 218,262.0 252,262.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M262,283.0 C296,283.0 218,262.0 252,262.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M262,361.0 C296,361.0 218,262.0 252,262.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M262,439.0 C296,439.0 218,262.0 252,262.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M412,262.0 C450,262.0 402,517.0 440,517.0" marker-end="url(#arrow)"/>
+<path class="edge dashed" d="M655,110.4 C840,110.4 872,224.2 872,258.2 L872,493.0 C872,513.0 857,517.0 850,517.0" marker-end="url(#arrowR)"/>
+<text class="edge-label" x="868.0" y="101.4">feeds, declared, not hardcoded</text>
+<path class="edge " d="M850,517.0 C874,517.0 866,256.0 890,256.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M1100,256.0 C1124,256.0 1116,163.0 1140,163.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M1320,163.0 C1344,163.0 1336,168.96 1360,168.96" marker-end="url(#arrow)"/>
+<path class="edge dashed" d="M1230.0,204 C1230.0,234 1212.0,214 1230.0,224" marker-end="url(#arrowR)"/>
+<text class="edge-label" x="1143" y="220.0">reads Parquet, no API</text>
+<path class="edge " d="M1515,168.96 C1549,168.96 1521,134.0 1555,134.0" marker-end="url(#arrow)"/>
+<path class="edge " d="M1515,209.96 C1549,209.96 1521,230.0 1555,230.0" marker-end="url(#arrow)"/>
+<line class="axis-rule" x1="16" y1="743" x2="1745" y2="743"/>
+<line class="axis-tick" x1="121.0" y1="743" x2="121.0" y2="752"/>
+<text class="lane-label" x="121.0" y="769" text-anchor="middle">SOURCES</text>
+<line class="axis-tick" x1="332.0" y1="743" x2="332.0" y2="752"/>
+<text class="lane-label" x="332.0" y="769" text-anchor="middle">INGEST</text>
+<line class="axis-tick" x1="645.0" y1="743" x2="645.0" y2="752"/>
+<text class="lane-label" x="645.0" y="769" text-anchor="middle">CANONICAL</text>
+<line class="axis-tick" x1="995.0" y1="743" x2="995.0" y2="752"/>
+<text class="lane-label" x="995.0" y="769" text-anchor="middle">MARTS</text>
+<line class="axis-tick" x1="1230.0" y1="743" x2="1230.0" y2="752"/>
+<text class="lane-label" x="1230.0" y="769" text-anchor="middle">PUBLISH</text>
+<line class="axis-tick" x1="1437.5" y1="743" x2="1437.5" y2="752"/>
+<text class="lane-label" x="1437.5" y="769" text-anchor="middle">RENDER</text>
+<line class="axis-tick" x1="1650.0" y1="743" x2="1650.0" y2="752"/>
+<text class="lane-label" x="1650.0" y="769" text-anchor="middle">OUTPUT</text>
+<text class="ghost-label" x="16" y="803">SAND PRODUCTS CONSIDERED, NOT USED IN D2</text>
+<g class="node ghost" transform="translate(16,823)">
+  <rect class="box" width="330" height="96" rx="4"/>
   <text class="tag" x="13" y="18">«not used»</text>
-  <text class="title" x="13" y="46">Health Atlas</text>
-  <text class="sub" x="13" y="66">geo intel — not built this cycle</text>
+  <text class="title" x="13" y="48">Health Atlas</text>
+  <text class="sub" x="13" y="71">geo intel, not built this cycle</text>
 </g>
-<g class="node ghost" transform="translate(332,616)">
-  <rect class="box" width="300" height="84" rx="4"/>
+<g class="node ghost" transform="translate(362,823)">
+  <rect class="box" width="330" height="96" rx="4"/>
   <text class="tag" x="13" y="18">«not used»</text>
-  <text class="title" x="13" y="46">Health Outcome Tracker</text>
-  <text class="sub" x="13" y="66">patient grain — wrong for this report</text>
+  <text class="title" x="13" y="48">Health Outcome Tracker</text>
+  <text class="sub" x="13" y="71">patient grain,</text>
+  <text class="sub" x="13" y="89">wrong for this report</text>
 </g>
-<g class="node ghost" transform="translate(648,616)">
-  <rect class="box" width="260" height="84" rx="4"/>
+<g class="node ghost" transform="translate(708,823)">
+  <rect class="box" width="290" height="96" rx="4"/>
   <text class="tag" x="13" y="18">«not used»</text>
-  <text class="title" x="13" y="46">Health Insight Engine</text>
-  <text class="sub" x="13" y="66">opaque AI — fails 2am-restart test</text>
+  <text class="title" x="13" y="48">Health Insight Engine</text>
+  <text class="sub" x="13" y="71">opaque AI,</text>
+  <text class="sub" x="13" y="89">fails 2am-restart test</text>
 </g>
       </svg>
 
@@ -382,12 +387,12 @@
         <span><i class="chip buy"></i>Bought / adopted, scoped</span>
         <span><i class="chip ghost"></i>Sand product, not used in D2</span>
         <span><i class="chip output"></i>Delivered output</span>
-        <span style="color:var(--clay-d); font-weight:600;">— dashed clay = declared mapping, not a hardcoded join</span>
+        <span style="color:var(--clay-d); font-weight:600;">Dashed clay = declared mapping, not a hardcoded join</span>
       </div>
     </div>
 
     <footer class="colophon">
-      <span>Synthetic test data throughout (assignment CSVs plus a hand-built DHIS2 sample) — not real Rwanda health records.</span>
+      <span>Synthetic test data throughout (assignment CSVs plus a hand-built DHIS2 sample), not real Rwanda health records.</span>
       <span>Source: <code>pipeline/mart/crosswalk.csv</code> (71 rows) &middot; <code>pipeline/dataflow/{bronze,silver,gold}.py</code> &middot; decisions/0008, 0010, 0012</span>
     </footer>
 
