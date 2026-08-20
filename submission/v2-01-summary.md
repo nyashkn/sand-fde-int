@@ -14,7 +14,7 @@ Full working notes, runbook, data contract and decision register are in the repo
 |---|---|---|
 | **A — Quarterly Health Bulletin, automated** | **Chosen** | Only option finishable and provable in 6 weeks; operates on data that already arrives, in a shape that already exists. The trust wedge for later work. |
 | B — Real-time facility dashboard | Out of reach *this sprint* | Needs facility-level freshness. Reporting substrate is monthly aggregates on a 2–3wk lag — a granularity/cadence gap, not a coverage gap, regardless of how many facilities report. |
-| C — Unified patient view (TB/HIV) | Rejected | Needs a clinical-safety hazard analysis that does not fit in 6 weeks. Propose a weekly reconciliation report instead — flags likely co-infection for human review, no record merging, none of the risk. |
+| C — Unified patient view (TB/HIV) | Rejected | No shared patient ID between the TB and HIV systems, so records are matched by probability. A wrong match puts one patient's HIV status into another's treatment decision, and no MoH process exists to review and sign that risk off inside 6 weeks. Propose a weekly reconciliation report instead: flags likely co-infection for human review, no record merging, no clinical claim. |
 
 ## What was built
 

@@ -3,8 +3,10 @@
 **The choice.** Problem A, the Quarterly Health Bulletin, automated end to end, with
 figure-level lineage built in from the start rather than added later. B needs
 facility-level freshness that monthly aggregate reporting on a two to three week lag
-cannot supply, which is a cadence gap and a separate project. C needs a clinical-safety
-hazard analysis that does not fit in six weeks, and I would propose a weekly
+cannot supply, which is a cadence gap and a separate project. C matches TB and HIV
+records by probability, since the systems share no patient identifier, so a wrong match
+puts one patient's HIV status into another's treatment decision, and no MoH process
+exists to review and sign that risk off inside six weeks. I would propose a weekly
 reconciliation report instead of record merging. A is the reachable wedge, not the most
 valuable outcome available, and Deliverable 1 says so in those words.
 

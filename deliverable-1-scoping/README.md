@@ -174,11 +174,16 @@ to attempt B, and in a first-country, template-setting engagement, proof is the 
 **Why not B, why not C.** B is out of reach *in this sprint*, not impossible: it needs
 facility-level freshness, and the reporting substrate is monthly aggregates on a 2–3 week lag. That
 is a granularity and cadence gap rather than a coverage gap (1.3), and closing it is a separate
-project. C needs probabilistic identity matching across CommCare silos with no shared identifier and
-no MoH clinical-safety review process. A unified *view* does not itself prescribe treatment, and the
-real risk turns on whether matching is advisory or authoritative, which is the point: establishing
-that requires a hazard analysis I cannot complete in six weeks. The weekly reconciliation report is
-the version of C I would propose.
+project. C matches records across CommCare silos with no shared patient
+identifier, so matching is probabilistic in both directions. A wrong match puts one patient's HIV
+status into another's treatment decision, which matters concretely: rifampicin, first-line for TB,
+collapses the plasma levels of several antiretrovirals, so co-infection status drives the regimen.
+A missed match loses the co-infection entirely. A unified *view* does not itself prescribe
+treatment, so the risk turns on whether the match is advisory or authoritative, and settling that
+needs a named clinical reviewer and a Ministry sign-off route that do not exist here and cannot be
+created in six weeks. The weekly reconciliation report is the version of C I would propose: it
+flags a likely co-infection for a person to check and merges nothing, so the system makes no
+clinical claim.
 
 **What A does not give B**, since the sequencing pitch is where this gets oversold. A builds an
 aggregate, period-grain mart on bulletin cadence; B needs facility-status freshness, stock and
