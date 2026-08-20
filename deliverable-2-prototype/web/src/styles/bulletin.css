@@ -660,40 +660,6 @@ figcaption {
  font-family: var(--mono);
 }
 
-/* ---- lineage ---- */
-a.lineage {
- font-family: var(--mono);
- font-size: 10px;
- color: var(--gray-mid);
- text-decoration: none;
- border-bottom: 1px dotted var(--gray-line);
- margin-left: var(--s-2);
-}
-
-a.lineage:hover {
- color: var(--red);
- border-bottom-color: var(--red);
-}
-
-table.lineage th[scope='row'] {
- font-family: var(--slab);
- font-weight: 700;
- font-size: 13.5px;
- color: var(--ink);
- text-align: left;
- width: 20%;
-}
-
-table.lineage td {
- font-size: 12.5px;
- color: var(--ink);
- vertical-align: top;
-}
-
-table.lineage code {
- font-size: 11px;
-}
-
 footer.colophon {
  font-family: var(--mono);
  font-size: 10.5px;

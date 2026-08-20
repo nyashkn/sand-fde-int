@@ -13,9 +13,9 @@
 import '../styles/bulletin.css';
 import {
   completeness, headlineNmr, districtNmr, topFacilities, causeBreakdown, checks, icdCodes,
-  rulesApplied, capabilitySummary, causeCapabilityLinks, contradictions, ALL_QUARTERS,
+  rulesApplied, capabilitySummary, causeCapabilityLinks, ALL_QUARTERS,
   stillbirthRate, districtTrend, capabilityByTier, equipmentTierConfound,
-  referralFeedbackTierConfound, tierNmr, neonatologistCoverage, crosswalkCoverage,
+  referralFeedbackTierConfound, tierNmr, neonatologistCoverage,
 } from '../lib/mart';
 import { chart } from '../lib/charts';
 
@@ -26,21 +26,20 @@ interface Props {
 const { quarter: QUARTER, quarterHref } = Astro.props;
 
 const [comp, head, districts, top, causes, chk, codes, rules, capSummary, causeLinks,
-       knownContradictions, trendHeads, trendComps, stillbirths, distTrend, capTier,
-       equipConfound, referralConfound, nmrByTier, neoCoverage, coverage] = await Promise.all([
+       trendHeads, trendComps, stillbirths, distTrend, capTier,
+       equipConfound, referralConfound, nmrByTier, neoCoverage] = await Promise.all([
   completeness(QUARTER), headlineNmr(QUARTER), districtNmr(QUARTER),
   topFacilities(QUARTER), causeBreakdown(QUARTER), checks(), icdCodes(), rulesApplied(),
-  capabilitySummary(), causeCapabilityLinks(), contradictions(),
+  capabilitySummary(), causeCapabilityLinks(),
   Promise.all(ALL_QUARTERS.map((q) => headlineNmr(q))),
   Promise.all(ALL_QUARTERS.map((q) => completeness(q))),
   stillbirthRate(QUARTER), districtTrend(), capabilityByTier(),
   equipmentTierConfound(), referralFeedbackTierConfound(), tierNmr(), neonatologistCoverage(),
-  crosswalkCoverage(),
 ]);
 
 // ---- section numbering: nav and headings both render off this one array's position,
 // not two hand-typed number lists that happened to agree. ----
-const SECTIONS = ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'] as const;
+const SECTIONS = ['s1', 's2', 's3', 's4', 's5', 's6'] as const;
 const secNum = (id: (typeof SECTIONS)[number]) => String(SECTIONS.indexOf(id) + 1).padStart(2, '0');
 
 const CROSSWALK_URL = 'https://github.com/nyashkn/sand-fde-int/blob/main/deliverable-2-prototype/pipeline/mart/crosswalk.csv';
@@ -243,22 +242,6 @@ function parseWithin(withinStrata: string): { tier: string; value: number }[] {
   });
 }
 
-// ---- known issues: the defects that survive, plus every declared contradiction ----
-const CONTRADICTION_LABEL: Record<string, string> = {
-  kangaroo_care_self_contradiction: 'Kangaroo-care self-contradiction',
-  trained_nurses_never_trained: 'Trained-nurses-vs-never-trained',
-  referral_imbalance: 'Referral imbalance',
-  power_without_generator: 'Power without generator',
-  night_shift_coverage_unreported: 'Night-shift coverage unreported',
-  surfactant_no_variance: 'Surfactant availability, no variance',
-  neonatologist_no_variance: 'Neonatologist staffing, no variance',
-  quality_improvement_no_variance: 'Quality-improvement programme, no variance',
-  snapshot_joined_to_panel: 'Snapshot tables joined to a monthly panel',
-  monthly_suffix_without_period: 'Named monthly, recorded without a period',
-  correlation_static_vs_annual: 'Static capability against an annual rate',
-  unmapped_columns_never_mentioned: 'Excluded columns, reasons recorded',
-  protocol_last_updated_not_rendered: 'Protocol date carried, never rendered',
-};
 ---
 
 <!DOCTYPE html>
@@ -360,14 +343,13 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <a href="#s4">{secNum('s4')} By district</a>
     <a href="#s5">{secNum('s5')} Trend</a>
     <a href="#s6">{secNum('s6')} Correlation</a>
-    <a href="#s7">{secNum('s7')} Known issues</a>
-    <a href="#s8">{secNum('s8')} Lineage</a>
   </nav>
 
   <p class="convention">
     Provisional figures are hatched in bars, hollow in dots, underlined in tables. Every check
     below always renders its finding: a caveat qualifies confidence, it never withholds content.
-    Every figure links to its lineage record.
+    Figure definitions, the column-level crosswalk and the recorded defects in the source
+    data are published in the repository, linked below.
   </p>
 
   <section class="deep" id="s1">
@@ -376,7 +358,7 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <figure set:html={rankingSvg} />
     <figcaption>
       Top {top.length} of 117 by total deliveries. Volume tracks tier, so this is not a
-      quality ranking. <a class="lineage" href="#lineage-top">lineage, section 8</a>
+      quality ranking.
     </figcaption>
     </div>
   </section>
@@ -406,7 +388,7 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     </p>
     <figure set:html={causeSvg} />
     <figcaption>
-      Ranked by count, not by assumed clinical severity. <a class="lineage" href="#lineage-cause">lineage, section 8</a>
+      Ranked by count, not by assumed clinical severity.
     </figcaption>
     </div>
     <div class="cell">
@@ -436,7 +418,6 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <figcaption>
       Reconciles to total neonatal deaths in 1,404 of 1,404 source rows. Capability figures are
       national, not quarter-scoped: capability data is a facility snapshot, section 3.
-      {' '}<a class="lineage" href="#lineage-cause">lineage, section 8</a>
     </figcaption>
     </div>
     </div>
@@ -473,14 +454,13 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <figure set:html={capabilityTierSvg} />
     <figcaption>
       Median count per facility, by tier, {EQUIPMENT_CHART_METRICS.map((m) => m.label).join(', ')}.
-      {' '}<a class="lineage" href="#lineage-capability">lineage, section 8</a>
     </figcaption>
     </div>
     <p>
       Only {surfactantYes.nWith} of {surfactantYes.nFacilities} facilities stock surfactant and only
       {' '}{qiYes.nWith} of {qiYes.nFacilities} run an active quality-improvement programme,
-      nationally; both are declared low-variance in section 7 and are not broken out by tier here for
-      that reason. The wider capability set the brief asks for is below, by tier, in full:
+      nationally; neither varies enough across facilities to compare them, so neither is broken
+      out by tier here. The wider capability set the brief asks for is below, by tier, in full:
     </p>
     <table>
       <thead>
@@ -508,20 +488,19 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <figcaption>
       Median per facility, by tier, all facilities, all metrics the <a href={CROSSWALK_URL}>crosswalk</a> resolves
       under this section that the chart above does not already carry.
-      {' '}<a class="lineage" href="#lineage-capability">lineage, section 8</a>
     </figcaption>
     <div class="statbox">
       <div class="sb-label">
         Neonatologists on staff: zero at all but {neoCoverage.total - neoCoverage.zero} facilities,
         both Referral tier. The national mean is a rounding artefact of those two facilities, not
-        staffing depth, section 7.
+        staffing depth.
       </div>
       <div style="text-align:right;">
         <div class="sb-num">{neoCoverage.zero}<span style="font-size:16px;">/{neoCoverage.total}</span></div>
         <div class="sb-sub">facilities with zero neonatologists</div>
       </div>
     </div>
-    <figcaption>national, not quarter-scoped &middot; <a class="lineage" href="#lineage-capability">lineage, section 8</a></figcaption>
+    <figcaption>national, not quarter-scoped</figcaption>
   </section>
 
   <section class="deep" id="s4">
@@ -530,8 +509,7 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <figure set:html={districtSvg} />
     <figcaption>
       {districts.length} districts, {districts[districts.length - 1]?.value.toFixed(1)} to {districts[0]?.value.toFixed(1)} per 1,000.
-      District grain: facility coordinates are unusable, section 7.
-      {' '}<a class="lineage" href="#lineage-district">lineage, section 8</a>
+      District grain: the facility coordinates in this data are unusable.
     </figcaption>
     </div>
   </section>
@@ -547,8 +525,8 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <figure set:html={districtTrendSvg} />
     <figcaption>
       Thin lines: each district, dashed where that district-quarter figure is provisional (a batch
-      conflict, section 7). Bold line: national, hatched points mark a partial quarter (a missing
-      month, not a batch conflict). <a class="lineage" href="#lineage-trend">lineage, section 8</a>
+      conflict). Bold line: national, hatched points mark a partial quarter (a missing
+      month, not a batch conflict).
     </figcaption>
     </div>
     <div class="gapgrid" style="grid-template-columns:1fr;">
@@ -575,7 +553,6 @@ const CONTRADICTION_LABEL: Record<string, string> = {
       not remove the series. Read the crossing, directionless district lines as that caveat made
       visible, not as evidence a trend is being hidden.
     </p>
-    <figcaption><a class="lineage" href="#lineage-trend">lineage, section 8</a></figcaption>
   </section>
 
   <section class="deep" id="s6">
@@ -637,114 +614,6 @@ const CONTRADICTION_LABEL: Record<string, string> = {
         </div>
       );
     })}
-    <figcaption><a class="lineage" href="#lineage-correlation">lineage, section 8</a></figcaption>
-  </section>
-
-  <section class="deep" id="s7">
-    <h2><span class="n">{secNum('s7')}</span>Known issues in the source data</h2>
-    <table>
-      <thead><tr><th>Finding</th><th>Detail</th><th class="num">Extent</th><th>Handling</th></tr></thead>
-      <tbody>
-        <tr><td class="mono">gps_lat, gps_lon</td><td>Uniform random within Rwanda's bounding box. Every province spans the full country extent.</td><td class="num">117 / 117</td><td><span class="tag unmeasured">not used</span></td></tr>
-        <tr class="provisional"><td class="mono">2024-01, 2024-03</td><td>Each loaded twice with differing values. No timestamp distinguishes them, and both are internally consistent.</td><td class="num">234 rows</td><td><span class="tag provisional">queued</span></td></tr>
-        <tr><td class="mono">facility_name</td><td>Contradicts <code>tier_level</code>.</td><td class="num">62 / 117</td><td><span class="tag unmeasured">label only</span></td></tr>
-        <tr><td class="mono">staff_per_delivery_2024</td><td>Named as derived but unreconstructable. Best of eight formulas matched 58.1%, worse than guessing the column's own mode.</td><td class="num">3 values</td><td><span class="tag unmeasured">not used</span></td></tr>
-        {knownContradictions.map((c) => (
-          <tr>
-            <td class="mono">{c.elements}</td>
-            <td>{CONTRADICTION_LABEL[c.finding] ?? c.finding}: {c.statement}</td>
-            <td class="num">n/a</td>
-            <td><span class="tag caveat">{c.kind}</span></td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    <figcaption>Contradictions read live off <code>gold.known_contradictions</code>, sourced from the <a href={CROSSWALK_URL}>crosswalk</a>'s own notes.</figcaption>
-  </section>
-
-  <section class="deep" id="s8">
-    <h2><span class="n">{secNum('s8')}</span>Lineage</h2>
-
-    <p class="caption">
-      Of {coverage.totalSourceColumns} source columns in the <a href={CROSSWALK_URL}>crosswalk</a>,
-      {' '}{coverage.observations} become observations, {coverage.keys} are identity or dimension
-      keys, and {coverage.excluded} are excluded, each with a recorded reason. One observation,
-      the raw protocol-update date, reaches a gold table and is never rendered directly: the
-      crosswalk's own notes record it as redundant, since the protocol-status field this page does
-      render is a pure function of that date's staleness (outdated at 24 months or more, no
-      exceptions in 103 facilities checked).
-    </p>
-
-    <table class="lineage">
-      <thead>
-        <tr><th>Figure</th><th>Grain</th><th>Inputs</th><th>Rule applied</th><th>Definition</th></tr>
-      </thead>
-      <tbody>
-        <tr id="lineage-headline">
-          <th scope="row">Neonatal mortality, headline</th>
-          <td class="mono">national, quarter</td>
-          <td>{head.births.toLocaleString()} live births, {head.deaths.toLocaleString()} deaths, {districts.length} districts, {monthsPhrase}</td>
-          <td><code>{RULE}</code> lowest occurrence ordinal, arbitrary and pending resolution</td>
-          <td>WHO GHO: (early + late neonatal deaths) / live births &times; 1,000</td>
-        </tr>
-        <tr id="lineage-top">
-          <th scope="row">Facilities by delivery volume</th>
-          <td class="mono">facility, quarter</td>
-          <td>117 facilities, {monthsHeld} months each, top {top.length} shown</td>
-          <td><code>{RULE}</code> on contested batches</td>
-          <td>Sum of <code>total_deliveries</code> over held months</td>
-        </tr>
-        <tr id="lineage-cause">
-          <th scope="row">Neonatal deaths by cause</th>
-          <td class="mono">national, quarter</td>
-          <td>5 cause elements, reconciling in 1,404 of 1,404 source rows</td>
-          <td><code>{RULE}</code> on contested batches</td>
-          <td>ICD-10 P21, P07, P36, Q00 to Q99, summed over held months</td>
-        </tr>
-        <tr id="lineage-stillbirths">
-          <th scope="row">Stillbirths</th>
-          <td class="mono">national, quarter</td>
-          <td>{stillbirths.stillbirths.toLocaleString()} stillbirths, {stillbirths.deliveries.toLocaleString()} total deliveries</td>
-          <td><code>{RULE}</code> on contested batches</td>
-          <td>ICD-10 P95, per 1,000 total deliveries, WHO GHO denominator (not live births)</td>
-        </tr>
-        <tr id="lineage-capability">
-          <th scope="row">Facility capability</th>
-          <td class="mono">national, all facilities</td>
-          <td>42 governance/operations/staffing/capability elements, period = ALL, {capSummary.length} metric rows</td>
-          <td>no batch resolution, one snapshot per facility</td>
-          <td><code>gold.facility_capability</code>: pivot of observations_resolved at period = ALL</td>
-        </tr>
-        <tr id="lineage-district">
-          <th scope="row">Neonatal mortality by district</th>
-          <td class="mono">district, quarter</td>
-          <td>{districts.length} districts, {head.births.toLocaleString()} live births, {districts.filter((d) => d.provisional).length} provisional</td>
-          <td><code>{RULE}</code> lowest occurrence ordinal</td>
-          <td>WHO GHO per district, benchmarked against {NATIONAL_NMR} per 1,000</td>
-        </tr>
-        <tr id="lineage-trend">
-          <th scope="row">Trend, four quarters, by district</th>
-          <td class="mono">national + district, quarter, all 2024</td>
-          <td>{trendSeries.reduce((s, t) => s + t.deaths, 0).toLocaleString()} deaths across all four quarters, {districts.length} districts &times; 4 quarters</td>
-          <td>seed {chk.temporal[0]?.seed}, {chk.temporal[0]?.trials} permutation trials; <code>{RULE}</code> on contested district-quarter batches</td>
-          <td><code>checks.temporal_signal_check</code>: lag-1 autocorrelation vs. within-facility permutation null</td>
-        </tr>
-        <tr id="lineage-correlation">
-          <th scope="row">Correlation, mortality drivers</th>
-          <td class="mono">facility, all quarters pooled</td>
-          <td>{chk.strat.length + extraStrat.length} covariates tested against tier</td>
-          <td>stratified by <code>tier</code>, survives only if sign and half-magnitude hold in every stratum with n &ge; 10</td>
-          <td><code>checks.stratification_check</code> ({chk.strat.length}) + <code>web/src/lib/mart.ts</code> equipment index and referral covariates ({extraStrat.length}, this layer, pipeline out of scope): pooled vs. within-tier Pearson r</td>
-        </tr>
-        <tr id="lineage-tier-nmr">
-          <th scope="row">Mean mortality by tier</th>
-          <td class="mono">facility, all quarters pooled, grouped by tier</td>
-          <td>{nmrByTier.reduce((s, t) => s + t.n, 0)} facilities across {nmrByTier.length} tiers</td>
-          <td>no batch resolution beyond <code>nmr_facility_quarter</code>'s own</td>
-          <td>mean of per-facility (deaths &divide; births &times; 1,000), grouped by <code>org_units.tier</code></td>
-        </tr>
-      </tbody>
-    </table>
   </section>
 
   <footer class="colophon">
