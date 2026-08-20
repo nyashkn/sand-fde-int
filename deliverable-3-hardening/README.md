@@ -147,5 +147,5 @@ Not a to-do list, but the reviewer should know where the line is.
 | Email clipping and unsupported SVG | `check-email.mjs`, measured at 6% of the ceiling |
 | House style violations | `check-style.mjs`, five bans, proven to fail |
 | Chart palette drifting from the stylesheet | `check-tokens.mjs`, nine colours compared |
-| Provenance of every published figure | Lineage record per figure, section 6 |
-| Known defects in the source | Published in the bulletin, section 5, not corrected silently |
+| Provenance of every published figure | `rules_applied` carried per observation from bronze through to Parquet, alongside the declared crosswalk |
+| Known defects in the source | Declared in `known_contradictions.csv` and stated in Deliverable 2, never silently corrected |

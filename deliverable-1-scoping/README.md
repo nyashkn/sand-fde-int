@@ -156,7 +156,7 @@ and the brief does not consider it. Both are hypotheses to test in Week 1, not f
 ## 2.2 The choice: **Problem A**, plus one bounded handover act
 
 > **Commitment (conditional on the Week 1 gate in 2.5a):** automate the Quarterly Health
-> Bulletin, with figure-level lineage built in from the start, and one named Digital Health
+> Bulletin, with figure-level lineage carried in the data from the start, and one named Digital Health
 > Officer independently producing a bulletin from a replayed quarter before I leave.
 
 **What I am giving up, stated first.** The highest-value outcome for this Ministry is probably

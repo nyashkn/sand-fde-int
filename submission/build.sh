@@ -108,6 +108,24 @@ echo "==> docs to pdf"
 # because it is the quarter carrying both the batch conflict and a missing month,
 # so it exercises every caveat path the build has.
 BULLETIN="$ROOT/deliverable-2-prototype/output/bulletin-2024-Q1.html"
+
+# `bun run publish` writes output/, `bun run verify` writes dist/. They are different
+# directories, so a session that edits the bulletin and runs only verify leaves output/
+# untouched and this script silently embeds the previous build. That happened: three
+# consecutive PDFs carried a bulletin from hours earlier, and every check run against
+# them passed, because they were all checking the stale pages faithfully.
+if [ ! -f "$BULLETIN" ]; then
+  echo "    FAIL  $BULLETIN missing — run 'bun run publish' in deliverable-2-prototype/web" >&2
+  exit 1
+fi
+STALE=$(find "$ROOT/deliverable-2-prototype/web/src" -type f -newer "$BULLETIN" -print -quit)
+if [ -n "$STALE" ]; then
+  echo "    FAIL  bulletin source is newer than the published edition:" >&2
+  echo "          $STALE" >&2
+  echo "          run 'bun run publish' in deliverable-2-prototype/web first" >&2
+  exit 1
+fi
+
 echo "==> bulletin to pdf"
 "$CHROME" --headless --disable-gpu --no-pdf-header-footer \
   --print-to-pdf="$WORK/bulletin.pdf" "file://$BULLETIN" 2>/dev/null

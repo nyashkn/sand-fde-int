@@ -14,7 +14,7 @@
 
 **5. Facility geography is unusable.** GPS is uniform-random inside Rwanda's bounding box for all 117 facilities; the bulletin honestly maps at district grain. *Fix:* join HDX's Rwanda Healthsites layer (1,345 real facilities, open licence). *Do not* reverse-geocode district centroids as a substitute &mdash; that manufactures false precision.
 
-**Already hardened, not just flagged:** disclosed-not-withheld statistical caveats (temporal-signal and stratification checks always annotate, never gate); cross-surface figure agreement (`check-agreement.mjs`, 7 shared figures); filename/content mismatch refused at publish; chart-palette drift against the stylesheet (`check-tokens.mjs`); per-figure lineage recorded for every published number.
+**Already hardened, not just flagged:** disclosed-not-withheld statistical caveats (temporal-signal and stratification checks always annotate, never gate); cross-surface figure agreement (`check-agreement.mjs`, 7 shared figures); filename/content mismatch refused at publish; chart-palette drift against the stylesheet (`check-tokens.mjs`); `rules_applied` carried per observation, so a contested figure can name the rule that resolved it.
 
 ## D4 &mdash; Handover
 

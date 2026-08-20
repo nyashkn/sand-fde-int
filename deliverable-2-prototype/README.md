@@ -31,9 +31,9 @@ HTML artifact, is `SOLUTION-DESIGN.md`.
 ## What it produces
 
 `output/bulletin-<quarter>.html`, one edition per quarter, all four built by `bun run
-publish`, with every figure carrying its value, its state, and a link to the rows and
-rules behind it. Lineage records live in the same file as anchors, so it works offline and
-survives being forwarded.
+publish`, with every figure carrying its value and its state. Each edition is one
+self-contained HTML file with no external assets, so it works offline and survives being
+forwarded.
 
 Four required metrics, two answered directly and two substituted, with the substitution
 stated rather than papered over:
@@ -114,8 +114,10 @@ section it qualifies.
 
 ## Shortcuts taken
 
-- Lineage records are anchors in one file rather than addressable URLs. The contract is the
-  same; the explore surface would serve them at `/metric/.../lineage`.
+- Lineage is carried in the data, not rendered on the page. `rules_applied` reaches Parquet
+  per observation and the crosswalk is published, but the bulletin surfaces no per-figure
+  record: that is a reader-facing surface a Ministry bulletin is the wrong place for. The
+  explore surface would serve them at `/metric/.../lineage`.
 - The batch collision uses a declared arbitrary default (`DEFAULT-BATCH-01`, lowest
   occurrence ordinal) so the pipeline completes. Every figure it touches is provisional.
   Resolution belongs to an analyst, and the queue is specified but not built.

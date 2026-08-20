@@ -145,8 +145,8 @@ already done, because the harvest is the work.
 **Per-figure lineage.** Carried as columns through the pipeline (`rules_applied`,
 `quality_flags`, `provisional`, `source_system`, `source_row`, `row_hash`,
 `ingested_at`), not a bolted-on audit log. `observations_resolved` publishes to Parquet
-because it is the only table carrying `rules_applied`, so the bulletin's lineage section
-reads the actual rule name, not a restatement. A generic BI tool's lineage feature
+because it is the only table carrying `rules_applied`, so wherever the bulletin names the
+rule that resolved a contested figure it reads the actual name, not a restatement. A generic BI tool's lineage feature
 describes a generic ETL's; it cannot name this pipeline's own arbitrary tie-break
 (`DEFAULT-BATCH-01`, see 3.1) without this pipeline's code producing that fact first.
 

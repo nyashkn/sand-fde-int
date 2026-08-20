@@ -1,7 +1,7 @@
 # Executive summary
 
 **The choice.** Problem A, the Quarterly Health Bulletin, automated end to end, with
-figure-level lineage built in from the start rather than added later. B needs
+figure-level lineage carried in the data from the start rather than added later. B needs
 facility-level freshness that monthly aggregate reporting on a two to three week lag
 cannot supply, which is a cadence gap and a separate project. C matches TB and HIV
 records by probability, since the systems share no patient identifier, so a wrong match

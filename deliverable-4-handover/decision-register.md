@@ -26,8 +26,8 @@ The first-occurring row for each key survives; the second is dropped. Every row 
 touches is stamped `provisional`, and the rule name is carried into every downstream
 figure's lineage record (`observations_resolved.rules_applied`), which is what makes
 `DEFAULT-BATCH-01` a fact a reader can check rather than an invisible default. The
-bulletin's §4 lineage table reads this column at render time rather than having the rule
-name typed into the template, specifically so the two cannot drift; see
+bulletin reads this column at render time wherever it names the rule, rather than having
+the name typed into the template, specifically so the two cannot drift; see
 `decisions/0011-email-is-a-summary-edition.md` and the commit that fixed a real instance
 of that drift.
 
