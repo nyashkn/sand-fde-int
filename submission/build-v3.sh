@@ -102,7 +102,7 @@ cap = ('<p class="cap">Synthetic test data throughout (assignment CSVs plus a ha
        'sample) &mdash; not real Rwanda health records. Mart ERD and build-vs-buy detail in the '
        'full submission and repository.</p>')
 
-intro = ('<p class="intro">Four layers plus checks plus render (D2 &sect;1.1, condensed). '
+intro = ('<p class="intro">Four layers plus checks plus render (D2 1.1, condensed). '
          'Sources &rarr; <b>bronze</b> (verbatim, stamped with lineage) &rarr; <b>silver</b> '
          '(melted, crosswalk-resolved to one canonical observation grain) &rarr; <b>gold</b> '
          '(the marts a bulletin reads, plus two seeded statistical checks that always annotate, '

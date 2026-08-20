@@ -335,7 +335,7 @@ svg { min-width: 0 !important; width: 100%; height: auto; max-height: 118mm; }
 </style>
 </head><body>
 <h2>D2 &mdash; Solution architecture: data flow, product choices, custom components</h2>
-<p class="intro">Four layers plus checks plus render (D2 &sect;1.1, condensed). Sources &rarr; <b>bronze</b> (verbatim, stamped with lineage) &rarr; <b>silver</b> (melted, crosswalk-resolved to one canonical observation grain) &rarr; <b>gold</b> (the marts a bulletin reads, plus two seeded statistical checks that always annotate, never gate) &rarr; publish to Parquet/DuckDB &rarr; render (Astro/Vega-Lite, static bulletin + email + Superset for the connected office). One Sand product used (Superset); the crosswalk, per-figure lineage, and the two checks are custom &mdash; the rest is standard warehouse plumbing, not the reason this took six weeks.</p>
+<p class="intro">Four layers plus checks plus render (D2 1.1, condensed). Sources &rarr; <b>bronze</b> (verbatim, stamped with lineage) &rarr; <b>silver</b> (melted, crosswalk-resolved to one canonical observation grain) &rarr; <b>gold</b> (the marts a bulletin reads, plus two seeded statistical checks that always annotate, never gate) &rarr; publish to Parquet/DuckDB &rarr; render (Astro/Vega-Lite, static bulletin + email + Superset for the connected office). One Sand product used (Superset); the crosswalk, per-figure lineage, and the two checks are custom &mdash; the rest is standard warehouse plumbing, not the reason this took six weeks.</p>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flow"
         viewBox="0 0 1489 719" role="img" aria-label="Bulletin pipeline data flow, PlantUML component diagram">
         <defs />

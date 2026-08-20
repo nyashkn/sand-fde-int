@@ -1,5 +1,5 @@
 <div class="masthead">
-<strong>D1 &mdash; Problem decomposition &amp; scoping</strong> (condensed; full document: <code>deliverable-1-scoping/README.md</code>, red-team amendment log: <code>decisions/0007-cross-provider-redteam-amendments.md</code>)
+<strong>D1 &mdash; Problem decomposition &amp; scoping</strong> (condensed; full document: <code>deliverable-1-scoping/README.md</code>)
 </div>
 
 ## "Our data is a mess" is a symptom report, not a problem statement

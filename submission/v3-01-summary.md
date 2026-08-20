@@ -14,8 +14,6 @@ Full working notes, runbook, data contract and decision register are in the repo
 | B &mdash; Real-time facility dashboard | Out of reach this sprint | Needs facility-level freshness. Reporting substrate is monthly aggregates on a 2&ndash;3wk lag &mdash; a granularity/cadence gap, not a coverage gap, regardless of how many facilities report. |
 | C &mdash; Unified patient view (TB/HIV) | Rejected | Needs a clinical-safety hazard analysis that does not fit in 6 weeks. Propose a weekly reconciliation report instead &mdash; flags likely co-infection for human review, no record merging, none of the risk. |
 
-**How this survived review.** The choice was prompted hostilely against three independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5). All three independently chose Problem A &mdash; but rejected the original justification, unanimously finding errors (an impossible 5-day publication target given the 2&ndash;3wk upstream lag; an overstated ROI baseline; a false claim that A's mart is "most of" B's data layer). All corrected in the full document.
-
 ## What was built
 
 A pipeline that reads the five provided CSVs plus a DHIS2-shaped sample, resolves every field through a 71-row declared crosswalk, and publishes all four 2024 quarters as self-contained HTML with zero client-side JavaScript. Python + Hamilton + DuckDB + Parquet (bronze &rarr; silver &rarr; gold &rarr; checks); Astro + Vega-Lite compiled to static SVG for render. 5 automated checks gate publication, each one added because it caught a real defect.
