@@ -11,8 +11,9 @@ valuable outcome available, and Deliverable 1 says so in those words.
 **What is built.** A working pipeline that reads the five provided CSVs, resolves every
 column through a declared crosswalk, and publishes all four 2024 quarters as
 self-contained HTML with no client-side JavaScript. Python with Hamilton, DuckDB and
-Parquet for the data layer; Astro with Flint compiled to Vega-Lite for the render. Four
-automated checks gate publication, and each one exists because it caught a real defect.
+Parquet for the data layer; Astro with Flint compiled to Vega-Lite for the render. Five
+automated checks gate publication; four of them exist because they caught a real defect,
+and the fifth is preventive and labelled as such rather than counted as a catch.
 Setup and run instructions are in the accompanying repository.
 
 All four editions are live at **https://sand-fde-bulletin.pages.dev**. The pages carry
