@@ -1,0 +1,133 @@
+/* Tight print stylesheet for the 5-page v2 submission.
+   Derived from print.css, compressed: smaller type, tighter margins,
+   denser tables. Same palette/contrast ratios, unchanged. */
+
+:root {
+  --ink: #161513;
+  --paper: #f6f4ef;
+  --panel: #fffef9;
+  --red: #c22029;
+  --gray-track: #e2ded2;
+  --gray-mid: #6b6659;
+  --gray-line: #c9c4b4;
+
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --slab: Rockwell, 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'SFMono-Regular', 'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 11mm 12mm 12mm 12mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 8.3pt;
+  line-height: 1.28;
+  color: var(--ink);
+  margin: 0;
+  hyphens: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--slab);
+  font-weight: 700;
+  line-height: 1.1;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 0.55em 0 0.25em;
+}
+
+h1 { font-size: 14pt; margin-top: 0; }
+h2 { font-size: 10.5pt; border-bottom: 1px solid var(--ink); padding-bottom: 2px; margin-top: 0.7em; }
+h3 { font-size: 9pt; }
+h4 { font-size: 8.3pt; letter-spacing: 0.02em; }
+
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+p { margin: 0 0 0.4em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: none; border-bottom: 0.5px solid var(--gray-line); }
+
+ul, ol { margin: 0 0 0.4em; padding-left: 1.1em; }
+li { margin-bottom: 0.12em; break-inside: avoid-page; }
+
+blockquote {
+  margin: 0.5em 0;
+  padding: 0.35em 0.7em;
+  background: var(--panel);
+  border-left: 2.5px solid var(--red);
+  break-inside: avoid-page;
+  font-size: 8pt;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 7.3pt;
+  background: var(--panel);
+  padding: 0 2px;
+}
+
+hr { border: 0; border-top: 0.5px solid var(--gray-line); margin: 0.8em 0; }
+
+/* ---- tables ------------------------------------------------------------ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.6pt;
+  margin: 0.35em 0 0.6em;
+}
+
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th {
+  font-family: var(--sans);
+  font-size: 6.6pt;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-mid);
+  text-align: left;
+  border-bottom: 1px solid var(--ink);
+  padding: 3px 4px 2px;
+  vertical-align: bottom;
+}
+
+td {
+  border-bottom: 0.5px solid var(--gray-line);
+  padding: 3px 4px;
+  vertical-align: top;
+}
+
+/* ---- structure --------------------------------------------------------- */
+
+.pagebreak { break-after: page; height: 0; }
+
+.masthead {
+  font-family: var(--sans);
+  font-size: 7.3pt;
+  color: var(--gray-mid);
+  margin-bottom: 0.6em;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--red);
+}
+.masthead strong { color: var(--ink); }
+
+.cap {
+  font-family: var(--mono);
+  font-size: 6.6pt;
+  color: var(--gray-mid);
+}

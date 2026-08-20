@@ -1,0 +1,39 @@
+<div class="masthead">
+<strong>D3 — Production hardening</strong> &amp; <strong>D4 — Handover</strong> (condensed; full:
+<code>deliverable-3-hardening/README.md</code>, <code>deliverable-4-handover/README.md</code>)
+</div><h2>D3 — top 5 fixes before this runs unattended, ranked by impact if skipped</h2>
+<p><strong>1. The batch conflict has no resolution path.</strong> 2024-01 and 2024-03 each arrived twice, 234
+rows, no timestamp or revision flag to arbitrate. Pipeline defaults to <code>DEFAULT-BATCH-01</code> and
+marks every derived figure provisional — honest, not useful, at 100% provisional. <em>Fix:</em> a
+triage queue where a named analyst records the choice and figures promote to settled (specified,
+not built).</p>
+<p><strong>2. Ingestion assumes one file shape.</strong> The 71-field crosswalk was learned by hand; real DHIS2,
+HealthTrack, OpenMRS and paper forms won&#39;t hold still. <em>Fix:</em> LLM-proposed, human-confirmed,
+cached column mapping — never re-inferred per run. Free win: HXL-tagged sources map by lookup,
+no model call needed.</p>
+<p><strong>3. Chart runtime decided for the bulletin, open for the surface that doesn&#39;t exist yet.</strong>
+Flint → Vega-Lite adopted and working. <em>Do not</em> default the unbuilt explore surface to whichever
+runtime is closest to hand — decide explicitly, in writing, before its first line is written.</p>
+<p><strong>4. Nothing runs on a schedule, no one is told when it fails.</strong> Hamilton already exposes the DAG
+as a callable — orchestration is a wrapper, not a rewrite. What matters more than the scheduler:
+publication must gate on the 5 checks passing, and a failed run must reach a person.</p>
+<p><strong>5. Facility geography is unusable.</strong> GPS is uniform-random inside Rwanda&#39;s bounding box for all
+117 facilities; the bulletin honestly maps at district grain. <em>Fix:</em> join HDX&#39;s Rwanda
+Healthsites layer (1,345 real facilities, open licence). <em>Do not</em> reverse-geocode district
+centroids as a substitute — that manufactures false precision.</p>
+<h2>D4 — Handover</h2>
+<p>The deliverable is not the artifact, it&#39;s a named Digital Health Officer independently restarting
+the pipeline once, unassisted, before exit. Two training sessions: run the full cycle
+hands-on-keyboard-DHO; diagnose a deliberately seeded failure using only the runbook. Full
+clean-rebuild verified 2026-08-11 from a wiped state — 5/5 checks passed, output reproduced at
+the same byte hash, confirming the pipeline is deterministic. That run predates later pipeline
+changes (ADR-0012) and has <strong>not been re-verified against current code</strong> — flagged here, not
+hidden; re-running and diff-checking the hash is the next action before reproducibility can be
+re-claimed.</p>
+<p>Three documents answer &quot;what would you hand the MoH IT team&quot; and ship in the repository, not
+this PDF — at nine pages combined they would have made D3+D4 a third of a document whose brief
+asks for 80% of the effort on D1+D2:</p>
+<p><code>deliverable-4-handover/runbook.md</code> · <code>data-contract.md</code> · <code>decision-register.md</code></p>
+<p><strong>Full detail for all four deliverables, the pipeline code, and the openspec behaviour specs:</strong>
+<strong>github.com/nyashkn/sand-fde-int</strong></p>
+<div class="pagebreak"></div>

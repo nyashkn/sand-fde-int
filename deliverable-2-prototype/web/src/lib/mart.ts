@@ -320,7 +320,8 @@ const CARRIED_UNUSED_ELEMENTS = ['governance_protocol_updated'] as const;
 
 export interface CrosswalkCoverage {
   totalSourceColumns: number;
-  reachingFigure: number;
+  observations: number;
+  keys: number;
   excluded: number;
   carriedUnused: number;
 }
@@ -333,22 +334,28 @@ export interface CrosswalkCoverage {
  * `dhis2`'s 5 rows are a second source proving the same canonical elements `assignment_csv`
  * already declares, not additional distinct source columns, so only `assignment_csv` rows
  * count toward the 66.
+ *
+ * Reports the crosswalk's own role split (observation / identity+dimension key / unmapped),
+ * not "reaches a figure": reaching `silver` (what every non-unmapped role does) is not the
+ * same claim as reaching a rendered figure on this page, and this page has no manifest of
+ * which elements a query actually surfaces, so that stronger claim is not one this function
+ * can honestly compute.
  */
 export async function crosswalkCoverage(): Promise<CrosswalkCoverage> {
   const [r] = await q(`
     SELECT
       count(*) FILTER (WHERE source_system = 'assignment_csv') AS total,
+      count(*) FILTER (WHERE source_system = 'assignment_csv' AND role = 'observation') AS observations,
+      count(*) FILTER (WHERE source_system = 'assignment_csv' AND role IN ('identity', 'dimension')) AS keys,
       count(*) FILTER (WHERE source_system = 'assignment_csv' AND role = 'unmapped') AS excluded
     FROM read_csv_auto('${CROSSWALK}')
   `);
-  const totalSourceColumns = num(r.total);
-  const excluded = num(r.excluded);
-  const carriedUnused = CARRIED_UNUSED_ELEMENTS.length;
   return {
-    totalSourceColumns,
-    excluded,
-    carriedUnused,
-    reachingFigure: totalSourceColumns - excluded - carriedUnused,
+    totalSourceColumns: num(r.total),
+    observations: num(r.observations),
+    keys: num(r.keys),
+    excluded: num(r.excluded),
+    carriedUnused: CARRIED_UNUSED_ELEMENTS.length,
   };
 }
 

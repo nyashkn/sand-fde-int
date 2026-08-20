@@ -1,0 +1,176 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Sand FDE submission v2</title><style>
+/* Tight print stylesheet for the 5-page v2 submission.
+   Derived from print.css, compressed: smaller type, tighter margins,
+   denser tables. Same palette/contrast ratios, unchanged. */
+
+:root {
+  --ink: #161513;
+  --paper: #f6f4ef;
+  --panel: #fffef9;
+  --red: #c22029;
+  --gray-track: #e2ded2;
+  --gray-mid: #6b6659;
+  --gray-line: #c9c4b4;
+
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --slab: Rockwell, 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'SFMono-Regular', 'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 11mm 12mm 12mm 12mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 8.3pt;
+  line-height: 1.28;
+  color: var(--ink);
+  margin: 0;
+  hyphens: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--slab);
+  font-weight: 700;
+  line-height: 1.1;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 0.55em 0 0.25em;
+}
+
+h1 { font-size: 14pt; margin-top: 0; }
+h2 { font-size: 10.5pt; border-bottom: 1px solid var(--ink); padding-bottom: 2px; margin-top: 0.7em; }
+h3 { font-size: 9pt; }
+h4 { font-size: 8.3pt; letter-spacing: 0.02em; }
+
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+p { margin: 0 0 0.4em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: none; border-bottom: 0.5px solid var(--gray-line); }
+
+ul, ol { margin: 0 0 0.4em; padding-left: 1.1em; }
+li { margin-bottom: 0.12em; break-inside: avoid-page; }
+
+blockquote {
+  margin: 0.5em 0;
+  padding: 0.35em 0.7em;
+  background: var(--panel);
+  border-left: 2.5px solid var(--red);
+  break-inside: avoid-page;
+  font-size: 8pt;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 7.3pt;
+  background: var(--panel);
+  padding: 0 2px;
+}
+
+hr { border: 0; border-top: 0.5px solid var(--gray-line); margin: 0.8em 0; }
+
+/* ---- tables ------------------------------------------------------------ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.6pt;
+  margin: 0.35em 0 0.6em;
+}
+
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th {
+  font-family: var(--sans);
+  font-size: 6.6pt;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-mid);
+  text-align: left;
+  border-bottom: 1px solid var(--ink);
+  padding: 3px 4px 2px;
+  vertical-align: bottom;
+}
+
+td {
+  border-bottom: 0.5px solid var(--gray-line);
+  padding: 3px 4px;
+  vertical-align: top;
+}
+
+/* ---- structure --------------------------------------------------------- */
+
+.pagebreak { break-after: page; height: 0; }
+
+.masthead {
+  font-family: var(--sans);
+  font-size: 7.3pt;
+  color: var(--gray-mid);
+  margin-bottom: 0.6em;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--red);
+}
+.masthead strong { color: var(--ink); }
+
+.cap {
+  font-family: var(--mono);
+  font-size: 6.6pt;
+  color: var(--gray-mid);
+}
+</style></head><body>
+<div class="masthead">
+<strong>D3 — Production hardening</strong> &amp; <strong>D4 — Handover</strong> (condensed; full:
+<code>deliverable-3-hardening/README.md</code>, <code>deliverable-4-handover/README.md</code>)
+</div><h2>D3 — top 5 fixes before this runs unattended, ranked by impact if skipped</h2>
+<p><strong>1. The batch conflict has no resolution path.</strong> 2024-01 and 2024-03 each arrived twice, 234
+rows, no timestamp or revision flag to arbitrate. Pipeline defaults to <code>DEFAULT-BATCH-01</code> and
+marks every derived figure provisional — honest, not useful, at 100% provisional. <em>Fix:</em> a
+triage queue where a named analyst records the choice and figures promote to settled (specified,
+not built).</p>
+<p><strong>2. Ingestion assumes one file shape.</strong> The 71-field crosswalk was learned by hand; real DHIS2,
+HealthTrack, OpenMRS and paper forms won&#39;t hold still. <em>Fix:</em> LLM-proposed, human-confirmed,
+cached column mapping — never re-inferred per run. Free win: HXL-tagged sources map by lookup,
+no model call needed.</p>
+<p><strong>3. Chart runtime decided for the bulletin, open for the surface that doesn&#39;t exist yet.</strong>
+Flint → Vega-Lite adopted and working. <em>Do not</em> default the unbuilt explore surface to whichever
+runtime is closest to hand — decide explicitly, in writing, before its first line is written.</p>
+<p><strong>4. Nothing runs on a schedule, no one is told when it fails.</strong> Hamilton already exposes the DAG
+as a callable — orchestration is a wrapper, not a rewrite. What matters more than the scheduler:
+publication must gate on the 5 checks passing, and a failed run must reach a person.</p>
+<p><strong>5. Facility geography is unusable.</strong> GPS is uniform-random inside Rwanda&#39;s bounding box for all
+117 facilities; the bulletin honestly maps at district grain. <em>Fix:</em> join HDX&#39;s Rwanda
+Healthsites layer (1,345 real facilities, open licence). <em>Do not</em> reverse-geocode district
+centroids as a substitute — that manufactures false precision.</p>
+<h2>D4 — Handover</h2>
+<p>The deliverable is not the artifact, it&#39;s a named Digital Health Officer independently restarting
+the pipeline once, unassisted, before exit. Two training sessions: run the full cycle
+hands-on-keyboard-DHO; diagnose a deliberately seeded failure using only the runbook. Full
+clean-rebuild verified 2026-08-11 from a wiped state — 5/5 checks passed, output reproduced at
+the same byte hash, confirming the pipeline is deterministic. That run predates later pipeline
+changes (ADR-0012) and has <strong>not been re-verified against current code</strong> — flagged here, not
+hidden; re-running and diff-checking the hash is the next action before reproducibility can be
+re-claimed.</p>
+<p>Three documents answer &quot;what would you hand the MoH IT team&quot; and ship in the repository, not
+this PDF — at nine pages combined they would have made D3+D4 a third of a document whose brief
+asks for 80% of the effort on D1+D2:</p>
+<p><code>deliverable-4-handover/runbook.md</code> · <code>data-contract.md</code> · <code>decision-register.md</code></p>
+<p><strong>Full detail for all four deliverables, the pipeline code, and the openspec behaviour specs:</strong>
+<strong>github.com/nyashkn/sand-fde-int</strong></p>
+<div class="pagebreak"></div>
+</body></html>

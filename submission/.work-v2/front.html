@@ -1,0 +1,295 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Sand FDE submission v2</title><style>
+/* Tight print stylesheet for the 5-page v2 submission.
+   Derived from print.css, compressed: smaller type, tighter margins,
+   denser tables. Same palette/contrast ratios, unchanged. */
+
+:root {
+  --ink: #161513;
+  --paper: #f6f4ef;
+  --panel: #fffef9;
+  --red: #c22029;
+  --gray-track: #e2ded2;
+  --gray-mid: #6b6659;
+  --gray-line: #c9c4b4;
+
+  --serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --slab: Rockwell, 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'SFMono-Regular', 'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace;
+}
+
+@page {
+  size: A4;
+  margin: 11mm 12mm 12mm 12mm;
+}
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 8.3pt;
+  line-height: 1.28;
+  color: var(--ink);
+  margin: 0;
+  hyphens: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--slab);
+  font-weight: 700;
+  line-height: 1.1;
+  break-after: avoid-page;
+  break-inside: avoid-page;
+  margin: 0.55em 0 0.25em;
+}
+
+h1 { font-size: 14pt; margin-top: 0; }
+h2 { font-size: 10.5pt; border-bottom: 1px solid var(--ink); padding-bottom: 2px; margin-top: 0.7em; }
+h3 { font-size: 9pt; }
+h4 { font-size: 8.3pt; letter-spacing: 0.02em; }
+
+h1 + *, h2 + *, h3 + * { break-before: avoid-page; }
+
+p { margin: 0 0 0.4em; orphans: 3; widows: 3; }
+
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+a { color: var(--ink); text-decoration: none; border-bottom: 0.5px solid var(--gray-line); }
+
+ul, ol { margin: 0 0 0.4em; padding-left: 1.1em; }
+li { margin-bottom: 0.12em; break-inside: avoid-page; }
+
+blockquote {
+  margin: 0.5em 0;
+  padding: 0.35em 0.7em;
+  background: var(--panel);
+  border-left: 2.5px solid var(--red);
+  break-inside: avoid-page;
+  font-size: 8pt;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: var(--mono);
+  font-size: 7.3pt;
+  background: var(--panel);
+  padding: 0 2px;
+}
+
+hr { border: 0; border-top: 0.5px solid var(--gray-line); margin: 0.8em 0; }
+
+/* ---- tables ------------------------------------------------------------ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 7.6pt;
+  margin: 0.35em 0 0.6em;
+}
+
+thead { display: table-header-group; }
+tr { break-inside: avoid-page; }
+
+th {
+  font-family: var(--sans);
+  font-size: 6.6pt;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-mid);
+  text-align: left;
+  border-bottom: 1px solid var(--ink);
+  padding: 3px 4px 2px;
+  vertical-align: bottom;
+}
+
+td {
+  border-bottom: 0.5px solid var(--gray-line);
+  padding: 3px 4px;
+  vertical-align: top;
+}
+
+/* ---- structure --------------------------------------------------------- */
+
+.pagebreak { break-after: page; height: 0; }
+
+.masthead {
+  font-family: var(--sans);
+  font-size: 7.3pt;
+  color: var(--gray-mid);
+  margin-bottom: 0.6em;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--red);
+}
+.masthead strong { color: var(--ink); }
+
+.cap {
+  font-family: var(--mono);
+  font-size: 6.6pt;
+  color: var(--gray-mid);
+}
+</style></head><body>
+<div class="masthead">
+<strong>Sand FDE submission — condensed (v2, 5pp)</strong> · Kinyanjui Njoroge · August 2026 ·
+Full submission (36pp incl. handover docs): <code>sand-fde-submission.pdf</code> ·
+Repo: github.com/nyashkn/sand-fde-int
+</div><blockquote>
+<p>All figures below are computed on <strong>synthetic data</strong> — the assignment CSVs plus a hand-built
+DHIS2 sample — not real Rwanda health records. Facility mortality of 14.3–73.2 per 1,000 live
+births runs three to four times real Rwandan rates.</p>
+</blockquote>
+<h2>The choice: Problem A, and why not B or C</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Verdict</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>A — Quarterly Health Bulletin, automated</strong></td>
+<td><strong>Chosen</strong></td>
+<td>Only option finishable and provable in 6 weeks; operates on data that already arrives, in a shape that already exists. The trust wedge for later work.</td>
+</tr>
+<tr>
+<td>B — Real-time facility dashboard</td>
+<td>Out of reach <em>this sprint</em></td>
+<td>Needs facility-level freshness. Reporting substrate is monthly aggregates on a 2–3wk lag — a granularity/cadence gap, not a coverage gap, regardless of how many facilities report.</td>
+</tr>
+<tr>
+<td>C — Unified patient view (TB/HIV)</td>
+<td>Rejected</td>
+<td>Needs a clinical-safety hazard analysis that does not fit in 6 weeks. Propose a weekly reconciliation report instead — flags likely co-infection for human review, no record merging, none of the risk.</td>
+</tr>
+</tbody></table>
+<h2>What was built</h2>
+<p>A pipeline that reads the five provided CSVs plus a DHIS2-shaped sample, resolves every field
+through a 71-row declared crosswalk, and publishes all four 2024 quarters as self-contained HTML
+with <strong>zero client-side JavaScript</strong>. Python + Hamilton + DuckDB + Parquet (bronze → silver →
+gold → checks); Astro + Vega-Lite compiled to static SVG for render. <strong>5 automated checks</strong> gate
+publication, each one added because it caught a real defect. Live: <strong>sand-fde-bulletin.pages.dev</strong>
+· Repo: <strong>github.com/nyashkn/sand-fde-int</strong></p>
+<h2>Two findings that shaped it more than any metric in the brief</h2>
+<p><strong>1 — The largest cause of neonatal death isn&#39;t a clinical cause.</strong> <code>death_other</code> is <strong>30.7%</strong> of
+resolved deaths, the largest single bucket in all ten held months (28.8%–32.1%). The two named
+causes behind it can&#39;t be separated: birth asphyxia <strong>23.7%</strong> vs prematurity <strong>23.6%</strong>, a gap of
+15 deaths in 9,036 — and which one leads flips between months. A bulletin ranking named clinical
+causes would be reporting noise. The finding is about the reporting system, not newborn medicine.</p>
+<p><strong>2 — A striking correlation is a confound.</strong> A composite equipment index correlates <strong>≈ −0.87</strong>
+with facility mortality, pooled across 117 facilities — reads as &quot;equip facilities, save
+newborns.&quot; Stratified by tier it collapses to near zero: <strong>District −0.07, Health Centre +0.04,
+Provincial −0.29</strong>. The pooled number describes which tier a facility sits in, not what equipping
+it would do. Publishing the pooled figure alone would have pointed a Ministry&#39;s budget at a
+confound; the bulletin shows every covariate pooled <em>and</em> within tier, caveat attached, not
+withheld.</p>
+<div class="pagebreak"></div><div class="pagebreak"></div><div class="masthead">
+<strong>D1 — Problem decomposition &amp; scoping</strong> (condensed; full document:
+<code>deliverable-1-scoping/README.md</code>, red-team amendment log:
+<code>decisions/0007-cross-provider-redteam-amendments.md</code>)
+</div><h2>&quot;Our data is a mess&quot; is a symptom report, not a problem statement</h2>
+<table>
+<thead>
+<tr>
+<th>Failure class</th>
+<th>Meaning</th>
+<th>Implies</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Absence</td>
+<td>Never captured at all</td>
+<td>Digitisation problem</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Captured, arrives too late to act on</td>
+<td>Pipeline problem — DHIS2 runs 2–3wk behind</td>
+</tr>
+<tr>
+<td>Distrust</td>
+<td>Arrives on time, nobody believes it</td>
+<td>Provenance problem — sources disagree, nobody reconciles</td>
+</tr>
+<tr>
+<td>Last mile</td>
+<td>Believed, never reaches a decision</td>
+<td>Workflow problem</td>
+</tr>
+</tbody></table>
+<p>Week 1&#39;s job is to find which dominates. Distrust is tested <em>first</em> — cheapest to check, most
+commonly missed — not because the brief&#39;s sentence says so. One question for every interview,
+because the answers won&#39;t match: <em>&quot;When two systems give different numbers, what happens?&quot;</em></p>
+<h2>Top assumptions and risks (of 9 tracked in full)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Assumption</th>
+<th>If false</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A3</td>
+<td>Reporting labour is mostly mechanical</td>
+<td>Automate assembly only; reset the ROI target publicly</td>
+</tr>
+<tr>
+<td>A7</td>
+<td>A named DHO with cleared hours exists</td>
+<td>Downgrade honestly; stop calling it capacity transfer</td>
+</tr>
+<tr>
+<td>A8</td>
+<td>The bulletin is read by someone who decides</td>
+<td>Stop. Find what <em>is</em> read</td>
+</tr>
+<tr>
+<td>A10</td>
+<td>Hosting / InfoSec approval achievable in ≤3 weeks</td>
+<td>Re-plan around Ministry-owned infrastructure</td>
+</tr>
+</tbody></table>
+<p><strong>The Week 1 gate.</strong> The commitment to A is conditional on five gates assessed at end of Week 1,
+not final at proposal time: <strong>G1</strong> Value (a decision-maker used the last bulletin for something
+identifiable) · <strong>G2</strong> Mechanisability (≥60% of cycle time is mechanical) · <strong>G3</strong> Inputs (DHIS2
+access confirmed with a stated cutoff) · <strong>G4</strong> Runtime (a place to run and hand over exists) ·
+<strong>G5</strong> Operator (a named receiver is assigned). G1 or G3 failing means A is the wrong commitment —
+said in Week 1, not Week 5.</p>
+<h2>What would change my mind</h2>
+<table>
+<thead>
+<tr>
+<th>Observation</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Districts decide <strong>weekly</strong> and can&#39;t today</td>
+<td>Re-scope toward B for adequate-granularity facilities, honestly named partial</td>
+</tr>
+<tr>
+<td>The bulletin is <strong>not read</strong> by any decision-maker</td>
+<td>Stop. Find what is read</td>
+</tr>
+<tr>
+<td>Co-infected patients harmed <strong>today</strong>, measurably</td>
+<td>Escalate C as clinical safety, resourced properly</td>
+</tr>
+<tr>
+<td>Hosting/InfoSec approval takes <strong>&gt;3 weeks</strong></td>
+<td>Re-plan around an offline deliverable; escalate Day 3</td>
+</tr>
+</tbody></table>
+<p><strong>How this survived review.</strong> The problem selection was prompted hostilely against three
+independent model families (GPT-5.6-sol, Gemini 3.1 Pro, Grok 4.5). All three independently chose
+<strong>Problem A</strong> — but rejected the original justification, finding errors unanimously (an
+impossible 5-day publication target given a 2–3wk upstream lag; an overstated ROI baseline; a
+false claim that A&#39;s mart is &quot;most of&quot; B&#39;s data layer). All corrected in the full document.</p>
+<div class="pagebreak"></div><div class="pagebreak"></div>
+</body></html>

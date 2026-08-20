@@ -242,6 +242,11 @@ const CONTRADICTION_LABEL: Record<string, string> = {
   surfactant_no_variance: 'Surfactant availability, no variance',
   neonatologist_no_variance: 'Neonatologist staffing, no variance',
   quality_improvement_no_variance: 'Quality-improvement programme, no variance',
+  snapshot_joined_to_panel: 'Snapshot tables joined to a monthly panel',
+  monthly_suffix_without_period: 'Named monthly, recorded without a period',
+  correlation_static_vs_annual: 'Static capability against an annual rate',
+  unmapped_columns_never_mentioned: 'Excluded columns, reasons recorded',
+  protocol_last_updated_not_rendered: 'Protocol date carried, never rendered',
 };
 ---
 
@@ -645,10 +650,13 @@ const CONTRADICTION_LABEL: Record<string, string> = {
     <h2><span class="n">{secNum('s8')}</span>Lineage</h2>
 
     <p class="caption">
-      {coverage.reachingFigure} of {coverage.totalSourceColumns} source columns reach a figure on
-      this page; {coverage.excluded} are excluded, each with a reason in the
-      {' '}<a href={CROSSWALK_URL}>crosswalk</a>; {coverage.carriedUnused} reaches a gold table and
-      is never rendered.
+      Of {coverage.totalSourceColumns} source columns in the <a href={CROSSWALK_URL}>crosswalk</a>,
+      {' '}{coverage.observations} become observations, {coverage.keys} are identity or dimension
+      keys, and {coverage.excluded} are excluded, each with a recorded reason. One observation,
+      the raw protocol-update date, reaches a gold table and is never rendered directly: the
+      crosswalk's own notes record it as redundant, since the protocol-status field this page does
+      render is a pure function of that date's staleness (outdated at 24 months or more, no
+      exceptions in 103 facilities checked).
     </p>
 
     <table class="lineage">
